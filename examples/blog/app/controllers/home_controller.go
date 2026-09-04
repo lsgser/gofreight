@@ -1,8 +1,8 @@
 package controllers
 
 import (
-	"github.com/gofreight/gofreight/controller"
-	"github.com/gofreight/gofreight/router"
+	"github.com/lsgser/gofreight/controller"
+	"github.com/lsgser/gofreight/router"
 )
 
 type HomeController struct{}

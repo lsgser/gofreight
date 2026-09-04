@@ -6,7 +6,7 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/gofreight/gofreight/database"
+	"github.com/lsgser/gofreight/database"
 )
 
 // columnMeta describes a struct field mapped to a database column.

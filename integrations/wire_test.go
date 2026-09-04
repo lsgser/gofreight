@@ -3,7 +3,7 @@ package integrations_test
 import (
 	"testing"
 
-	"github.com/gofreight/gofreight/integrations"
+	"github.com/lsgser/gofreight/integrations"
 )
 
 type mockEnv map[string]string

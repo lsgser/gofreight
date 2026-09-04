@@ -7,9 +7,9 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/gofreight/gofreight/controller"
-	"github.com/gofreight/gofreight/database"
-	"github.com/gofreight/gofreight/router"
+	"github.com/lsgser/gofreight/controller"
+	"github.com/lsgser/gofreight/database"
+	"github.com/lsgser/gofreight/router"
 )
 
 //go:embed templates/*

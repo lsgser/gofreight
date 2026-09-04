@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/gofreight/gofreight/model"
+	"github.com/lsgser/gofreight/model"
 )
 
 // Factory creates test model instances, like Laravel factories / FactoryBot.

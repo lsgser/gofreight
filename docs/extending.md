@@ -7,7 +7,7 @@ Gofreight is designed to be extended without forking the framework.
 Register your own services in `main.go` or an `init()` in your app package:
 
 ```go
-import "github.com/gofreight/gofreight/integrations"
+import "github.com/lsgser/gofreight/integrations"
 
 func init() {
     integrations.RegisterCustom("slack", func(cfg map[string]string) error {

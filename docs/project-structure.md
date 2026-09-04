@@ -2,7 +2,7 @@
 
 Gofreight involves **two different trees**:
 
-1. **The Gofreight framework** — a Go library and CLI (`github.com/gofreight/gofreight`). You install it; you do not copy it into your app.
+1. **The Gofreight framework** — a Go library and CLI ([github.com/lsgser/gofreight](https://github.com/lsgser/gofreight)). You install it; you do not copy it into your app.
 2. **Your application** — a separate project directory created with `gofreight new`. This is where your product code lives.
 
 When you run `gofreight new myapp`, a new folder `myapp/` is created **in your current working directory**. That folder is your app. It is not nested inside the framework repo unless you choose to create it there.
@@ -16,7 +16,7 @@ This is the canonical layout every generated app follows. Paths below are **fixe
 ```
 myapp/                              # Go module root (module name = folder name by default)
 ├── main.go                         # Entry point — boot Application, draw routes, run server
-├── go.mod                          # Depends on github.com/gofreight/gofreight
+├── go.mod                          # Depends on github.com/lsgser/gofreight
 ├── .env                            # Local secrets (gitignored)
 ├── .env.example                    # Committed template for environment variables
 ├── .gitignore
@@ -124,7 +124,7 @@ You should not need to invent folder names — use generators and match existing
 
 ## Framework repository (this repo)
 
-If you clone `github.com/gofreight/gofreight`, you see **many top-level packages**. That is normal for a Go framework: each package is imported by applications via `go.mod`, not copied into your app.
+If you clone [github.com/lsgser/gofreight](https://github.com/lsgser/gofreight), you see **many top-level packages**. That is normal for a Go framework: each package is imported by applications via `go.mod`, not copied into your app.
 
 ```
 gofreight/                          # Framework module (library)
@@ -177,7 +177,7 @@ examples/blog/
 It depends on the local framework via `replace` in `go.mod`:
 
 ```go
-replace github.com/gofreight/gofreight => ../..
+replace github.com/lsgser/gofreight => ../..
 ```
 
 ---
@@ -197,7 +197,7 @@ go run .
 `go.mod` contains:
 
 ```go
-require github.com/gofreight/gofreight v0.1.0
+require github.com/lsgser/gofreight v0.1.0
 ```
 
 Go downloads the framework module from the module proxy.
@@ -208,13 +208,13 @@ If you develop the framework and an app side by side:
 
 ```go
 // shop/go.mod
-replace github.com/gofreight/gofreight => ../gofreight
+replace github.com/lsgser/gofreight => ../gofreight
 ```
 
 Or, as in `examples/blog`, from inside the framework repo:
 
 ```go
-replace github.com/gofreight/gofreight => ../..
+replace github.com/lsgser/gofreight => ../..
 ```
 
 ---
@@ -247,7 +247,7 @@ The framework repo includes `Dockerfile` and `docker-compose.yml` as **examples 
 │         │                                                 │
 │         │  import                                         │
 │         ▼                                                 │
-│  Go module cache / github.com/gofreight/gofreight        │
+│  Go module cache / github.com/lsgser/gofreight        │
 │    router, model, view, application, …                    │
 └─────────────────────────────────────────────────────────┘
 ```

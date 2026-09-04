@@ -2,6 +2,8 @@
 
 Welcome to the Gofreight docs. Gofreight is a Rails/Laravel-inspired web framework for Go with MVC, ORM, generators, testing, admin tools, and extensible integrations.
 
+**Repository:** [github.com/lsgser/gofreight](https://github.com/lsgser/gofreight)
+
 ## Guides
 
 | Guide | Description |

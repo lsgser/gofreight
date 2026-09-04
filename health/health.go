@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/gofreight/gofreight/database"
+	"github.com/lsgser/gofreight/database"
 )
 
 // Checker verifies subsystem health.

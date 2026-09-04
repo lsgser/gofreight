@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/gofreight/gofreight/config"
-	"github.com/gofreight/gofreight/database"
-	"github.com/gofreight/gofreight/dev"
-	"github.com/gofreight/gofreight/router"
+	"github.com/lsgser/gofreight/config"
+	"github.com/lsgser/gofreight/database"
+	"github.com/lsgser/gofreight/dev"
+	"github.com/lsgser/gofreight/router"
 )
 
 func handleDBSeed() {

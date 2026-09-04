@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/gofreight/gofreight/database"
+	"github.com/lsgser/gofreight/database"
 )
 
 // PolymorphicAssoc defines a polymorphic belongs_to/has_many relationship.

@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/gofreight/gofreight/validation"
+	"github.com/lsgser/gofreight/validation"
 )
 
 func TestValidatorRequired(t *testing.T) {

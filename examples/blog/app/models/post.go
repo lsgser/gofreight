@@ -3,7 +3,7 @@ package models
 import (
 	"context"
 
-	"github.com/gofreight/gofreight/model"
+	"github.com/lsgser/gofreight/model"
 )
 
 type Post struct {

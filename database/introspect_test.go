@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/gofreight/gofreight/database"
+	"github.com/lsgser/gofreight/database"
 )
 
 func TestIntrospectSQLite(t *testing.T) {

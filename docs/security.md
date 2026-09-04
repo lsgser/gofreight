@@ -9,7 +9,7 @@
 ## Authentication
 
 ```go
-import "github.com/gofreight/gofreight/auth"
+import "github.com/lsgser/gofreight/auth"
 
 hash, _ := auth.HashPassword("user-password")
 // store hash in database, never store plaintext

@@ -10,10 +10,10 @@ import (
 	"os"
 	"testing"
 
-	"github.com/gofreight/gofreight/application"
-	"github.com/gofreight/gofreight/database"
-	"github.com/gofreight/gofreight/router"
-	"github.com/gofreight/gofreight/view"
+	"github.com/lsgser/gofreight/application"
+	"github.com/lsgser/gofreight/database"
+	"github.com/lsgser/gofreight/router"
+	"github.com/lsgser/gofreight/view"
 )
 
 // App is a test application with HTTP helpers and database access.

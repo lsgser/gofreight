@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/gofreight/gofreight/database"
+	"github.com/lsgser/gofreight/database"
 )
 
 func setupSchema(t *testing.T) {

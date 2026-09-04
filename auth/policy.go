@@ -3,7 +3,7 @@ package auth
 import (
 	"net/http"
 
-	"github.com/gofreight/gofreight/middleware"
+	"github.com/lsgser/gofreight/middleware"
 )
 
 // Policy defines authorization rules (like Laravel Gates).

@@ -3,8 +3,8 @@ package auth
 import (
 	"net/http"
 
-	"github.com/gofreight/gofreight/controller"
-	"github.com/gofreight/gofreight/middleware"
+	"github.com/lsgser/gofreight/controller"
+	"github.com/lsgser/gofreight/middleware"
 )
 
 // LoginConfig configures session-based login.

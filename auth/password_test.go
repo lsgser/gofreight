@@ -3,7 +3,7 @@ package auth_test
 import (
 	"testing"
 
-	"github.com/gofreight/gofreight/auth"
+	"github.com/lsgser/gofreight/auth"
 )
 
 func TestHashPassword(t *testing.T) {

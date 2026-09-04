@@ -6,7 +6,7 @@ import (
 
 	"blog/config"
 	"blog/tests/factories"
-	"github.com/gofreight/gofreight/gftest"
+	"github.com/lsgser/gofreight/gftest"
 )
 
 const postsMigration = `CREATE TABLE posts (

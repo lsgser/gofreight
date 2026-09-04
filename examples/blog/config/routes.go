@@ -2,7 +2,7 @@ package config
 
 import (
 	"blog/app/controllers"
-	"github.com/gofreight/gofreight/router"
+	"github.com/lsgser/gofreight/router"
 )
 
 func Routes(r *router.Router) {

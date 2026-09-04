@@ -3,8 +3,8 @@ package integrations
 import (
 	"os"
 
-	"github.com/gofreight/gofreight/cache"
-	"github.com/gofreight/gofreight/mail"
+	"github.com/lsgser/gofreight/cache"
+	"github.com/lsgser/gofreight/mail"
 )
 
 // Services holds wired application services from integrations.

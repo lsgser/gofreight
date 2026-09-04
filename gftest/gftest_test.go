@@ -3,7 +3,7 @@ package gftest_test
 import (
 	"testing"
 
-	"github.com/gofreight/gofreight/gftest"
+	"github.com/lsgser/gofreight/gftest"
 )
 
 func TestDescribeIt(t *testing.T) {

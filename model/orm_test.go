@@ -4,8 +4,8 @@ import (
 	"context"
 	"testing"
 
-	"github.com/gofreight/gofreight/database"
-	"github.com/gofreight/gofreight/model"
+	"github.com/lsgser/gofreight/database"
+	"github.com/lsgser/gofreight/model"
 )
 
 type Article struct {

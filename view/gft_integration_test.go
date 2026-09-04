@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/gofreight/gofreight/view"
+	"github.com/lsgser/gofreight/view"
 )
 
 func TestCompileBlogIndexGFT(t *testing.T) {

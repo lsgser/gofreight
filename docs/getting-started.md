@@ -3,9 +3,10 @@
 ## Install the CLI
 
 ```bash
-go install github.com/gofreight/gofreight/cmd/gofreight@latest
+go install github.com/lsgser/gofreight/cmd/gofreight@latest
 # or from source:
-go install ./cmd/gofreight
+git clone https://github.com/lsgser/gofreight.git
+cd gofreight && go install ./cmd/gofreight
 ```
 
 ## Create a new app

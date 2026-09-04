@@ -7,7 +7,7 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/gofreight/gofreight/version"
+	"github.com/lsgser/gofreight/version"
 )
 
 // NewApp scaffolds a new Gofreight application.
@@ -214,7 +214,7 @@ import (
 	"log"
 
 	"{{.Module}}/config"
-	"github.com/gofreight/gofreight/application"
+	"github.com/lsgser/gofreight/application"
 )
 
 func main() {
@@ -233,7 +233,7 @@ const appGoModTmpl = `module {{.Module}}
 
 go 1.22
 
-require github.com/gofreight/gofreight {{.FrameworkVersion}}
+require github.com/lsgser/gofreight {{.FrameworkVersion}}
 `
 
 const appReadmeTmpl = `# {{.Name}}
@@ -252,7 +252,7 @@ public/            Static assets
 tests/             HTTP tests
 ` + "```" + `
 
-Full structure: https://github.com/gofreight/gofreight/blob/main/docs/project-structure.md
+Full structure: https://github.com/lsgser/gofreight/blob/main/docs/project-structure.md
 
 ## Run
 
@@ -278,8 +278,8 @@ import (
 	"net/http"
 
 	"{{.Module}}/app/controllers"
-	"github.com/gofreight/gofreight/controller"
-	"github.com/gofreight/gofreight/router"
+	"github.com/lsgser/gofreight/controller"
+	"github.com/lsgser/gofreight/router"
 )
 
 func Routes(r *router.Router) {
@@ -294,7 +294,7 @@ func Routes(r *router.Router) {
 
 const databaseTmpl = `package config
 
-import "github.com/gofreight/gofreight/database"
+import "github.com/lsgser/gofreight/database"
 
 func RunMigrations() error {
 	return database.Migrate(
@@ -323,7 +323,7 @@ const modelTmpl = `package models
 import (
 	"context"
 
-	"github.com/gofreight/gofreight/model"
+	"github.com/lsgser/gofreight/model"
 )
 
 type {{.Name}} struct {
@@ -414,7 +414,7 @@ import (
 	"testing"
 
 	"{{.Module}}/config"
-	"github.com/gofreight/gofreight/gftest"
+	"github.com/lsgser/gofreight/gftest"
 )
 
 func TestApp(t *testing.T) {
@@ -435,7 +435,7 @@ func TestApp(t *testing.T) {
 
 const testFactoriesTmpl = `package factories
 
-import "github.com/gofreight/gofreight/gftest"
+import "github.com/lsgser/gofreight/gftest"
 
 // Add model factories here.
 `
@@ -448,8 +448,8 @@ import (
 	"net/http"
 
 	"{{.Module}}/app/models"
-	"github.com/gofreight/gofreight/controller"
-	"github.com/gofreight/gofreight/router"
+	"github.com/lsgser/gofreight/controller"
+	"github.com/lsgser/gofreight/router"
 )
 
 type {{.Name}}Controller struct{}

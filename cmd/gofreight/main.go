@@ -7,10 +7,10 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/gofreight/gofreight/config"
-	"github.com/gofreight/gofreight/database"
-	"github.com/gofreight/gofreight/generator"
-	"github.com/gofreight/gofreight/version"
+	"github.com/lsgser/gofreight/config"
+	"github.com/lsgser/gofreight/database"
+	"github.com/lsgser/gofreight/generator"
+	"github.com/lsgser/gofreight/version"
 	"github.com/joho/godotenv"
 )
 

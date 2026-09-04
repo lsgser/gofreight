@@ -4,9 +4,9 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/gofreight/gofreight/cache"
-	"github.com/gofreight/gofreight/jobs"
-	"github.com/gofreight/gofreight/mail"
+	"github.com/lsgser/gofreight/cache"
+	"github.com/lsgser/gofreight/jobs"
+	"github.com/lsgser/gofreight/mail"
 )
 
 // Fakes holds test doubles for framework services (like Laravel fakes).

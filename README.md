@@ -1,6 +1,6 @@
 # Gofreight
 
-**v0.1.0**
+**v0.1.0** · [github.com/lsgser/gofreight](https://github.com/lsgser/gofreight)
 
 A **Ruby on Rails / Laravel-inspired web framework for Go**. Gofreight brings MVC architecture, **Gofreight Templates (GFT)**, ActiveRecord-style models, RESTful routing, code generators, and batteries-included tooling to the Go ecosystem.
 
@@ -40,9 +40,9 @@ A **Ruby on Rails / Laravel-inspired web framework for Go**. Gofreight brings MV
 
 ```bash
 # 1. Install the CLI
-go install github.com/gofreight/gofreight/cmd/gofreight@latest
-# or from source:
-cd gofreight && go install ./cmd/gofreight
+go install github.com/lsgser/gofreight/cmd/gofreight@latest
+# or clone https://github.com/lsgser/gofreight and from source:
+git clone https://github.com/lsgser/gofreight.git && cd gofreight && go install ./cmd/gofreight
 
 # 2. Create a new app
 gofreight new myapp
@@ -72,7 +72,7 @@ Visit **http://localhost:3000** — admin at **http://localhost:3000/admin** (de
 **Your app** and **the Gofreight framework** are separate:
 
 - Run `gofreight new myapp` → creates `myapp/` in your **current directory** (your product code).
-- Install `github.com/gofreight/gofreight` as a **Go module dependency** — you do not copy framework folders into your app.
+- Install `github.com/lsgser/gofreight` as a **Go module dependency** — you do not copy framework folders into your app.
 
 Full guide: **[docs/project-structure.md](docs/project-structure.md)** — application layout, framework repo layout, where to put new code, and local development.
 
@@ -100,7 +100,8 @@ myapp/
 └── tests/
 ```
 
-Reference implementation: **[examples/blog/](examples/blog/)** — same structure as a generated app.
+Reference implementation: **[examples/blog/](examples/blog/)** — same structure as a generated app.  
+Repository: **[github.com/lsgser/gofreight](https://github.com/lsgser/gofreight)**
 
 ### Framework packages (library — not copied into your app)
 

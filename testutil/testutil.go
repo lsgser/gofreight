@@ -5,10 +5,10 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/gofreight/gofreight/application"
-	"github.com/gofreight/gofreight/config"
-	"github.com/gofreight/gofreight/gftest"
-	"github.com/gofreight/gofreight/router"
+	"github.com/lsgser/gofreight/application"
+	"github.com/lsgser/gofreight/config"
+	"github.com/lsgser/gofreight/gftest"
+	"github.com/lsgser/gofreight/router"
 )
 
 // TestApp wraps a gftest.App for backward compatibility.

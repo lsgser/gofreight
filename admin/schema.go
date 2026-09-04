@@ -5,10 +5,10 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/gofreight/gofreight/controller"
-	"github.com/gofreight/gofreight/database"
-	"github.com/gofreight/gofreight/integrations"
-	"github.com/gofreight/gofreight/router"
+	"github.com/lsgser/gofreight/controller"
+	"github.com/lsgser/gofreight/database"
+	"github.com/lsgser/gofreight/integrations"
+	"github.com/lsgser/gofreight/router"
 )
 
 func (p *Panel) mountSchemaRoutes(a *router.Router, wrap func(func(controller.Base) error) http.HandlerFunc) {

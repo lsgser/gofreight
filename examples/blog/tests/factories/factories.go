@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"blog/app/models"
-	"github.com/gofreight/gofreight/gftest"
+	"github.com/lsgser/gofreight/gftest"
 )
 
 // PostFactory creates test posts.

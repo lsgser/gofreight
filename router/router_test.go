@@ -5,7 +5,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/gofreight/gofreight/router"
+	"github.com/lsgser/gofreight/router"
 )
 
 func TestRouterGet(t *testing.T) {

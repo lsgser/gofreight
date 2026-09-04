@@ -26,7 +26,7 @@ Integrations are also configured automatically when you call `app.Run()`.
 ## Using an integration
 
 ```go
-import "github.com/gofreight/gofreight/integrations"
+import "github.com/lsgser/gofreight/integrations"
 
 storage, ok := integrations.AsStorage(integrations.MustGet("storage"))
 if ok {

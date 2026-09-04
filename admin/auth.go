@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/gofreight/gofreight/controller"
-	"github.com/gofreight/gofreight/middleware"
+	"github.com/lsgser/gofreight/controller"
+	"github.com/lsgser/gofreight/middleware"
 )
 
 // authMiddleware protects admin routes when ADMIN_PASSWORD is set.

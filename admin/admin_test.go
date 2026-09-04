@@ -6,10 +6,10 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/gofreight/gofreight/admin"
-	"github.com/gofreight/gofreight/database"
-	"github.com/gofreight/gofreight/gftest"
-	"github.com/gofreight/gofreight/router"
+	"github.com/lsgser/gofreight/admin"
+	"github.com/lsgser/gofreight/database"
+	"github.com/lsgser/gofreight/gftest"
+	"github.com/lsgser/gofreight/router"
 )
 
 func setupAdmin(t *testing.T) *gftest.App {

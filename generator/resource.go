@@ -244,7 +244,7 @@ const resourceModelTmpl = `package models
 import (
 	"context"
 
-	"github.com/gofreight/gofreight/model"
+	"github.com/lsgser/gofreight/model"
 )
 
 // {{.Name}} represents a {{.Singular}} record.
@@ -277,9 +277,9 @@ import (
 	"strconv"
 
 	"{{.Module}}/app/models"
-	"github.com/gofreight/gofreight/controller"
-	"github.com/gofreight/gofreight/router"
-	"github.com/gofreight/gofreight/validation"
+	"github.com/lsgser/gofreight/controller"
+	"github.com/lsgser/gofreight/router"
+	"github.com/lsgser/gofreight/validation"
 )
 
 // {{.Name}}Controller handles {{.Plural}} resources.
@@ -411,7 +411,7 @@ import (
 	"testing"
 
 	"{{.Module}}/app/models"
-	"github.com/gofreight/gofreight/gftest"
+	"github.com/lsgser/gofreight/gftest"
 )
 
 var {{.Name}}Factory = gftest.NewFactory(models.{{.Name}}s).Define(map[string]any{
@@ -430,7 +430,7 @@ import (
 	"testing"
 
 	"{{.Module}}/config"
-	"github.com/gofreight/gofreight/gftest"
+	"github.com/lsgser/gofreight/gftest"
 )
 
 func Test{{.Name}}Resource(t *testing.T) {

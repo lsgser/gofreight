@@ -1,4 +1,4 @@
-module github.com/gofreight/gofreight
+module github.com/lsgser/gofreight
 
 go 1.26.0
 

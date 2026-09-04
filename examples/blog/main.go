@@ -4,7 +4,7 @@ import (
 	"log"
 
 	"blog/config"
-	"github.com/gofreight/gofreight/application"
+	"github.com/lsgser/gofreight/application"
 )
 
 func main() {

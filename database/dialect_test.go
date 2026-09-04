@@ -3,7 +3,7 @@ package database_test
 import (
 	"testing"
 
-	"github.com/gofreight/gofreight/database"
+	"github.com/lsgser/gofreight/database"
 )
 
 func TestDetectDriver(t *testing.T) {

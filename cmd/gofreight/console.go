@@ -7,7 +7,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/gofreight/gofreight/database"
+	"github.com/lsgser/gofreight/database"
 )
 
 // RunConsole starts an interactive SQL console for the connected database.

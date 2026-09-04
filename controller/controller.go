@@ -5,7 +5,7 @@ import (
 	"html/template"
 	"net/http"
 
-	"github.com/gofreight/gofreight/view"
+	"github.com/lsgser/gofreight/view"
 )
 
 var defaultViews *view.Engine
