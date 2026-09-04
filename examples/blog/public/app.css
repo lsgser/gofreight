@@ -1,0 +1,51 @@
+body {
+  font-family: system-ui, -apple-system, sans-serif;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+  color: #333;
+}
+
+header {
+  border-bottom: 2px solid #e44;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+}
+
+header h1 { margin: 0; color: #e44; }
+
+nav a {
+  margin-right: 1rem;
+  color: #e44;
+  text-decoration: none;
+}
+
+nav a:hover { text-decoration: underline; }
+
+.post {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.post h2 { margin-top: 0; }
+
+.flash {
+  padding: 0.75rem 1rem;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+}
+
+.flash.notice { background: #d4edda; color: #155724; }
+
+button {
+  background: #e44;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button:hover { background: #c33; }

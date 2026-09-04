@@ -1,0 +1,35 @@
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      GOFREIGHT_ENV: development
+      DATABASE_URL: postgres://gofreight:gofreight@db:5432/gofreight_development?sslmode=disable
+      REDIS_URL: redis://redis:6379
+      SECRET_KEY: dev-secret-key
+    depends_on:
+      - db
+      - redis
+    volumes:
+      - .:/app
+    command: go run .
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: gofreight
+      POSTGRES_PASSWORD: gofreight
+      POSTGRES_DB: gofreight_development
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+volumes:
+  pgdata:

@@ -1,0 +1,15 @@
+#layout "layouts.application"
+
+#slot "content"
+<h2>All Posts</h2>
+
+#eachor .Posts as post
+  <div class="post">
+    <h2>{= .Title }</h2>
+    <p>{= .Body }</p>
+    <small>ID: {= .ID }</small>
+  </div>
+#otherwise
+  <p>No posts yet.</p>
+#endeach
+#endslot

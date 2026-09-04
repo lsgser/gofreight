@@ -1,0 +1,7 @@
+#layout "layouts.application"
+
+#slot "content"
+  <h2>{= .Post.Title }</h2>
+  <p>{= .Post.Body }</p>
+  <small>Created: {= .Post.CreatedAt }</small>
+#endslot

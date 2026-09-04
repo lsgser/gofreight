@@ -1,0 +1,373 @@
+{{define "head"}}
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  :root { --bg:#f8f9fa; --surface:#fff; --border:#dee2e6; --primary:#417690; --primary-dark:#205067; --text:#333; --muted:#666; --danger:#ba2121; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; background:var(--bg); color:var(--text); line-height:1.5; }
+  .header { background:var(--primary); color:#fff; padding:0.75rem 1.5rem; display:flex; align-items:center; justify-content:space-between; }
+  .header h1 { font-size:1.25rem; font-weight:600; }
+  .header a { color:#fff; text-decoration:none; opacity:0.9; margin-left:1rem; font-size:0.9rem; }
+  .header a:hover { opacity:1; text-decoration:underline; }
+  .container { max-width:1200px; margin:0 auto; padding:1.5rem; }
+  .flash { background:#d1e7dd; border:1px solid #badbcc; color:#0f5132; padding:0.75rem 1rem; border-radius:4px; margin-bottom:1rem; }
+  .card { background:var(--surface); border:1px solid var(--border); border-radius:6px; overflow:hidden; margin-bottom:1.5rem; }
+  .card-header { background:var(--primary); color:#fff; padding:0.75rem 1rem; font-weight:600; display:flex; justify-content:space-between; align-items:center; }
+  .card-body { padding:1rem; }
+  table { width:100%; border-collapse:collapse; font-size:0.875rem; }
+  th,td { padding:0.6rem 0.75rem; text-align:left; border-bottom:1px solid var(--border); }
+  th { background:#f1f3f5; font-weight:600; color:var(--muted); text-transform:uppercase; font-size:0.75rem; }
+  tr:hover td { background:#f8f9fa; }
+  .btn { display:inline-block; padding:0.4rem 0.85rem; border-radius:4px; font-size:0.875rem; text-decoration:none; border:none; cursor:pointer; }
+  .btn-primary { background:var(--primary); color:#fff; }
+  .btn-danger { background:var(--danger); color:#fff; }
+  .btn-sm { padding:0.25rem 0.5rem; font-size:0.8rem; }
+  .breadcrumb { margin-bottom:1rem; font-size:0.875rem; color:var(--muted); }
+  .breadcrumb a { color:var(--primary); text-decoration:none; }
+  .form-group { margin-bottom:1rem; }
+  .form-group label { display:block; font-weight:600; margin-bottom:0.25rem; font-size:0.875rem; }
+  .form-group input,.form-group textarea { width:100%; padding:0.5rem 0.75rem; border:1px solid var(--border); border-radius:4px; font-size:0.875rem; }
+  .form-group textarea { min-height:100px; }
+  .form-group .hint { font-size:0.75rem; color:var(--muted); }
+  .pagination { display:flex; gap:0.5rem; margin-top:1rem; }
+  .pagination a,.pagination span { padding:0.35rem 0.65rem; border:1px solid var(--border); border-radius:4px; text-decoration:none; color:var(--text); font-size:0.875rem; }
+  .pagination .current { background:var(--primary); color:#fff; }
+  .badge { padding:0.15rem 0.5rem; border-radius:10px; font-size:0.75rem; background:#e9ecef; color:var(--muted); }
+  .table-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:1rem; }
+  .table-card { background:var(--surface); border:1px solid var(--border); border-radius:6px; padding:1rem; text-decoration:none; color:inherit; }
+  .table-card:hover { box-shadow:0 2px 8px rgba(0,0,0,0.1); }
+  .table-card h3 { color:var(--primary); }
+  .null-val { color:#adb5bd; font-style:italic; }
+  .truncate { max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .error { background:#f8d7da; color:#842029; padding:0.75rem; border-radius:4px; margin-bottom:1rem; }
+  .sql-editor { font-family:monospace; min-height:120px; }
+</style>
+{{end}}
+
+{{define "nav"}}
+<header class="header">
+  <h1><a href="{{.Prefix}}/" style="color:#fff;text-decoration:none">{{.Title}}</a></h1>
+  <nav>
+    <a href="{{.Prefix}}/">Dashboard</a>
+    <a href="{{.Prefix}}/schema/new">Create Table</a>
+    <a href="{{.Prefix}}/import">Import SQL</a>
+    <a href="{{.Prefix}}/integrations">Integrations</a>
+    {{if .AllowSQL}}<a href="{{.Prefix}}/sql">SQL Console</a>{{end}}
+  </nav>
+</header>
+{{end}}
+
+{{define "dashboard.html"}}
+<!DOCTYPE html><html lang="en"><head><title>{{.Title}}</title>{{template "head" .}}</head><body>
+{{template "nav" .}}
+<main class="container">
+  {{if .Flash}}<div class="flash">{{.Flash}}</div>{{end}}
+  <h2 style="margin-bottom:1rem">Database Tables</h2>
+  <div style="margin-bottom:1rem;display:flex;gap:0.5rem">
+    <a href="{{.Prefix}}/schema/new" class="btn btn-primary">+ Create Table</a>
+    <a href="{{.Prefix}}/import" class="btn btn-sm" style="background:#6c757d;color:#fff">Import SQL</a>
+  </div>
+  <div class="table-grid">
+    {{range .Tables}}
+    <a href="{{$.Prefix}}/tables/{{.Name}}" class="table-card">
+      <h3>{{.Name}}</h3>
+      <div>{{.Count}} rows</div>
+    </a>
+    {{else}}
+    <p>No tables found. Run migrations first.</p>
+    {{end}}
+  </div>
+</main></body></html>
+{{end}}
+
+{{define "table_index.html"}}
+<!DOCTYPE html><html lang="en"><head><title>{{.Table}} | {{.Title}}</title>{{template "head" .}}</head><body>
+{{template "nav" .}}
+<main class="container">
+  {{if .Flash}}<div class="flash">{{.Flash}}</div>{{end}}
+  <div class="breadcrumb"><a href="{{.Prefix}}/">Dashboard</a> &rsaquo; {{.Table}}</div>
+  <div class="card">
+    <div class="card-header">
+      <span>{{.Table}} <span class="badge">{{.Total}} rows</span></span>
+      <div style="display:flex;gap:0.5rem">
+        <a href="{{.Prefix}}/tables/{{.Table}}/structure" class="btn btn-sm" style="background:#6c757d;color:#fff">Structure</a>
+        <a href="{{.Prefix}}/export/{{.Table}}" class="btn btn-sm" style="background:#6c757d;color:#fff">Export</a>
+        <a href="{{.Prefix}}/tables/{{.Table}}/new" class="btn btn-primary btn-sm">+ Add row</a>
+      </div>
+    </div>
+    <div class="card-body" style="padding:0;overflow-x:auto">
+      <table>
+        <thead><tr>{{range .Columns}}<th>{{.Name}}</th>{{end}}<th>Actions</th></tr></thead>
+        <tbody>
+          {{range $row := .Rows}}
+          <tr>
+            {{range $.Columns}}
+            <td class="truncate">{{$v := index $row .Name}}{{if eq $v nil}}<span class="null-val">NULL</span>{{else}}{{$v}}{{end}}</td>
+            {{end}}
+            <td><a href="{{$.Prefix}}/tables/{{$.Table}}/{{index $row "id"}}" class="btn btn-primary btn-sm">Edit</a></td>
+          </tr>
+          {{else}}
+          <tr><td colspan="100" style="text-align:center;padding:2rem">No records</td></tr>
+          {{end}}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {{if gt .LastPage 1}}
+  <div class="pagination">
+    {{if gt .Page 1}}<a href="?page={{minus .Page 1}}">&laquo; Prev</a>{{end}}
+    <span class="current">Page {{.Page}} / {{.LastPage}}</span>
+    {{if lt .Page .LastPage}}<a href="?page={{plus .Page 1}}">Next &raquo;</a>{{end}}
+  </div>
+  {{end}}
+</main></body></html>
+{{end}}
+
+{{define "table_form.html"}}
+<!DOCTYPE html><html lang="en"><head><title>{{if .Edit}}Edit{{else}}New{{end}} {{.Table}} | {{.Title}}</title>{{template "head" .}}</head><body>
+{{template "nav" .}}
+<main class="container">
+  <div class="breadcrumb"><a href="{{.Prefix}}/">Dashboard</a> &rsaquo; <a href="{{.Prefix}}/tables/{{.Table}}">{{.Table}}</a> &rsaquo; {{if .Edit}}Edit #{{.ID}}{{else}}New{{end}}</div>
+  <div class="card">
+    <div class="card-header">{{if .Edit}}Edit{{else}}Create{{end}} {{.Table}}</div>
+    <div class="card-body">
+      <form method="POST" action="{{if .Edit}}{{.Prefix}}/tables/{{.Table}}/{{.ID}}{{else}}{{.Prefix}}/tables/{{.Table}}{{end}}">
+        {{range .Schema.Columns}}
+        {{if not (and $.Edit .PrimaryKey)}}
+        <div class="form-group">
+          <label for="{{.Name}}">{{.Name}}</label>
+          {{if or (eq .Type "text") (eq .Type "TEXT") (eq .Type "blob") (eq .Type "BLOB")}}
+          <textarea name="{{.Name}}" id="{{.Name}}">{{index $.Row .Name}}</textarea>
+          {{else}}
+          <input type="text" name="{{.Name}}" id="{{.Name}}" value="{{index $.Row .Name}}">
+          {{end}}
+          <div class="hint">{{.Type}}{{if .PrimaryKey}} · primary key{{end}}{{if not .Nullable}} · required{{end}}</div>
+        </div>
+        {{end}}
+        {{end}}
+        <div style="display:flex;gap:0.5rem;margin-top:1.5rem">
+          <button type="submit" class="btn btn-primary">{{if .Edit}}Save{{else}}Create{{end}}</button>
+          <a href="{{.Prefix}}/tables/{{.Table}}" class="btn btn-sm" style="background:#6c757d;color:#fff">Cancel</a>
+        </div>
+      </form>
+      {{if .Edit}}
+      <form method="POST" action="{{.Prefix}}/tables/{{.Table}}/{{.ID}}/delete" style="margin-top:0.5rem" onsubmit="return confirm('Delete this record?')">
+        <button type="submit" class="btn btn-danger">Delete</button>
+      </form>
+      {{end}}
+    </div>
+  </div>
+</main></body></html>
+{{end}}
+
+{{define "sql.html"}}
+<!DOCTYPE html><html lang="en"><head><title>SQL Console | {{.Title}}</title>{{template "head" .}}</head><body>
+{{template "nav" .}}
+<main class="container">
+  <h2 style="margin-bottom:1rem">SQL Console</h2>
+  <p style="color:#666;margin-bottom:1rem">Read-only queries (SELECT, PRAGMA, EXPLAIN) for local development.</p>
+  <div class="card">
+    <div class="card-body">
+      <form method="POST" action="{{.Prefix}}/sql">
+        <div class="form-group">
+          <label for="query">SQL Query</label>
+          <textarea name="query" id="query" class="sql-editor">{{.Query}}</textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Run Query</button>
+      </form>
+    </div>
+  </div>
+  {{if .Error}}<div class="error">{{.Error}}</div>{{end}}
+  {{if .Results}}
+  <div class="card"><div class="card-body" style="padding:0;overflow-x:auto">
+    <table>
+      <thead><tr>{{range .ResultColumns}}<th>{{.}}</th>{{end}}</tr></thead>
+      <tbody>
+        {{range $row := .Results}}
+        <tr>{{range $.ResultColumns}}<td class="truncate">{{$v := index $row .}}{{if eq $v nil}}<span class="null-val">NULL</span>{{else}}{{$v}}{{end}}</td>{{end}}</tr>
+        {{end}}
+      </tbody>
+    </table>
+  </div></div>
+  {{end}}
+</main></body></html>
+{{end}}
+
+{{define "schema_new.html"}}
+<!DOCTYPE html><html lang="en"><head><title>Create Table | {{.Title}}</title>{{template "head" .}}</head><body>
+{{template "nav" .}}
+<main class="container">
+  <h2 style="margin-bottom:1rem">Create Table</h2>
+  <div class="card"><div class="card-body">
+    <form method="POST" action="{{.Prefix}}/schema/create">
+      <div class="form-group">
+        <label for="table_name">Table Name</label>
+        <input type="text" name="table_name" id="table_name" required placeholder="users">
+      </div>
+      <input type="hidden" name="column_count" value="5">
+      <h3 style="margin:1.5rem 0 1rem;font-size:1rem">Columns</h3>
+      <p class="hint" style="margin-bottom:1rem">An <code>id</code>, <code>created_at</code>, and <code>updated_at</code> column are added automatically if no primary key is set.</p>
+      {{range $i := seq 5}}
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr auto auto auto;gap:0.5rem;margin-bottom:0.5rem;align-items:end">
+        <div class="form-group" style="margin:0"><label>Name</label><input type="text" name="col_{{$i}}_name" placeholder="column_{{$i}}"></div>
+        <div class="form-group" style="margin:0"><label>Type</label>
+          <select name="col_{{$i}}_type">{{range $.ColumnTypes}}<option>{{.}}</option>{{end}}</select>
+        </div>
+        <div class="form-group" style="margin:0"><label>Default</label><input type="text" name="col_{{$i}}_default"></div>
+        <label><input type="checkbox" name="col_{{$i}}_nullable" value="1"> Null</label>
+        <label><input type="checkbox" name="col_{{$i}}_pk" value="1"> PK</label>
+        <label><input type="checkbox" name="col_{{$i}}_auto" value="1"> Auto</label>
+      </div>
+      {{end}}
+      <button type="submit" class="btn btn-primary" style="margin-top:1rem">Create Table</button>
+    </form>
+  </div></div>
+</main></body></html>
+{{end}}
+
+{{define "table_structure.html"}}
+<!DOCTYPE html><html lang="en"><head><title>{{.Table}} Structure | {{.Title}}</title>{{template "head" .}}</head><body>
+{{template "nav" .}}
+<main class="container">
+  {{if .Flash}}<div class="flash">{{.Flash}}</div>{{end}}
+  <div class="breadcrumb"><a href="{{.Prefix}}/">Dashboard</a> &rsaquo; <a href="{{.Prefix}}/tables/{{.Table}}">{{.Table}}</a> &rsaquo; Structure</div>
+  <div class="card">
+    <div class="card-header">
+      <span>{{.Table}} — Structure</span>
+      <div style="display:flex;gap:0.5rem">
+        <a href="{{.Prefix}}/tables/{{.Table}}/columns/new" class="btn btn-primary btn-sm">+ Add Column</a>
+        <a href="{{.Prefix}}/export/{{.Table}}" class="btn btn-sm" style="background:#6c757d;color:#fff">Export SQL</a>
+      </div>
+    </div>
+    <div class="card-body" style="padding:0">
+      <table>
+        <thead><tr><th>Column</th><th>Type</th><th>Nullable</th><th>Primary Key</th><th>Default</th><th>Actions</th></tr></thead>
+        <tbody>
+          {{range .Schema.Columns}}
+          <tr>
+            <td><strong>{{.Name}}</strong></td>
+            <td>{{.Type}}</td>
+            <td>{{if .Nullable}}Yes{{else}}No{{end}}</td>
+            <td>{{if .PrimaryKey}}Yes{{else}}—{{end}}</td>
+            <td>{{if .Default.Valid}}{{.Default.String}}{{else}}—{{end}}</td>
+            <td>
+              {{if not .PrimaryKey}}
+              <a href="{{$.Prefix}}/tables/{{$.Table}}/columns/{{.Name}}/rename" class="btn btn-sm">Rename</a>
+              <form method="POST" action="{{$.Prefix}}/tables/{{$.Table}}/columns/{{.Name}}/drop" style="display:inline" onsubmit="return confirm('Drop column {{.Name}}?')">
+                <button type="submit" class="btn btn-danger btn-sm">Drop</button>
+              </form>
+              {{end}}
+            </td>
+          </tr>
+          {{end}}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="card" style="margin-top:1rem"><div class="card-body">
+    <h3 style="margin-bottom:1rem;font-size:1rem">Add Index</h3>
+    <form method="POST" action="{{.Prefix}}/tables/{{.Table}}/indexes">
+      <div style="display:flex;gap:0.5rem;align-items:end">
+        <div class="form-group" style="margin:0"><label>Index name</label><input type="text" name="index_name" required></div>
+        <div class="form-group" style="margin:0"><label>Column</label><input type="text" name="column" required></div>
+        <label><input type="checkbox" name="unique" value="1"> Unique</label>
+        <button type="submit" class="btn btn-primary btn-sm">Add Index</button>
+      </div>
+    </form>
+  </div></div>
+  <div style="margin-top:1rem;display:flex;gap:0.5rem">
+    <a href="{{.Prefix}}/tables/{{.Table}}/migration" class="btn btn-sm" style="background:#6c757d;color:#fff">Save as Migration</a>
+  </div>
+  <form method="POST" action="{{.Prefix}}/tables/{{.Table}}/drop" onsubmit="return confirm('Drop table {{.Table}}? This cannot be undone.')">
+    <button type="submit" class="btn btn-danger">Drop Table</button>
+  </form>
+</main></body></html>
+{{end}}
+
+{{define "column_new.html"}}
+<!DOCTYPE html><html lang="en"><head><title>Add Column | {{.Title}}</title>{{template "head" .}}</head><body>
+{{template "nav" .}}
+<main class="container">
+  <div class="breadcrumb"><a href="{{.Prefix}}/">Dashboard</a> &rsaquo; <a href="{{.Prefix}}/tables/{{.Table}}/structure">{{.Table}}</a> &rsaquo; Add Column</div>
+  <div class="card"><div class="card-body">
+    <form method="POST" action="{{.Prefix}}/tables/{{.Table}}/columns">
+      <div class="form-group"><label>Name</label><input type="text" name="name" required></div>
+      <div class="form-group"><label>Type</label>
+        <select name="type">{{range .ColumnTypes}}<option>{{.}}</option>{{end}}</select>
+      </div>
+      <div class="form-group"><label>Default (optional)</label><input type="text" name="default"></div>
+      <label><input type="checkbox" name="nullable" value="1"> Nullable</label>
+      <div style="margin-top:1rem"><button type="submit" class="btn btn-primary">Add Column</button></div>
+    </form>
+  </div></div>
+</main></body></html>
+{{end}}
+
+{{define "import.html"}}
+<!DOCTYPE html><html lang="en"><head><title>Import SQL | {{.Title}}</title>{{template "head" .}}</head><body>
+{{template "nav" .}}
+<main class="container">
+  <h2 style="margin-bottom:1rem">Import SQL</h2>
+  <p style="color:#666;margin-bottom:1rem">Run CREATE, ALTER, INSERT, UPDATE, or DELETE statements. Separate multiple statements with semicolons.</p>
+  {{if .Error}}<div class="error">{{.Error}}</div>{{end}}
+  <div class="card"><div class="card-body">
+    <form method="POST" action="{{.Prefix}}/import">
+      <div class="form-group">
+        <label for="sql">SQL</label>
+        <textarea name="sql" id="sql" class="sql-editor" style="min-height:200px">{{.SQL}}</textarea>
+      </div>
+      <button type="submit" class="btn btn-primary">Import</button>
+    </form>
+  </div></div>
+</main></body></html>
+{{end}}
+
+{{define "integrations.html"}}
+<!DOCTYPE html><html lang="en"><head><title>Integrations | {{.Title}}</title>{{template "head" .}}</head><body>
+{{template "nav" .}}
+<main class="container">
+  <h2 style="margin-bottom:1rem">Integrations</h2>
+  <p style="color:#666;margin-bottom:1rem">Configure via environment variables. See <code>docs/integrations.md</code>.</p>
+  <div class="card"><div class="card-body" style="padding:0">
+    <table>
+      <thead><tr><th>Integration</th><th>Status</th></tr></thead>
+      <tbody>
+        {{range .Integrations}}
+        <tr>
+          <td><strong>{{.Name}}</strong></td>
+          <td>{{if .Enabled}}<span style="color:#198754">● Active</span>{{else}}<span style="color:#adb5bd">○ Not configured</span>{{end}}</td>
+        </tr>
+        {{end}}
+      </tbody>
+    </table>
+  </div></div>
+</main></body></html>
+{{end}}
+
+{{define "login.html"}}
+<!DOCTYPE html><html lang="en"><head><title>Admin Login | {{.Title}}</title>{{template "head" .}}</head><body>
+<main class="container" style="max-width:400px;margin:4rem auto">
+  <h2>Admin Login</h2>
+  {{if .Error}}<div class="error">{{.Error}}</div>{{end}}
+  <div class="card"><div class="card-body">
+    <form method="POST" action="{{.Prefix}}/login">
+      <div class="form-group"><label for="password">Password</label><input type="password" name="password" id="password" required></div>
+      <button type="submit" class="btn btn-primary">Login</button>
+    </form>
+  </div></div>
+</main></body></html>
+{{end}}
+
+{{define "column_rename.html"}}
+<!DOCTYPE html><html lang="en"><head><title>Rename Column | {{.Title}}</title>{{template "head" .}}</head><body>
+{{template "nav" .}}
+<main class="container">
+  <div class="breadcrumb"><a href="{{.Prefix}}/">Dashboard</a> &rsaquo; <a href="{{.Prefix}}/tables/{{.Table}}/structure">{{.Table}}</a> &rsaquo; Rename {{.Column}}</div>
+  <div class="card"><div class="card-body">
+    <form method="POST" action="{{.Prefix}}/tables/{{.Table}}/columns/{{.Column}}/rename">
+      <div class="form-group"><label>New name</label><input type="text" name="new_name" value="{{.Column}}" required></div>
+      <button type="submit" class="btn btn-primary">Rename</button>
+    </form>
+  </div></div>
+</main></body></html>
+{{end}}
