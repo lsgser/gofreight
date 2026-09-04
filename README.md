@@ -54,21 +54,49 @@ gofreight new myapp
 cd myapp
 go mod tidy
 
-# 3. Configure environment
-cp .env.example .env   # or edit .env created by generator
-
-# 4. Database
-gofreight db:create
+# 3. Database (SQLite — no server required)
+gofreight db:create      # creates db/development.db
 gofreight db:migrate
 
-# 5. Generate your first resource (model + controller + views + tests)
+# 4. Generate your first resource (optional)
 gofreight make scaffold Post title:string body:text published:boolean
+gofreight db:migrate
 
-# 6. Run
-GOFREIGHT_ENV=development go run .
+# 5. Run the server
+go run .
 ```
 
-Visit **http://localhost:3000** — admin at **http://localhost:3000/admin** (development only).
+Open **http://localhost:3000** — admin at **http://localhost:3000/admin** (development only).
+
+New apps ship with `DATABASE_URL=sqlite://db/development.db` in `.env`. No PostgreSQL install needed to get started.
+
+---
+
+## Run your app
+
+After `gofreight new myapp`:
+
+```bash
+cd myapp
+go mod tidy
+gofreight db:create      # create db/development.db (SQLite)
+gofreight db:migrate     # apply db/migrate/*.sql
+go run .                 # start on http://localhost:3000
+```
+
+| Command | What it does |
+|---------|----------------|
+| `go run .` | Start the web server (port 3000) |
+| `gofreight watch` | Auto-restart on file changes |
+| `gofreight test` | Run the test suite |
+| `gofreight db:migrate` | Apply pending migrations |
+| `gofreight db:status` | Show migration status |
+
+**Switch to PostgreSQL/MySQL later** — change `DATABASE_URL` in `.env`:
+
+```env
+DATABASE_URL=postgres://localhost/myapp_development?sslmode=disable
+```
 
 ---
 
@@ -134,7 +162,7 @@ Repository: **[github.com/lsgser/gofreight](https://github.com/lsgser/gofreight)
 ### Prerequisites
 
 - Go 1.22+
-- PostgreSQL, SQLite, MySQL, or MariaDB
+- (Optional) PostgreSQL, MySQL, or MariaDB — **SQLite is the default** for new apps; no extra install required
 - (Optional) Redis for caching/queues
 
 ### Step-by-step
@@ -147,27 +175,31 @@ cd blog
 go mod tidy
 ```
 
-**2. Configure `.env`**
+**2. Configure `.env`** (created automatically with SQLite defaults)
 
 ```env
 GOFREIGHT_ENV=development
 PORT=3000
-DATABASE_URL=postgres://localhost/blog_development?sslmode=disable
+DATABASE_URL=sqlite://db/development.db
 SECRET_KEY=your-secret-key-here
-REDIS_URL=redis://localhost:6379
-MAIL_DRIVER=log
 ```
 
 **3. Set up the database**
 
 ```bash
-gofreight db:create      # creates SQLite file or prints instructions
+gofreight db:create      # creates db/development.db
 gofreight db:migrate     # runs db/migrate/*.sql
 gofreight db:status      # shows migration status
 gofreight db:seed        # runs db/seeds/*.sql
 ```
 
-**4. Generate resources**
+**4. Run the app**
+
+```bash
+go run .                 # http://localhost:3000
+```
+
+**5. Generate resources**
 
 ```bash
 # Full CRUD (recommended — like php artisan make:scaffold)
@@ -178,9 +210,10 @@ gofreight generate model Comment body:text post_id:integer
 gofreight generate controller Comment
 gofreight generate migration add_index_to_posts
 gofreight generate auth
+gofreight db:migrate
 ```
 
-**5. Bootstrap in `main.go`**
+**6. Bootstrap in `main.go`**
 
 ```go
 app := application.New()
@@ -189,7 +222,7 @@ app.Draw(config.Routes)
 app.Run() // loads .gft views, mounts /health, /assets, /admin (dev)
 ```
 
-**6. Development workflow**
+**7. Development workflow**
 
 ```bash
 gofreight watch          # auto-reload on file changes
@@ -197,7 +230,7 @@ gofreight console        # interactive SQL REPL
 gofreight test           # run test suite
 ```
 
-**7. Docker (optional)**
+**8. Docker (optional)**
 
 ```bash
 docker compose up --build
@@ -480,11 +513,11 @@ Posts.Upsert(ctx, &post, []string{"slug"})
 
 ## Database & migrations
 
-Supports **PostgreSQL**, **SQLite**, **MySQL**, and **MariaDB** — auto-detected from `DATABASE_URL`:
+Supports **SQLite** (default for new apps), **PostgreSQL**, **MySQL**, and **MariaDB** — auto-detected from `DATABASE_URL`:
 
 ```
+DATABASE_URL=sqlite://db/development.db          # default — file in db/
 DATABASE_URL=postgres://localhost/myapp_development?sslmode=disable
-DATABASE_URL=sqlite://db/development.db
 DATABASE_URL=mysql://user:pass@localhost/myapp_development
 DATABASE_URL=mariadb://user:pass@localhost/myapp_development
 ```
@@ -599,7 +632,7 @@ The blog uses Gofreight Templates:
 | `GOFREIGHT_ENV` | development | `development`, `test`, `production` |
 | `PORT` | 3000 | Server port |
 | `HOST` | 0.0.0.0 | Bind address |
-| `DATABASE_URL` | postgres://... | Database connection |
+| `DATABASE_URL` | `sqlite://db/development.db` | SQLite (default), or Postgres/MySQL URL |
 | `SECRET_KEY` | change-me | Session/CSRF secret |
 | `ADMIN_PASSWORD` | — | Protect /admin in dev |
 | `REDIS_URL` | — | Redis cache/queues |

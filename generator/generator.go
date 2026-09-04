@@ -202,7 +202,7 @@ func sqlType(t string) string {
 	case "bool", "boolean":
 		return "BOOLEAN DEFAULT FALSE"
 	case "float":
-		return "DOUBLE PRECISION"
+		return "REAL"
 	default:
 		return "VARCHAR(255)"
 	}
@@ -238,7 +238,18 @@ require github.com/lsgser/gofreight {{.FrameworkVersion}}
 
 const appReadmeTmpl = `# {{.Name}}
 
-Gofreight application.
+Gofreight application (SQLite by default).
+
+## Run
+
+` + "```bash" + `
+go mod tidy
+gofreight db:create    # creates db/development.db
+gofreight db:migrate   # runs db/migrate/*.sql
+go run .               # http://localhost:3000
+` + "```" + `
+
+Admin (development): http://localhost:3000/admin
 
 ## Layout
 
@@ -253,19 +264,11 @@ tests/             HTTP tests
 ` + "```" + `
 
 Full structure: https://github.com/lsgser/gofreight/blob/main/docs/project-structure.md
-
-## Run
-
-` + "```bash" + `
-go mod tidy
-gofreight db:migrate
-GOFREIGHT_ENV=development go run .
-` + "```" + `
 `
 
 const envExampleTmpl = `GOFREIGHT_ENV=development
 PORT=3000
-DATABASE_URL=postgres://localhost/{{.Module}}_development?sslmode=disable
+DATABASE_URL=sqlite://db/development.db
 SECRET_KEY=change-me-in-production
 ADMIN_PASSWORD=
 REDIS_URL=redis://localhost:6379
@@ -305,7 +308,7 @@ func RunMigrations() error {
 
 const envTmpl = `GOFREIGHT_ENV=development
 PORT=3000
-DATABASE_URL=postgres://localhost/{{.Module}}_development?sslmode=disable
+DATABASE_URL=sqlite://db/development.db
 SECRET_KEY=change-me-in-production
 ADMIN_PASSWORD=
 REDIS_URL=redis://localhost:6379
@@ -314,6 +317,7 @@ MAIL_DRIVER=log
 `
 
 const gitignoreTmpl = `.env
+db/*.db
 tmp/
 *.exe
 `
@@ -343,10 +347,10 @@ func (m *{{.Name}}) Save(ctx context.Context) error {
 
 const migrationSQLTmpl = `-- Migration: create_{{.Table}}
 CREATE TABLE IF NOT EXISTS {{.Table}} (
-	id SERIAL PRIMARY KEY,
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
 {{range .Fields}}	{{.DBTag}} {{.SQLType}} NOT NULL,
-{{end}}	created_at TIMESTAMP DEFAULT NOW(),
-	updated_at TIMESTAMP DEFAULT NOW()
+{{end}}	created_at TEXT DEFAULT (datetime('now')),
+	updated_at TEXT DEFAULT (datetime('now'))
 );
 `
 

@@ -32,7 +32,7 @@ func Load() *Config {
 		Environment: Environment(getEnv("GOFREIGHT_ENV", "development")),
 		Host:        getEnv("HOST", "0.0.0.0"),
 		Port:        port,
-		DatabaseURL: getEnv("DATABASE_URL", "postgres://localhost/gofreight_development?sslmode=disable"),
+		DatabaseURL: getEnv("DATABASE_URL", "sqlite://db/development.db"),
 		SecretKey:   getEnv("SECRET_KEY", "change-me-in-production"),
 		LogLevel:    getEnv("LOG_LEVEL", "info"),
 	}
