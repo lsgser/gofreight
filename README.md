@@ -41,6 +41,11 @@ A **Ruby on Rails / Laravel-inspired web framework for Go**. Gofreight brings MV
 ```bash
 # 1. Install the CLI
 go install github.com/lsgser/gofreight/cmd/gofreight@latest
+
+# Add Go's bin directory to PATH (once per machine; usually ~/go/bin)
+export PATH="$PATH:$(go env GOPATH)/bin"
+# macOS zsh — persist: echo 'export PATH="$PATH:$(go env GOPATH)/bin"' >> ~/.zshrc
+
 # or clone https://github.com/lsgser/gofreight and from source:
 git clone https://github.com/lsgser/gofreight.git && cd gofreight && go install ./cmd/gofreight
 

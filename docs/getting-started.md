@@ -4,9 +4,34 @@
 
 ```bash
 go install github.com/lsgser/gofreight/cmd/gofreight@latest
-# or from source:
+```
+
+`go install` puts the binary in `$(go env GOPATH)/bin` (usually `~/go/bin`). That folder must be on your `PATH`:
+
+```bash
+export PATH="$PATH:$(go env GOPATH)/bin"
+gofreight version   # should print: gofreight v0.1.0
+```
+
+**macOS (zsh)** — add to `~/.zshrc` so it persists:
+
+```bash
+echo 'export PATH="$PATH:$(go env GOPATH)/bin"' >> ~/.zshrc
+source ~/.zshrc
+```
+
+Or run without changing PATH:
+
+```bash
+$(go env GOPATH)/bin/gofreight new myapp
+```
+
+From source:
+
+```bash
 git clone https://github.com/lsgser/gofreight.git
 cd gofreight && go install ./cmd/gofreight
+export PATH="$PATH:$(go env GOPATH)/bin"
 ```
 
 ## Create a new app
