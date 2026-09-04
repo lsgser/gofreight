@@ -635,4 +635,4 @@ Full list: [.env.example](.env.example)
 
 ## License
 
-MIT
+MIT — see [LICENSE](LICENSE).
