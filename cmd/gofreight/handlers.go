@@ -778,7 +778,7 @@ func scanRouteFiles(dir string) []string {
 			return nil
 		}
 		content := string(data)
-		for _, method := range []string{"Get", "Post", "Put", "Patch", "Delete", "Resources"} {
+		for _, method := range []string{"Get", "Post", "Put", "Patch", "Delete", "Resources", "ApiResource"} {
 			search := "r." + method + "("
 			idx := 0
 			for {
@@ -788,7 +788,7 @@ func scanRouteFiles(dir string) []string {
 				}
 				pos += idx
 				rest := content[pos+len(search):]
-				if method == "Resources" {
+				if method == "Resources" || method == "ApiResource" {
 					end := strings.Index(rest, ",")
 					if end > 0 {
 						path := strings.Trim(strings.TrimSpace(rest[:end]), `"`)

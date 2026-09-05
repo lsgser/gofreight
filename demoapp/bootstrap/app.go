@@ -40,6 +40,7 @@ func Application() *application.Application {
 
 	_ = app.LoadLocales("config/locales")
 	app.UseLocale()
+	app.UseCSRF()
 
 	// Service container — register application services here.
 	app.Singleton("example", func() any {

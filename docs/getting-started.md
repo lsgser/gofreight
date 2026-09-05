@@ -42,6 +42,7 @@ New apps use **SQLite by default** — no database server to install.
 gofreight new myapp
 cd myapp
 go mod tidy
+gofreight key:generate
 gofreight db:create
 gofreight migrate
 gofreight serve          # http://localhost:5000
@@ -64,6 +65,26 @@ Run `gofreight key:generate` after scaffolding to set a unique encryption key.
 See `.env.example` for all variables. SQLite uses `db/development.db` by default — no `DB_DATABASE` line needed. For PostgreSQL, MySQL, or MariaDB, set `DB_CONNECTION` and uncomment `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME`, and `DB_PASSWORD` (use port `5432` for PostgreSQL or `3306` for MySQL/MariaDB).
 
 See **[Project structure](project-structure.md)** for the full application layout and how the framework module differs from your app.
+
+## Routing
+
+Routes live in `routes/web.go` (HTML) and `routes/api.go` (JSON). **`routes/register.go`** wires them with **route groups**:
+
+```go
+func Register(r *router.Router) {
+    Web(r)
+
+    r.Group(func(api *router.Router) {
+        API(api)
+    }).Prefix("/api/v1").Name("api.").Apply()
+}
+```
+
+Inside the group callback, define paths **without** the prefix (`/health`, not `/api/v1/health`). Chain `.Use(middleware)` for auth or rate limits. See **[Routing](routing.md)** for nested groups, `ApiResource`, and middleware order.
+
+```bash
+gofreight route:list
+```
 
 ## Application bootstrap
 

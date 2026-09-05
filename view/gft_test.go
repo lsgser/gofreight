@@ -71,7 +71,7 @@ func TestCompileGFTPartialToken(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if !strings.Contains(out.Source, `_csrf`) {
+	if !strings.Contains(out.Source, `authenticity_token`) {
 		t.Fatal("expected token field")
 	}
 	if !strings.Contains(out.Source, `partials.flash`) {

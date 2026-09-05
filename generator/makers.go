@@ -217,31 +217,14 @@ const requestTmpl = `package requests
 | {{.StructName}}
 |--------------------------------------------------------------------------
 |
-| Form request — validates input before the controller action runs.
+| Validator for incoming request data — use with controller.ValidateUsing.
 |
 */
 
-import (
-	"net/http"
+import "github.com/lsgser/gofreight/vine"
 
-	"github.com/lsgser/gofreight/request"
-)
-
-// {{.StructName}} validates incoming request data.
-type {{.StructName}} struct {
-	*request.FormRequest
-}
-
-func New{{.StructName}}(r *http.Request) (*{{.StructName}}, error) {
-	fr, err := request.NewFormRequest(r)
-	if err != nil {
-		return nil, err
-	}
-	fr.Required("email")
-	return &{{.StructName}}{FormRequest: fr}, nil
-}
-
-func (f *{{.StructName}}) Validate() bool {
-	return f.FormRequest.Validate()
-}
+// {{.StructName}}Validator validates {{.StructName}} input.
+var {{.StructName}}Validator = vine.Object(map[string]vine.Rule{
+	"email": vine.String().Required().Email(),
+})
 `

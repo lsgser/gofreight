@@ -90,3 +90,5 @@ app.DB().ToHaveRecord("posts", map[string]any{"title": "Hello"})
 ```
 
 See `gftest/` and `examples/blog/tests/` for complete examples.
+
+Related: [Routing](routing.md) (test routes with `gftest.WithRoutes`), [Generators](generators.md) (factories with faker).

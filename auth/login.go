@@ -2,6 +2,7 @@ package auth
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/lsgser/gofreight/controller"
 	"github.com/lsgser/gofreight/middleware"
@@ -23,6 +24,40 @@ func DefaultLoginConfig(find func(string) (*User, error)) LoginConfig {
 		RedirectTo: "/",
 		LoginPath:  "/login",
 		FindUser:   find,
+	}
+}
+
+// LoginWithJWT handles POST /login and returns a JWT for API clients.
+func LoginWithJWT(cfg LoginConfig, jwtMgr *JWT) func(controller.Base) error {
+	return func(base controller.Base) error {
+		if err := base.Request.ParseForm(); err != nil {
+			return err
+		}
+		email := base.Request.FormValue("email")
+		password := base.Request.FormValue("password")
+
+		user, err := cfg.FindUser(email)
+		if err != nil || Authenticate(user, password) != nil {
+			base.Unauthorized("Invalid email or password")
+			return nil
+		}
+
+		token, expiresAt, err := jwtMgr.Issue(user.ID, user.Role)
+		if err != nil {
+			return err
+		}
+
+		base.RenderJSON(map[string]any{
+			"token_type":   "Bearer",
+			"access_token": token,
+			"expires_at":   expiresAt.UTC().Format(time.RFC3339),
+			"user": map[string]any{
+				"id":    user.ID,
+				"email": user.Email,
+				"role":  user.Role,
+			},
+		})
+		return nil
 	}
 }
 

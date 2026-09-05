@@ -45,6 +45,9 @@ func (c *Base) RenderView(name string, data any) error {
 		return ErrNoViewEngine
 	}
 	c.Response.WriteHeader(c.Status)
+	if m, ok := data.(map[string]any); ok {
+		data = view.MergeRequestContext(c.Request, m)
+	}
 	return defaultViews.Render(c.Response, name, data)
 }
 

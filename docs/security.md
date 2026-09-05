@@ -8,13 +8,59 @@
 
 ## Authentication
 
+Session login (HTML), JWT (API), and opaque API tokens are all supported.
+
 ```go
 import "github.com/lsgser/gofreight/auth"
 
 hash, _ := auth.HashPassword("user-password")
-// store hash in database, never store plaintext
-
 auth.CheckPassword(storedHash, inputPassword)
+```
+
+### Session login (browser)
+
+```go
+r.Post("/login", controller.Handler(auth.Login(auth.DefaultLoginConfig(findUserByEmail))))
+r.Post("/logout", controller.Handler(auth.Logout("current_user_id", "/")))
+```
+
+### JWT (API)
+
+Sign tokens with `APP_KEY` (run `gofreight key:generate`):
+
+```go
+jwtMgr := auth.JWTFromEnv(app.Config.AppKey)
+
+r.Post("/api/login", controller.Handler(auth.LoginWithJWT(
+    auth.DefaultLoginConfig(findUserByEmail),
+    jwtMgr,
+)))
+
+r.Group(func(api *router.Router) {
+    api.Get("/profile", profileHandler)
+}).Prefix("/api/v1").Use(auth.JWTMiddleware(jwtMgr)).Apply()
+```
+
+Clients send `Authorization: Bearer <token>`.
+
+Optional env: `JWT_TTL=24h` (default 24 hours).
+
+### Unified guard (JWT + API token + session)
+
+```go
+guard := auth.Guard{
+    JWT:        jwtMgr,
+    TokenStore: tokenStore,
+    SessionKey: "current_user_id",
+}
+api.Use(guard.Middleware)
+```
+
+### Opaque API tokens
+
+```go
+store := auth.NewMemoryTokenStore()
+api.Use(auth.APITokenMiddleware(store))
 ```
 
 Generate auth scaffolding:
@@ -25,13 +71,22 @@ gofreight make:auth
 
 ## Authorization (policies)
 
+Policies and role checks work with JWT, session, and API token context:
+
 ```go
 policy := auth.NewPolicy()
 policy.Define("edit-post", func(r *http.Request) bool {
-    // check session role, ownership, etc.
+    userID, ok := auth.UserIDFromRequest(r, "current_user_id")
+    if !ok {
+        return false
+    }
+    // ownership / role checks using userID
     return true
 })
 app.Router.Use(policy.RequirePolicy("edit-post"))
+
+// Role middleware — reads role from JWT claims or session
+app.Router.Use(auth.RequireRole("editor", "current_user_id"))
 ```
 
 ## CSRF

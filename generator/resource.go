@@ -15,6 +15,8 @@ type ResourceData struct {
 
 type ResourceField struct {
 	ParsedField
+	VineRule       string
+	FillAssignment string
 }
 
 func buildResourceData(appPath, name string, fields map[string]string) ResourceData {
@@ -27,7 +29,10 @@ func buildResourceData(appPath, name string, fields map[string]string) ResourceD
 	for fname, ftype := range fields {
 		pf := ParseField(fname, ftype)
 		pf.SQLType = pf.MigrationColumnDef()
-		flist = append(flist, ResourceField{ParsedField: pf})
+		rf := ResourceField{ParsedField: pf}
+		rf.VineRule = vineRule(rf)
+		rf.FillAssignment = fillFieldAssignment(rf)
+		flist = append(flist, rf)
 	}
 	return ResourceData{
 		Name:     title(name),
@@ -40,37 +45,48 @@ func buildResourceData(appPath, name string, fields map[string]string) ResourceD
 	}
 }
 
+func vineRule(f ResourceField) string {
+	switch f.FormType {
+	case "checkbox":
+		return "vine.Boolean()"
+	case "number":
+		return "vine.Number().Required()"
+	case "select":
+		vals := make([]string, len(f.EnumValues))
+		for i, v := range f.EnumValues {
+			vals[i] = fmt.Sprintf("%q", v)
+		}
+		return "vine.String().Required().In(" + strings.Join(vals, ", ") + ")"
+	default:
+		return "vine.String().Required()"
+	}
+}
+
+func fillFieldAssignment(f ResourceField) string {
+	switch f.GoType {
+	case "bool":
+		return fmt.Sprintf("\titem.%s = payload[\"%s\"] == \"1\"\n", f.Name, f.DBTag)
+	case "int":
+		return fmt.Sprintf("\titem.%s, _ = strconv.Atoi(payload[\"%s\"])\n", f.Name, f.DBTag)
+	case "int64":
+		return fmt.Sprintf("\titem.%s, _ = strconv.ParseInt(payload[\"%s\"], 10, 64)\n", f.Name, f.DBTag)
+	case "float64":
+		return fmt.Sprintf("\titem.%s, _ = strconv.ParseFloat(payload[\"%s\"], 64)\n", f.Name, f.DBTag)
+	default:
+		return fmt.Sprintf("\titem.%s = payload[\"%s\"]\n", f.Name, f.DBTag)
+	}
+}
+
 func formFieldHTML(f ResourceField) string {
 	switch f.FormType {
 	case "textarea":
-		return fmt.Sprintf(`  <div class="form-group">
-    <label for="%s">%s</label>
-    <textarea name="%s" id="%s">{= .Item.%s }</textarea>
-  </div>
-`, f.DBTag, f.Name, f.DBTag, f.DBTag, f.Name)
+		return fmt.Sprintf("#field \"%s\" label=\"%s\" type=\"textarea\" value=\".Item.%s\"\n", f.DBTag, f.Name, f.Name)
 	case "checkbox":
-		return fmt.Sprintf(`  <div class="form-group">
-    <label><input type="checkbox" name="%s" value="1"> %s</label>
-  </div>
-`, f.DBTag, f.Name)
+		return fmt.Sprintf("#field \"%s\" label=\"%s\" type=\"checkbox\"\n", f.DBTag, f.Name)
 	case "select":
-		var opts strings.Builder
-		for _, v := range f.EnumValues {
-			opts.WriteString(fmt.Sprintf("    <option value=\"%s\">%s</option>\n", v, title(v)))
-		}
-		return fmt.Sprintf(`  <div class="form-group">
-    <label for="%s">%s</label>
-    <select name="%s" id="%s">
-%s    </select>
-  </div>
-`, f.DBTag, f.Name, f.DBTag, f.DBTag, opts.String())
+		return fmt.Sprintf("#field \"%s\" label=\"%s\" type=\"select\" options=\"%s\"\n", f.DBTag, f.Name, strings.Join(f.EnumValues, ","))
 	default:
-		inputType := f.HTMLInputType()
-		return fmt.Sprintf(`  <div class="form-group">
-    <label for="%s">%s</label>
-    <input type="%s" name="%s" id="%s" value="{= .Item.%s }">
-  </div>
-`, f.DBTag, f.Name, inputType, f.DBTag, f.DBTag, f.Name)
+		return fmt.Sprintf("#field \"%s\" label=\"%s\" type=\"%s\" value=\".Item.%s\"\n", f.DBTag, f.Name, f.HTMLInputType(), f.Name)
 	}
 }
 func Resource(appPath, name string, fields map[string]string) error {
@@ -167,10 +183,9 @@ func writeResourceViews(appPath string, data ResourceData) error {
 #slot "content"
 <h1>New %s</h1>
 #partial "partials.flash"
-<form method="POST" action="/%s">
-  #token
+#form action="/%s" method="POST"
 %s  <button type="submit">Create</button>
-</form>
+#endform
 #endslot
 `, data.Name, data.Plural, formFields),
 
@@ -179,10 +194,9 @@ func writeResourceViews(appPath string, data ResourceData) error {
 #slot "content"
 <h1>Edit %s</h1>
 #partial "partials.flash"
-<form method="POST" action="/%s/{= .Item.ID }">
-  #token
+#form action="/%s/{= .Item.ID }" method="PUT"
 %s  <button type="submit">Save</button>
-</form>
+#endform
 #endslot
 `, data.Name, data.Plural, formFields),
 	}
@@ -277,8 +291,12 @@ import (
 	"{{.Module}}/app/models"
 	"github.com/lsgser/gofreight/controller"
 	"github.com/lsgser/gofreight/router"
-	"github.com/lsgser/gofreight/validation"
+	"github.com/lsgser/gofreight/vine"
 )
+
+var store{{.Name}}Validator = vine.Object(map[string]vine.Rule{
+{{range .Fields}}	"{{.DBTag}}": {{.VineRule}},
+{{end}}})
 
 // {{.Name}}Controller handles {{.Plural}} resources.
 type {{.Name}}Controller struct{}
@@ -320,19 +338,21 @@ func (c {{.Name}}Controller) Show(base controller.Base) error {
 }
 
 func (c {{.Name}}Controller) New(base controller.Base) error {
-	return base.RenderView("{{.Plural}}/new", map[string]any{
+	return base.RenderView("{{.Plural}}/new", base.ViewData(map[string]any{
 		"Title": "New {{.Name}}",
 		"Item":  &models.{{.Name}}{},
-	})
+	}))
 }
 
 func (c {{.Name}}Controller) Create(base controller.Base) error {
-	item := &models.{{.Name}}{}
-	if err := c.bind(base, item); err != nil {
+	payload, err := base.ValidateUsing(store{{.Name}}Validator)
+	if err != nil {
 		return nil
 	}
+	item := &models.{{.Name}}{}
+	c.fill(item, payload)
 	if err := item.Save(context.Background()); err != nil {
-		base.Unprocessable(map[string][]string{"base": {err.Error()}})
+		base.HandleValidationFailure(map[string][]string{"base": {err.Error()}}, payload)
 		return nil
 	}
 	base.Redirect("/{{.Plural}}/"+strconv.FormatInt(item.ID, 10), http.StatusSeeOther)
@@ -344,10 +364,10 @@ func (c {{.Name}}Controller) Edit(base controller.Base) error {
 	if err != nil {
 		return nil
 	}
-	return base.RenderView("{{.Plural}}/edit", map[string]any{
+	return base.RenderView("{{.Plural}}/edit", base.ViewData(map[string]any{
 		"Title": "Edit {{.Name}}",
 		"Item":  item,
-	})
+	}))
 }
 
 func (c {{.Name}}Controller) Update(base controller.Base) error {
@@ -355,11 +375,13 @@ func (c {{.Name}}Controller) Update(base controller.Base) error {
 	if err != nil {
 		return nil
 	}
-	if err := c.bind(base, item); err != nil {
+	payload, err := base.ValidateUsing(store{{.Name}}Validator)
+	if err != nil {
 		return nil
 	}
+	c.fill(item, payload)
 	if err := item.Save(context.Background()); err != nil {
-		base.Unprocessable(map[string][]string{"base": {err.Error()}})
+		base.HandleValidationFailure(map[string][]string{"base": {err.Error()}}, payload)
 		return nil
 	}
 	base.Redirect("/{{.Plural}}/"+base.Param("id"), http.StatusSeeOther)
@@ -389,18 +411,9 @@ func (c {{.Name}}Controller) find(base controller.Base) (*models.{{.Name}}, erro
 	return item, nil
 }
 
-func (c {{.Name}}Controller) bind(base controller.Base, item *models.{{.Name}}) error {
-	v, err := validation.New(base.Request)
-	if err != nil {
-		return err
-	}
-{{range .Fields}}	item.{{.Name}} = v.Get("{{.DBTag}}")
-{{end}}	if v.Fails() {
-		base.Unprocessable(v.Errors())
-		return err
-	}
-	return nil
-}
+func (c {{.Name}}Controller) fill(item *models.{{.Name}}, payload map[string]string) {
+{{range .Fields}}{{.FillAssignment}}{{end}}}
+
 `
 
 const resourceFactoryTmpl = `package factories

@@ -138,8 +138,41 @@ Creates:
 | `app/views/articles/*.gft` | GFT views (enum → select, text → textarea, etc.) |
 | `db/migrate/NNN_create_articles.sql` | SQLite migration |
 | `tests/article_test.go` | HTTP tests |
-| `tests/factories/article_factory.go` | Test factory |
-| Route registration in `routes/web.go` | REST routes |
+| `tests/factories/article_factory.go` | Test factory with **faker** defaults |
+| Route registration in `routes/web.go` | REST routes (`Resources`) |
+
+For JSON APIs, use `gofreight make:api` and register with `ApiResource` in `routes/api.go`. See [Routing](routing.md).
+
+---
+
+## Routing generated resources
+
+### Web (HTML)
+
+Scaffold adds REST routes to `routes/web.go`:
+
+```go
+r.Resources("articles", router.ResourceHandlers{
+    Index: controller.Handler(c.Index),
+    // ...
+})
+```
+
+### API (JSON)
+
+`make:api` creates a controller and resource. Register in `routes/api.go`:
+
+```go
+r.ApiResource("articles", router.ApiResourceHandlers{
+    Index:   controller.Handler(c.Index),
+    Store:   controller.Handler(c.Store),
+    Show:    controller.Handler(c.Show),
+    Update:  controller.Handler(c.Update),
+    Destroy: controller.Handler(c.Destroy),
+})
+```
+
+The `/api/v1` prefix is applied in `routes/register.go` via route groups. See [Routing](routing.md).
 
 ---
 

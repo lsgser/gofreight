@@ -61,9 +61,9 @@ myapp/
 |------|------|
 | `main.go` | Entry point — bootstraps `application.New()`, DB, routes, server |
 | `bootstrap/app.go` | Application wiring, service container, middleware registration |
-| `routes/web.go` | Browser URL mapping |
-| `routes/api.go` | JSON API URL mapping |
-| `routes/register.go` | Combines web and API route groups |
+| `routes/web.go` | Browser URL mapping (HTML, sessions, CSRF) |
+| `routes/api.go` | JSON API routes (registered inside `/api/v1` group) |
+| `routes/register.go` | Wires web + API with route groups |
 | `app/controllers/` | HTTP request handlers (`doc.go` explains the folder) |
 | `app/models/` | Data layer — structs, validations, associations |
 | `app/services/` | Business logic (keep controllers thin) |
@@ -101,7 +101,7 @@ Keep these names unless you intentionally change bootstrap code.
 
 | I want to… | Put it here |
 |------------|-------------|
-| Add a page or API endpoint | `routes/web.go` or `routes/api.go` + controller in `app/controllers/` |
+| Add a page or API endpoint | `routes/web.go` or `routes/api.go` + controller; see [Routing](routing.md) |
 | Add business logic | `gofreight make:service OrderProcessing` → `app/services/` |
 | Add a database table | `gofreight make:migration …` → `db/migrate/` + model in `app/models/` |
 | Add HTML | `app/views/<resource>/` as `.gft` files |
@@ -127,7 +127,27 @@ Creates, in the right places:
 - `app/views/posts/*.gft`
 - `db/migrate/NNN_create_posts.sql`
 - `app/services/payment_processing_service.go` (service generator)
-- Route registration snippet for `routes/web.go`
+- Route registration snippet for `routes/web.go` (web) or `routes/api.go` (API)
+
+### Route registration (`routes/register.go`)
+
+Every new app uses **route groups** to separate web and API traffic:
+
+```go
+func Register(r *router.Router) {
+    Web(r)
+
+    r.Group(func(api *router.Router) {
+        API(api)
+    }).Prefix("/api/v1").Use(/* optional auth middleware */).Name("api.").Apply()
+}
+```
+
+- **Web** routes in `routes/web.go` — use `r.Resources()` for HTML CRUD (includes `new`/`edit`).
+- **API** routes in `routes/api.go` — use `r.ApiResource()` for JSON CRUD (no `new`/`edit`).
+- **Nested groups** — `.Prefix()` stacks (e.g. `/api` + `/v1` → `/api/v1`).
+
+Full guide: **[Routing](routing.md)**.
 
 Use generators and match existing resources — you should not need to invent folder names.
 
@@ -143,7 +163,7 @@ If you clone [github.com/lsgser/gofreight](https://github.com/lsgser/gofreight),
 gofreight/                          # Framework module (library)
 ├── cmd/gofreight/                  # CLI (gofreight new, migrate, make:*, …)
 ├── application/                    # App bootstrap, server, wiring
-├── router/                         # RESTful routing
+├── router/                         # Route groups, REST & API resources
 ├── controller/                     # Base controller, RenderView, JSON helpers
 ├── model/                          # ORM, queries, associations
 ├── view/                           # GFT template engine

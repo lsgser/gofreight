@@ -195,16 +195,31 @@ func (e *Engine) executeSource(source string, data any) (string, error) {
 
 func defaultFuncs() template.FuncMap {
 	return template.FuncMap{
-		"upper":    strings.ToUpper,
-		"lower":    strings.ToLower,
-		"title":    title,
-		"join":     strings.Join,
-		"contains": strings.Contains,
-		"trim":     strings.TrimSpace,
-		"default":  defaultVal,
-		"safeHTML": func(s string) template.HTML { return template.HTML(s) },
-		"safeURL":  func(s string) template.URL { return template.URL(s) },
+		"upper":       strings.ToUpper,
+		"lower":       strings.ToLower,
+		"title":       title,
+		"join":        strings.Join,
+		"contains":    strings.Contains,
+		"trim":        strings.TrimSpace,
+		"default":     defaultVal,
+		"safeHTML":    func(s string) template.HTML { return template.HTML(s) },
+		"safeURL":     func(s string) template.URL { return template.URL(s) },
+		"old":         oldField,
+		"fieldErrors": fieldErrors,
+		"hasError":    hasFieldError,
 	}
+}
+
+func oldField(field string, ctx map[string]any, fallback string) string {
+	return Old(field, ctx, fallback)
+}
+
+func fieldErrors(field string, ctx map[string]any) []string {
+	return FieldErrors(field, ctx)
+}
+
+func hasFieldError(field string, ctx map[string]any) bool {
+	return HasError(field, ctx)
 }
 
 func title(s string) string {

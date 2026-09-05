@@ -1,10 +1,6 @@
 package auth
 
-import (
-	"net/http"
-
-	"github.com/lsgser/gofreight/middleware"
-)
+import "net/http"
 
 // Policy defines authorization rules (like Laravel Gates).
 type Policy struct {
@@ -43,16 +39,19 @@ func (p *Policy) RequirePolicy(name string) func(http.Handler) http.Handler {
 	}
 }
 
-// RequireRole middleware allows only users with a given role.
+// RequireRole middleware allows only users with a given role (JWT, session, or API context).
 func RequireRole(role, sessionKey string) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			session := middleware.SessionFromContext(r.Context())
-			if session == nil {
-				http.Error(w, "Unauthorized", http.StatusUnauthorized)
+			userRole, ok := RoleFromRequest(r)
+			if !ok {
+				if _, ok := UserIDFromRequest(r, sessionKey); !ok {
+					http.Error(w, "Unauthorized", http.StatusUnauthorized)
+					return
+				}
+				http.Error(w, "Forbidden", http.StatusForbidden)
 				return
 			}
-			userRole, _ := session.Get("current_user_role").(string)
 			if userRole != role && userRole != "admin" {
 				http.Error(w, "Forbidden", http.StatusForbidden)
 				return

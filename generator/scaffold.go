@@ -56,6 +56,7 @@ INSERT INTO users (email, password, role) VALUES ('admin@example.com', '$2a$10$N
 	snippetPath := filepath.Join(appPath, "config", "auth_routes.txt")
 	snippet := `// Auth routes — add to routes/web.go:
 // r.Post("/login", controller.Handler(auth.Login(auth.DefaultLoginConfig(findUserByEmail))))
+// r.Post("/api/login", controller.Handler(auth.LoginWithJWT(auth.DefaultLoginConfig(findUserByEmail), auth.JWTFromEnv(appKey))))
 // r.Post("/logout", controller.Handler(auth.Logout("current_user_id", "/")))
 // r.Post("/password/forgot", controller.Handler(auth.RequestPasswordReset(resetStore, findUserByEmail, sendResetEmail)))
 // r.Post("/password/reset", controller.Handler(auth.ResetPassword(resetStore, updateUserPassword)))
@@ -63,7 +64,8 @@ INSERT INTO users (email, password, role) VALUES ('admin@example.com', '$2a$10$N
 // r.Post("/email/verification/resend", controller.Handler(auth.ResendVerificationHandler(verifyStore, findUserIDByEmail, sendVerifyEmail)))
 // r.Get("/oauth/:provider", controller.Handler(auth.OAuthRedirect(oauthCfg)))
 // r.Get("/oauth/:provider/callback", controller.Handler(auth.OAuthCallback(oauthCfg)))
-// API: api.Use(auth.APITokenMiddleware(tokenStore))
+// API: jwtMgr := auth.JWTFromEnv(appKey); api.Use(auth.JWTMiddleware(jwtMgr))
+// Or unified guard: auth.Guard{JWT: jwtMgr, TokenStore: tokenStore, SessionKey: "current_user_id"}
 `
 	return os.WriteFile(snippetPath, []byte(snippet), 0644)
 }

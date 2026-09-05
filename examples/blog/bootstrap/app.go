@@ -28,6 +28,7 @@ func Application() *application.Application {
 
 	_ = app.LoadLocales("config/locales")
 	app.UseLocale()
+	app.UseCSRF()
 
 	return app
 }

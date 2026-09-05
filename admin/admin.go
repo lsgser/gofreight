@@ -2,13 +2,16 @@ package admin
 
 import (
 	"context"
+	"crypto/subtle"
 	"embed"
 	"html/template"
 	"net/http"
+	"os"
 	"strconv"
 
 	"github.com/lsgser/gofreight/controller"
 	"github.com/lsgser/gofreight/database"
+	"github.com/lsgser/gofreight/middleware"
 	"github.com/lsgser/gofreight/router"
 )
 
@@ -40,8 +43,8 @@ func DefaultConfig(development bool) Config {
 
 // Panel is the database admin dashboard.
 type Panel struct {
-	cfg   Config
-	tmpl  *template.Template
+	cfg  Config
+	tmpl *template.Template
 }
 
 // New creates an admin panel.
@@ -49,7 +52,13 @@ func New(cfg Config) (*Panel, error) {
 	funcMap := template.FuncMap{
 		"plus":  func(a, b int) int { return a + b },
 		"minus": func(a, b int) int { return a - b },
-		"seq":   func(n int) []int { s := make([]int, n); for i := range s { s[i] = i }; return s },
+		"seq": func(n int) []int {
+			s := make([]int, n)
+			for i := range s {
+				s[i] = i
+			}
+			return s
+		},
 	}
 	tmpl, err := template.New("admin").Funcs(funcMap).ParseFS(templateFS, "templates/*.html")
 	if err != nil {
@@ -80,7 +89,7 @@ func (p *Panel) Mount(r *router.Router) {
 		})
 	}
 
-	r.Group(p.cfg.Prefix, func(a *router.Router) {
+	r.Group(func(a *router.Router) {
 		a.Get("/login", controller.Handler(p.LoginForm))
 		a.Post("/login", controller.Handler(p.LoginSubmit))
 		a.Get("/", wrap(p.Dashboard))
@@ -93,7 +102,25 @@ func (p *Panel) Mount(r *router.Router) {
 		a.Get("/tables/:table/:id", wrap(p.TableShow))
 		a.Post("/tables/:table/:id", wrap(p.TableUpdate))
 		a.Post("/tables/:table/:id/delete", wrap(p.TableDelete))
-	})
+	}).Prefix(p.cfg.Prefix).Apply()
+}
+
+func (p *Panel) mountSchemaRoutes(a *router.Router, wrap func(func(controller.Base) error) http.HandlerFunc) {
+	a.Get("/schema/new", wrap(p.SchemaNew))
+	a.Post("/schema/create", wrap(p.SchemaCreate))
+	a.Get("/import", wrap(p.ImportForm))
+	a.Post("/import", wrap(p.ImportRun))
+	a.Get("/integrations", wrap(p.IntegrationsStatus))
+	a.Get("/tables/:table/structure", wrap(p.TableStructure))
+	a.Post("/tables/:table/drop", wrap(p.TableDrop))
+	a.Get("/tables/:table/columns/new", wrap(p.ColumnNew))
+	a.Post("/tables/:table/columns", wrap(p.ColumnAdd))
+	a.Post("/tables/:table/columns/:column/drop", wrap(p.ColumnDrop))
+	a.Get("/tables/:table/columns/:column/rename", wrap(p.ColumnRenameForm))
+	a.Post("/tables/:table/columns/:column/rename", wrap(p.ColumnRename))
+	a.Post("/tables/:table/indexes", wrap(p.IndexAdd))
+	a.Get("/tables/:table/migration", wrap(p.TableMigration))
+	a.Get("/export/:table", wrap(p.TableExport))
 }
 
 func (p *Panel) render(base controller.Base, name string, data any) error {
@@ -103,10 +130,10 @@ func (p *Panel) render(base controller.Base, name string, data any) error {
 
 func (p *Panel) baseData(base controller.Base) map[string]any {
 	return map[string]any{
-		"Title":   p.cfg.Title,
-		"Prefix":  p.cfg.Prefix,
+		"Title":    p.cfg.Title,
+		"Prefix":   p.cfg.Prefix,
 		"AllowSQL": p.cfg.AllowSQL,
-		"Flash":   base.Query("flash"),
+		"Flash":    base.Query("flash"),
 	}
 }
 
@@ -319,4 +346,53 @@ func MustNew(cfg Config) *Panel {
 		panic(err)
 	}
 	return p
+}
+
+func (p *Panel) adminPassword() string {
+	if p.cfg.Password != "" {
+		return p.cfg.Password
+	}
+	return os.Getenv("ADMIN_PASSWORD")
+}
+
+func (p *Panel) isPublicPath(path string) bool {
+	return path == p.cfg.Prefix+"/login"
+}
+
+func (p *Panel) authenticated(r *http.Request) bool {
+	if p.adminPassword() == "" {
+		return true
+	}
+	session := middleware.SessionFromContext(r.Context())
+	if session == nil {
+		return false
+	}
+	authed, _ := session.Get("_admin_authed").(bool)
+	return authed
+}
+
+// LoginForm shows admin login page.
+func (p *Panel) LoginForm(base controller.Base) error {
+	data := p.baseData(base)
+	return p.render(base, "login.html", data)
+}
+
+// LoginSubmit handles admin login.
+func (p *Panel) LoginSubmit(base controller.Base) error {
+	password := p.adminPassword()
+	if err := base.Request.ParseForm(); err != nil {
+		return err
+	}
+	submitted := base.Request.FormValue("password")
+	if subtle.ConstantTimeCompare([]byte(submitted), []byte(password)) != 1 {
+		data := p.baseData(base)
+		data["Error"] = "Invalid password"
+		return p.render(base, "login.html", data)
+	}
+	session := middleware.SessionFromContext(base.Request.Context())
+	if session != nil {
+		session.Set("_admin_authed", true)
+	}
+	base.Redirect(p.cfg.Prefix+"/", http.StatusSeeOther)
+	return nil
 }

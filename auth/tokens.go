@@ -55,17 +55,11 @@ func (s *MemoryTokenStore) Revoke(token string) error {
 	return nil
 }
 
-// APITokenMiddleware authenticates requests via Bearer token.
+// APITokenMiddleware authenticates requests via Bearer opaque API token.
 func APITokenMiddleware(store TokenStore) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			token := r.Header.Get("Authorization")
-			if len(token) > 7 && token[:7] == "Bearer " {
-				token = token[7:]
-			}
-			if token == "" {
-				token = r.URL.Query().Get("api_token")
-			}
+			token := bearerToken(r)
 			if token == "" {
 				http.Error(w, "Unauthorized", http.StatusUnauthorized)
 				return

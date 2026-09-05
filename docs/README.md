@@ -21,7 +21,8 @@
 | [Project structure](project-structure.md) | Framework vs application layout |
 | [Generators & field types](generators.md) | `make:*` commands and `name:type` fields |
 | [Features](features.md) | Redis sessions/queues, API resources, i18n, channels, caching |
-| [ORM](orm.md) | Models, queries, associations, validations |
+| [Routes & routing](routing.md) | Route groups, API resources, middleware |
+| [Forms & validation](forms-validation.md) | Vine schemas, GFT form components, flash errors |
 | [Templating](templating.md) | Gofreight Templates (GFT) syntax |
 | [Testing](testing.md) | HTTP tests with `gftest` |
 | [Date & time](datetime.md) | Carbon-style helpers via `support/datetime` |

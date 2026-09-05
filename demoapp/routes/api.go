@@ -5,22 +5,19 @@ package routes
 | API Routes
 |--------------------------------------------------------------------------
 |
-| Register stateless JSON API routes here. These routes are prefixed with
-| /api/v1 and are intended for mobile clients, SPAs, and third-party
-| consumers.
-|
-| Generate an API controller:
-|   gofreight make:api Post title:string body:text
+| Stateless JSON API routes. Prefix /api/v1 is applied in routes/register.go.
 |
 */
 
 import (
+	"github.com/lsgser/gofreight/controller"
 	"github.com/lsgser/gofreight/router"
 )
 
-// API registers JSON API routes under /api/v1.
+// API registers JSON API routes (prefix applied by Register).
 func API(r *router.Router) {
-	// Example:
-	// r.Get("/posts", controller.Handler((&controllers.PostAPIController{}).Index))
-	_ = r
+	r.Get("/health", controller.Handler(func(base controller.Base) error {
+		base.RenderJSON(map[string]string{"status": "ok"})
+		return nil
+	}), "health")
 }

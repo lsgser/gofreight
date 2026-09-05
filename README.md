@@ -42,7 +42,8 @@
 - **Batteries included** — routing, ORM, views, migrations, CLI, queues, sessions, auth, mail, cache, and tests in one framework
 - **Convention over configuration** — predictable folders, generators, and defaults so you write product code, not plumbing
 - **MVC architecture** — models, views (GFT), and controllers with clear boundaries
-- **RESTful by default** — resource routing generates standard CRUD endpoints
+- **RESTful by default** — resource routing for web (`Resources`) and JSON APIs (`ApiResource`)
+- **Route groups** — prefix, middleware, and nested groups for APIs
 - **Vendor-neutral** — no bundled payment or SaaS clients; register the integrations your app needs
 - **Production-ready paths** — health checks, graceful shutdown, multi-database support, Redis queues, and Docker examples
 
@@ -65,6 +66,7 @@ git clone https://github.com/lsgser/gofreight.git && cd gofreight && go install 
 gofreight new myapp
 cd myapp
 go mod tidy
+gofreight key:generate
 
 # 3. Database (SQLite — no server required)
 gofreight db:create
@@ -91,6 +93,7 @@ After `gofreight new myapp`:
 ```bash
 cd myapp
 go mod tidy
+gofreight key:generate
 gofreight db:create
 gofreight migrate
 gofreight serve          # or: go run .
@@ -99,6 +102,7 @@ gofreight serve          # or: go run .
 | Command | What it does |
 |---------|----------------|
 | `gofreight list` | List all CLI commands by namespace |
+| `gofreight key:generate` | Generate a unique `APP_KEY` in `.env` |
 | `gofreight serve` | Start the dev server (`go run .`) |
 | `gofreight dev` | Auto-restart on file changes |
 | `gofreight test` | Run the test suite |
@@ -140,7 +144,7 @@ myapp/
 ├── main.go                 # Boot Application, draw routes, run
 ├── bootstrap/app.go        # Service container, middleware, bindings
 ├── routes/
-│   ├── register.go         # Wires web + API routes
+│   ├── register.go         # Route groups: web + /api/v1
 │   ├── web.go              # Browser routes
 │   └── api.go              # JSON API routes
 ├── config/
@@ -393,7 +397,22 @@ gofreight make:scaffold Comment body:text post_id:references:posts
 
 ## Routes & controllers
 
-### RESTful routes
+Routing uses **route groups** — define routes in a callback, then chain prefix and middleware:
+
+```go
+// routes/register.go
+func Register(r *router.Router) {
+    Web(r)
+
+    r.Group(func(api *router.Router) {
+        API(api)
+    }).Prefix("/api/v1").Use(authMw).Name("api.").Apply()
+}
+```
+
+See **[docs/routing.md](docs/routing.md)** for nested groups, API resources, and middleware.
+
+### RESTful routes (web)
 
 ```go
 // routes/web.go
@@ -411,6 +430,33 @@ func Web(r *router.Router) {
 | GET | /posts/:id/edit | edit | posts.edit |
 | PUT/PATCH | /posts/:id | update | posts.update |
 | DELETE | /posts/:id | destroy | posts.destroy |
+
+### API routes (JSON)
+
+Use **`ApiResource`** inside a route group (no `new`/`edit` HTML routes):
+
+```go
+// routes/api.go — prefix applied in routes/register.go
+func API(r *router.Router) {
+    r.ApiResource("posts", router.ApiResourceHandlers{
+        Index:   controller.Handler(c.Index),
+        Store:   controller.Handler(c.Store),
+        Show:    controller.Handler(c.Show),
+        Update:  controller.Handler(c.Update),
+        Destroy: controller.Handler(c.Destroy),
+    })
+}
+```
+
+| Method | Path | Action |
+|--------|------|--------|
+| GET | /api/v1/posts | index |
+| POST | /api/v1/posts | store |
+| GET | /api/v1/posts/:id | show |
+| PUT/PATCH | /api/v1/posts/:id | update |
+| DELETE | /api/v1/posts/:id | destroy |
+
+Or use the helper: `api.Group(r, "v1", fn, authMw)`. Full guide: **[docs/routing.md](docs/routing.md)**.
 
 ### Controller example
 
@@ -722,10 +768,13 @@ Integration variables (`SESSION_DRIVER`, `QUEUE_CONNECTION`, `CACHE_STORE`, `FIL
 | [docs/commands.md](docs/commands.md) | Full CLI reference |
 | [docs/generators.md](docs/generators.md) | Generators & field types |
 | [docs/project-structure.md](docs/project-structure.md) | Application vs framework layout |
+| [docs/routing.md](docs/routing.md) | Route groups & API resources |
 | [docs/features.md](docs/features.md) | Sessions, queues, API, i18n, channels |
 | [docs/templating.md](docs/templating.md) | GFT reference |
+| [docs/forms-validation.md](docs/forms-validation.md) | Vine schemas, GFT forms, flash errors |
 | [docs/orm.md](docs/orm.md) | Models, queries, associations |
-| [docs/testing.md](docs/testing.md) | gftest guide |
+| [docs/testing.md](docs/testing.md) | gftest & faker guide |
+| [docs/datetime.md](docs/datetime.md) | Carbon-style date helpers |
 | [docs/integrations.md](docs/integrations.md) | Pluggable services |
 | [docs/admin.md](docs/admin.md) | Database admin |
 | [docs/deployment.md](docs/deployment.md) | Docker & production |
@@ -749,6 +798,7 @@ Integration variables (`SESSION_DRIVER`, `QUEUE_CONNECTION`, `CACHE_STORE`, `FIL
 - [x] Migration blueprint DSL
 - [x] API resources, form requests, mailables
 - [x] i18n, YAML config, HTTP/fragment cache, WebSocket channels
+- [x] Route groups (nested prefixes, group & route middleware, API resources)
 - [x] Service container, split routes, failed job handling
 
 ## License

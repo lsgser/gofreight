@@ -77,6 +77,36 @@ func (s *Session) Flashes() map[string]string {
 	return flashes
 }
 
+// FlashValidationErrors stores validation errors for the next request.
+func (s *Session) FlashValidationErrors(errs map[string][]string) {
+	s.Set("_validation_errors", errs)
+}
+
+// PullValidationErrors returns and clears flashed validation errors.
+func (s *Session) PullValidationErrors() map[string][]string {
+	errs, _ := s.Get("_validation_errors").(map[string][]string)
+	s.Delete("_validation_errors")
+	if errs == nil {
+		return make(map[string][]string)
+	}
+	return errs
+}
+
+// FlashOldInput stores submitted form values for the next request.
+func (s *Session) FlashOldInput(data map[string]string) {
+	s.Set("_old_input", data)
+}
+
+// PullOldInput returns and clears flashed old input.
+func (s *Session) PullOldInput() map[string]string {
+	old, _ := s.Get("_old_input").(map[string]string)
+	s.Delete("_old_input")
+	if old == nil {
+		return make(map[string]string)
+	}
+	return old
+}
+
 // SessionFromContext retrieves the session from the request context.
 func SessionFromContext(ctx context.Context) *Session {
 	s, _ := ctx.Value(sessionKey{}).(*Session)
@@ -211,6 +241,9 @@ func (c *CSRF) Middleware(next http.Handler) http.Handler {
 		if token == "" {
 			token = r.FormValue(c.FieldName)
 		}
+		if token == "" {
+			token = r.FormValue("_csrf")
+		}
 
 		if token != expected {
 			http.Error(w, "Invalid CSRF token", http.StatusForbidden)
@@ -224,6 +257,11 @@ func (c *CSRF) Middleware(next http.Handler) http.Handler {
 // Token returns the CSRF token for the current session.
 func (c *CSRF) Token(r *http.Request) string {
 	session := SessionFromContext(r.Context())
+	return CSRFTokenFromSession(session)
+}
+
+// CSRFTokenFromSession returns or creates a CSRF token for the session.
+func CSRFTokenFromSession(session *Session) string {
 	if session == nil {
 		return ""
 	}

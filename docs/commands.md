@@ -22,6 +22,9 @@ Legacy forms still work: `gofreight generate …`, `gofreight make …`, `gofrei
 | `gofreight inspire` | Display a quote |
 | `gofreight list` | List all commands |
 | `gofreight help <cmd>` | Help for one command |
+| `gofreight version` / `-v` / `--version` | Show Gofreight version (branded banner) |
+
+Running **`gofreight`** with no arguments prints the framework name and full command list.
 
 ---
 
@@ -104,7 +107,7 @@ Requires `REDIS_URL` in `.env`.
 | `gofreight cache:clear` | Clear `storage/framework/cache` |
 | `gofreight view:clear` | Clear compiled views cache |
 | `gofreight config:show [key]` | Print config values |
-| `gofreight key:generate` | Generate and write `APP_KEY` to `.env` |
+| `gofreight key:generate [--show] [--force]` | Generate and write `APP_KEY` to `.env` |
 | `gofreight optimize` | Write bootstrap cache marker |
 | `gofreight optimize:clear` | Clear bootstrap cache |
 | `gofreight auth:clear-resets` | Delete expired password reset tokens |
@@ -125,3 +128,7 @@ gofreight make:scaffold Post title:string body:text
 gofreight route:list
 gofreight serve
 ```
+
+See [Routing](routing.md) for route groups and API resources.
+
+---

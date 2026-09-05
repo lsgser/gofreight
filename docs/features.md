@@ -2,6 +2,8 @@
 
 Built-in capabilities that ship with Gofreight — no extra packages required for a production-grade Go web stack.
 
+> **Routing:** Route groups, nested prefixes, group and route middleware, web `Resources`, and API `ApiResource` — see **[Routing](routing.md)**.
+
 ## 1. Redis sessions & queues
 
 ```go
@@ -31,21 +33,32 @@ database.WriteMigrationPair("db/migrate", "004_create_comments", up, down)
 ## 3. API resources
 
 ```bash
-gofreight generate api Post title:string body:text
+gofreight make:api Post title:string body:text
 ```
 
 ```go
-api.Render(w, http.StatusOK, resources.NewPostResource(post))
-r.Group(api.VersionPrefix("v1"), func(api *router.Router) { ... })
+api.Group(r, "v1", func(api *router.Router) {
+    api.ApiResource("posts", router.ApiResourceHandlers{ ... })
+}, auth.APITokenMiddleware(store))
 ```
 
-## 4. Auth tokens & password reset
+## 4. Auth tokens, JWT & password reset
 
 ```go
-tokenStore := auth.NewMemoryTokenStore()
-resetStore := auth.NewMemoryPasswordResetStore()
-r.Post("/password/forgot", controller.Handler(auth.RequestPasswordReset(resetStore, findUser, sendMail)))
-api.Use(auth.APITokenMiddleware(tokenStore))
+jwtMgr := auth.JWTFromEnv(app.Config.AppKey)
+
+r.Post("/api/login", controller.Handler(auth.LoginWithJWT(
+    auth.DefaultLoginConfig(findUserByEmail),
+    jwtMgr,
+)))
+
+api.Group(r, "v1", func(api *router.Router) {
+    api.ApiResource("posts", router.ApiResourceHandlers{ ... })
+}, auth.JWTMiddleware(jwtMgr))
+
+// Or combine JWT, opaque tokens, and session:
+guard := auth.Guard{JWT: jwtMgr, TokenStore: tokenStore, SessionKey: "current_user_id"}
+// r.Group(...).Use(guard.Middleware).Apply()
 ```
 
 Run `gofreight generate auth` for User model + migration stubs.

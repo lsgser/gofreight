@@ -104,10 +104,28 @@ integrations.Publish(ctx, integrations.Event{
 
 ## Middleware
 
+Global middleware:
+
 ```go
 app := application.New()
 app.Router.Use(myMiddleware)
 ```
+
+Route group middleware:
+
+```go
+r.Group(func(api *router.Router) {
+    API(api)
+}).Prefix("/api/v1").Use(authMw).Apply()
+```
+
+Per-route middleware:
+
+```go
+r.Delete("/posts/:id", destroyHandler).Use(adminMw)
+```
+
+See [Routing](routing.md) for nested groups and middleware order.
 
 ## Generators
 

@@ -66,6 +66,7 @@ func New() *Application {
 	sessions := middleware.NewSessions(cfg.AppKey)
 	csrf := middleware.NewCSRF()
 	r.Use(sessions.Middleware)
+	r.Use(middleware.MethodSpoof)
 
 	views := view.New("app/views")
 	assetPipeline := assets.New("public")

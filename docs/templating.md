@@ -113,6 +113,19 @@ Inside `#each` / `#eachor`, use `{= .Field }` — the dot is the current item in
 
 ## Forms & security
 
+Use `#form` for CSRF-protected forms with optional PUT/PATCH/DELETE spoofing:
+
+```gft
+#form action="/posts" method="POST"
+  #field "title" label="Title" type="text" value=".Item.Title"
+  <button type="submit">Save</button>
+#endform
+```
+
+`#field` renders label, input, old values, and validation errors. See **[Forms & validation](forms-validation.md)**.
+
+Legacy CSRF token:
+
 ```gft
 <form method="POST" action="/posts">
   #token
@@ -120,7 +133,7 @@ Inside `#each` / `#eachor`, use `{= .Field }` — the dot is the current item in
 </form>
 ```
 
-`#token` emits a CSRF hidden field (`{{.CSRFToken}}` after compile).
+`#token` emits a CSRF hidden field (`authenticity_token`).
 
 ## Comments
 
@@ -140,7 +153,7 @@ app.Views.RegisterFunc("money", func(n float64) string {
 
 Use in templates after compile: `{= money .Price }` → `{{money .Price}}`
 
-Built-in helpers: `upper`, `lower`, `title`, `join`, `default`, `safeHTML`, `contains`, `trim`.
+Built-in helpers: `upper`, `lower`, `title`, `join`, `default`, `safeHTML`, `contains`, `trim`, `old`, `fieldErrors`, `hasError`.
 
 ## Rendering
 
@@ -169,7 +182,9 @@ GFT is Gofreight's own view language — not a port of another template engine. 
 | Conditionals | `#when` / `#endwhen` |
 | Loops | `#each` / `#endeach` |
 | Empty fallback | `#eachor` / `#otherwise` |
-| CSRF | `#token` |
+| CSRF | `#token` / `#form` |
+| Forms | `#form` / `#field` / `#error` |
+| Validation helpers | `old`, `fieldErrors`, `hasError` |
 | Output | `{= }` / `{! !}` |
 
 GFT is designed to be readable on its own while fitting naturally into Go projects that already use `html/template` under the hood.

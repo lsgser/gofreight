@@ -36,6 +36,9 @@ var (
 	reGFTSignedOut  = regexp.MustCompile(`#signedout\b`)
 	reGFTEndSigned  = regexp.MustCompile(`#endsigned(?:in|out)\b`)
 	reGFTToken      = regexp.MustCompile(`#token\b`)
+	reGFTForm       = regexp.MustCompile(`(?s)#form\s+([^\n]+)\n(.*?)#endform`)
+	reGFTField      = regexp.MustCompile(`(?m)^#field\s+(.+)$`)
+	reGFTError      = regexp.MustCompile(`#error\s+["']([^"']+)["']`)
 	reGFTPlace      = regexp.MustCompile(`#place\s+["']([^"']+)["'](?:\s+["']([^"']*)["'])?`)
 )
 
@@ -121,7 +124,11 @@ func compileGFTBody(input string) (string, error) {
 	s = reGFTEndSigned.ReplaceAllString(s, `{{end}}`)
 	s = reGFTSignedOut.ReplaceAllString(s, `{{if not .CurrentUser}}`)
 
-	s = reGFTToken.ReplaceAllString(s, `<input type="hidden" name="_csrf" value="{{.CSRFToken}}">`)
+	s = reGFTToken.ReplaceAllString(s, `<input type="hidden" name="authenticity_token" value="{{.CSRFToken}}">`)
+
+	s = reGFTForm.ReplaceAllStringFunc(s, compileGFTForm)
+	s = reGFTField.ReplaceAllStringFunc(s, compileGFTField)
+	s = reGFTError.ReplaceAllStringFunc(s, compileGFTError)
 
 	s = reGFTPartial.ReplaceAllString(s, `{{template "$1" .}}`)
 
@@ -183,7 +190,8 @@ func gftPathToName(path string) string {
 func IsGFTSource(s string) bool {
 	markers := []string{
 		"#layout", "#slot", "#endslot", "#partial", "#each", "#endeach",
-		"#eachor", "#when", "#endwhen", "#place", "#token", "{=", "{!",
+		"#eachor", "#when", "#endwhen", "#place", "#token", "#form", "#endform",
+		"#field", "#error", "{=", "{!",
 	}
 	for _, m := range markers {
 		if strings.Contains(s, m) {
@@ -195,3 +203,167 @@ func IsGFTSource(s string) bool {
 
 // GFTExtension is the recommended view file extension.
 const GFTExtension = ".gft"
+
+func compileGFTForm(match string) string {
+	parts := reGFTForm.FindStringSubmatch(match)
+	if len(parts) < 3 {
+		return match
+	}
+	attrs := parseGFTAttrs(parts[1])
+	action := attrs["action"]
+	method := strings.ToUpper(defaultStr(attrs["method"], "POST"))
+	body := parts[2]
+
+	var b strings.Builder
+	b.WriteString(`<form method="POST" action="`)
+	b.WriteString(action)
+	b.WriteString(`">`)
+	b.WriteString("\n  ")
+	b.WriteString(`<input type="hidden" name="authenticity_token" value="{{.CSRFToken}}">`)
+	if method != "POST" && method != "GET" {
+		b.WriteString("\n  ")
+		b.WriteString(`<input type="hidden" name="_method" value="`)
+		b.WriteString(method)
+		b.WriteString(`">`)
+	}
+	b.WriteString("\n")
+	b.WriteString(body)
+	b.WriteString("\n</form>")
+	return b.String()
+}
+
+func compileGFTField(match string) string {
+	parts := reGFTField.FindStringSubmatch(match)
+	if len(parts) < 2 {
+		return match
+	}
+	attrs := parseGFTAttrs(parts[1])
+	name := attrs["name"]
+	label := defaultStr(attrs["label"], titleCase(name))
+	fieldType := defaultStr(attrs["type"], "text")
+	valueExpr := attrs["value"]
+	if valueExpr == "" {
+		valueExpr = ".Item." + titleCase(name)
+	}
+
+	var b strings.Builder
+	b.WriteString(`<div class="field{{if hasError "`)
+	b.WriteString(name)
+	b.WriteString(`" .}} field-error{{end}}">`)
+	b.WriteString("\n  ")
+	b.WriteString(`<label for="`)
+	b.WriteString(name)
+	b.WriteString(`">`)
+	b.WriteString(label)
+	b.WriteString(`</label>`)
+	b.WriteString("\n  ")
+
+	switch fieldType {
+	case "textarea":
+		b.WriteString(`<textarea name="`)
+		b.WriteString(name)
+		b.WriteString(`" id="`)
+		b.WriteString(name)
+		b.WriteString(`">{{ old "`)
+		b.WriteString(name)
+		b.WriteString(`" . (printf "%v" `)
+		b.WriteString(valueExpr)
+		b.WriteString(`) }}</textarea>`)
+	case "select":
+		b.WriteString(`<select name="`)
+		b.WriteString(name)
+		b.WriteString(`" id="`)
+		b.WriteString(name)
+		b.WriteString(`">`)
+		for _, opt := range strings.Split(attrs["options"], ",") {
+			opt = strings.TrimSpace(opt)
+			if opt == "" {
+				continue
+			}
+			b.WriteString("\n    <option value=\"")
+			b.WriteString(opt)
+			b.WriteString(`">{{ title "`)
+			b.WriteString(opt)
+			b.WriteString(`" }}</option>`)
+		}
+		b.WriteString("\n  </select>")
+	case "checkbox":
+		b.WriteString(`<label><input type="checkbox" name="`)
+		b.WriteString(name)
+		b.WriteString(`" value="1"> `)
+		b.WriteString(label)
+		b.WriteString(`</label>`)
+	default:
+		b.WriteString(`<input type="`)
+		b.WriteString(fieldType)
+		b.WriteString(`" name="`)
+		b.WriteString(name)
+		b.WriteString(`" id="`)
+		b.WriteString(name)
+		b.WriteString(`" value="{{ old "`)
+		b.WriteString(name)
+		b.WriteString(`" . (printf "%v" `)
+		b.WriteString(valueExpr)
+		b.WriteString(`) }}">`)
+	}
+
+	if fieldType != "checkbox" {
+		b.WriteString("\n  ")
+		b.WriteString(`{{range fieldErrors "`)
+		b.WriteString(name)
+		b.WriteString(`" .}}<p class="field-error">{{.}}</p>{{end}}`)
+	}
+	b.WriteString("\n</div>")
+	return b.String()
+}
+
+func compileGFTError(match string) string {
+	parts := reGFTError.FindStringSubmatch(match)
+	if len(parts) < 2 {
+		return match
+	}
+	field := parts[1]
+	return fmt.Sprintf(`{{range fieldErrors "%s" .}}<p class="field-error">{{.}}</p>{{end}}`, field)
+}
+
+func parseGFTAttrs(line string) map[string]string {
+	attrs := make(map[string]string)
+	re := regexp.MustCompile(`(?:(\w+)=)?["']([^"']*)["']`)
+	for _, m := range re.FindAllStringSubmatch(line, -1) {
+		if len(m) < 3 {
+			continue
+		}
+		key := m[1]
+		val := m[2]
+		if key == "" {
+			if attrs["name"] == "" {
+				attrs["name"] = val
+			}
+			continue
+		}
+		attrs[key] = val
+	}
+	return attrs
+}
+
+func defaultStr(val, fallback string) string {
+	if val == "" {
+		return fallback
+	}
+	return val
+}
+
+func titleCase(s string) string {
+	if s == "" {
+		return s
+	}
+	parts := strings.Split(s, "_")
+	for i, p := range parts {
+		if len(p) == 0 {
+			continue
+		}
+		parts[i] = strings.ToUpper(p[:1]) + p[1:]
+	}
+	return strings.Join(parts, "")
+}
+
