@@ -83,20 +83,17 @@ func Model(appPath, name string, fields map[string]string) error {
 	}
 
 	type Field struct {
-		Name      string
-		GoType    string
-		SQLType   string
-		DBTag     string
-		JSONTag   string
+		Name, GoType, SQLType, DBTag, JSONTag string
 	}
 	var fieldList []Field
 	for fname, ftype := range fields {
+		pf := ParseField(fname, ftype)
 		fieldList = append(fieldList, Field{
-			Name:    title(fname),
-			GoType:  goType(ftype),
-			SQLType: sqlType(ftype),
-			DBTag:   strings.ToLower(fname),
-			JSONTag: strings.ToLower(fname),
+			Name:    pf.Name,
+			GoType:  pf.GoType,
+			SQLType: pf.MigrationColumnDef(),
+			DBTag:   pf.DBTag,
+			JSONTag: pf.JSONTag,
 		})
 	}
 
@@ -174,38 +171,6 @@ func pluralize(s string) string {
 		return s + "es"
 	}
 	return s + "s"
-}
-
-func goType(t string) string {
-	switch t {
-	case "string", "text":
-		return "string"
-	case "int", "integer":
-		return "int"
-	case "bool", "boolean":
-		return "bool"
-	case "float":
-		return "float64"
-	default:
-		return "string"
-	}
-}
-
-func sqlType(t string) string {
-	switch t {
-	case "string":
-		return "VARCHAR(255)"
-	case "text":
-		return "TEXT"
-	case "int", "integer":
-		return "INTEGER"
-	case "bool", "boolean":
-		return "BOOLEAN DEFAULT FALSE"
-	case "float":
-		return "REAL"
-	default:
-		return "VARCHAR(255)"
-	}
 }
 
 const appMainTmpl = `package main

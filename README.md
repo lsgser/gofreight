@@ -330,18 +330,37 @@ Running `gofreight make scaffold Post title:string body:text` creates:
 
 ### Field types
 
-```
-string    → VARCHAR(255)
-text      → TEXT (textarea in forms)
-integer   → INTEGER
-boolean   → BOOLEAN (checkbox)
-float     → DOUBLE PRECISION
-```
+Generators accept `name:type` pairs. Full reference: **[docs/generators.md](docs/generators.md)**.
 
-Example:
+| CLI type | Aliases | Go type | SQL (SQLite) | Form widget |
+|----------|---------|---------|--------------|-------------|
+| `string` | `str` | `string` | `VARCHAR(255)` | text |
+| `text` | — | `string` | `TEXT` | textarea |
+| `email` | — | `string` | `VARCHAR(255)` | email |
+| `url` | — | `string` | `VARCHAR(512)` | url |
+| `integer` | `int` | `int` | `INTEGER` | number |
+| `bigint` | — | `int64` | `INTEGER` | number |
+| `float` | `decimal`, `double` | `float64` | `REAL` | number |
+| `boolean` | `bool` | `bool` | `INTEGER` (0/1) | checkbox |
+| `datetime` | `timestamp` | `string` | `TEXT` | datetime-local |
+| `date` | — | `string` | `TEXT` | date |
+| `time` | — | `string` | `TEXT` | time |
+| `uuid` | — | `string` | `TEXT` | text |
+| `json` | `jsonb` | `string` | `TEXT` | textarea |
+| `enum` | — | `string` | `TEXT` + `CHECK` | select |
+| `references` | `reference`, `belongs_to` | `int64` | `INTEGER` | number (FK) |
+
+**Examples:**
 
 ```bash
-gofreight make scaffold Article title:string body:text published:boolean views:integer
+# Basic
+gofreight make scaffold Post title:string body:text published:boolean views:integer
+
+# Enum + JSON + datetime
+gofreight make scaffold Article title:string status:enum:draft,published,archived metadata:json published_at:datetime
+
+# Foreign key
+gofreight make scaffold Comment body:text post_id:references:posts
 ```
 
 ---
@@ -484,13 +503,20 @@ model.Transaction(ctx, func(txCtx context.Context) error {
 
 #### Soft Deletes
 
+Add a nullable `deleted_at` column, then enable on the repository:
+
 ```go
-Posts.EnableSoftDelete()
-Posts.Query(ctx).SoftDelete().Find(1)       // excludes deleted
+var Posts = model.NewRepository[Post]("posts").EnableSoftDelete()
+
+Posts.Query(ctx).Find(1)                    // excludes deleted
 Posts.Query(ctx).WithTrashed().Find(1)      // includes deleted
 Posts.Query(ctx).OnlyTrashed().Get()        // only deleted
 Posts.Destroy(ctx, record)                  // sets deleted_at
+Posts.Restore(ctx, record)                  // clears deleted_at
+Posts.ForceDestroy(ctx, record)             // permanent DELETE
 ```
+
+See **[docs/orm.md](docs/orm.md#soft-deletes)** for the full guide.
 
 #### Dirty Tracking
 
@@ -646,6 +672,7 @@ Full list: [.env.example](.env.example)
 
 | Guide | Description |
 |-------|-------------|
+| [docs/generators.md](docs/generators.md) | Scaffold commands & field types |
 | [docs/project-structure.md](docs/project-structure.md) | Application vs framework layout |
 | [docs/README.md](docs/README.md) | Documentation index |
 | [docs/getting-started.md](docs/getting-started.md) | Detailed setup |

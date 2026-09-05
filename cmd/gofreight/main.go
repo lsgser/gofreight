@@ -287,7 +287,11 @@ Usage:
 
 Examples:
   gofreight new blog
+  gofreight make scaffold Post title:string body:text status:enum:draft,published
   gofreight generate model Post title:string body:text
   gofreight generate migration add_published_to_posts
-  gofreight db:migrate`)
+  gofreight db:migrate
+
+Field types: string, text, email, url, integer, bigint, float, boolean, datetime, date, time, uuid, json, enum, references
+  See: https://github.com/lsgser/gofreight/blob/main/docs/generators.md`)
 }

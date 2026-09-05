@@ -14,7 +14,7 @@ type ResourceData struct {
 }
 
 type ResourceField struct {
-	Name, GoType, SQLType, DBTag, JSONTag, FormType string
+	ParsedField
 }
 
 func buildResourceData(appPath, name string, fields map[string]string) ResourceData {
@@ -25,14 +25,9 @@ func buildResourceData(appPath, name string, fields map[string]string) ResourceD
 	}
 	var flist []ResourceField
 	for fname, ftype := range fields {
-		flist = append(flist, ResourceField{
-			Name:     title(fname),
-			GoType:   goType(ftype),
-			SQLType:  sqlType(ftype),
-			DBTag:    strings.ToLower(fname),
-			JSONTag:  strings.ToLower(fname),
-			FormType: formType(ftype),
-		})
+		pf := ParseField(fname, ftype)
+		pf.SQLType = pf.MigrationColumnDef()
+		flist = append(flist, ResourceField{ParsedField: pf})
 	}
 	return ResourceData{
 		Name:     title(name),
@@ -45,18 +40,39 @@ func buildResourceData(appPath, name string, fields map[string]string) ResourceD
 	}
 }
 
-func formType(t string) string {
-	switch t {
-	case "text":
-		return "textarea"
-	case "bool", "boolean":
-		return "checkbox"
+func formFieldHTML(f ResourceField) string {
+	switch f.FormType {
+	case "textarea":
+		return fmt.Sprintf(`  <div class="form-group">
+    <label for="%s">%s</label>
+    <textarea name="%s" id="%s">{= .Item.%s }</textarea>
+  </div>
+`, f.DBTag, f.Name, f.DBTag, f.DBTag, f.Name)
+	case "checkbox":
+		return fmt.Sprintf(`  <div class="form-group">
+    <label><input type="checkbox" name="%s" value="1"> %s</label>
+  </div>
+`, f.DBTag, f.Name)
+	case "select":
+		var opts strings.Builder
+		for _, v := range f.EnumValues {
+			opts.WriteString(fmt.Sprintf("    <option value=\"%s\">%s</option>\n", v, title(v)))
+		}
+		return fmt.Sprintf(`  <div class="form-group">
+    <label for="%s">%s</label>
+    <select name="%s" id="%s">
+%s    </select>
+  </div>
+`, f.DBTag, f.Name, f.DBTag, f.DBTag, opts.String())
 	default:
-		return "text"
+		inputType := f.HTMLInputType()
+		return fmt.Sprintf(`  <div class="form-group">
+    <label for="%s">%s</label>
+    <input type="%s" name="%s" id="%s" value="{= .Item.%s }">
+  </div>
+`, f.DBTag, f.Name, inputType, f.DBTag, f.DBTag, f.Name)
 	}
 }
-
-// Resource generates a full Laravel-style resource (model, migration, controller, views, factory, test).
 func Resource(appPath, name string, fields map[string]string) error {
 	data := buildResourceData(appPath, name, fields)
 
@@ -110,25 +126,7 @@ func writeResourceViews(appPath string, data ResourceData) error {
 	for _, f := range data.Fields {
 		fieldLines += fmt.Sprintf("    <p><strong>%s:</strong> {= .%s }</p>\n", f.Name, f.Name)
 		showFields += fmt.Sprintf("<p><strong>%s:</strong> {= .Item.%s }</p>\n", f.Name, f.Name)
-		switch f.FormType {
-		case "textarea":
-			formFields += fmt.Sprintf(`  <div class="form-group">
-    <label for="%s">%s</label>
-    <textarea name="%s" id="%s">{= .Item.%s }</textarea>
-  </div>
-`, f.DBTag, f.Name, f.DBTag, f.DBTag, f.Name)
-		case "checkbox":
-			formFields += fmt.Sprintf(`  <div class="form-group">
-    <label><input type="checkbox" name="%s" value="1"> %s</label>
-  </div>
-`, f.DBTag, f.Name)
-		default:
-			formFields += fmt.Sprintf(`  <div class="form-group">
-    <label for="%s">%s</label>
-    <input type="text" name="%s" id="%s" value="{= .Item.%s }">
-  </div>
-`, f.DBTag, f.Name, f.DBTag, f.DBTag, f.Name)
-		}
+		formFields += formFieldHTML(f)
 	}
 
 	views := map[string]string{

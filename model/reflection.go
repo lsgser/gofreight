@@ -195,9 +195,14 @@ func collectFields(v reflect.Value, t reflect.Type, skipID bool, columns *[]stri
 			continue
 		}
 
+		fv := v.Field(i)
+		if fv.Kind() == reflect.Ptr && fv.IsNil() {
+			continue
+		}
+
 		*columns = append(*columns, dbTag)
 		*placeholders = append(*placeholders, database.Placeholder(len(*values)+1))
-		*values = append(*values, v.Field(i).Interface())
+		*values = append(*values, fv.Interface())
 	}
 }
 

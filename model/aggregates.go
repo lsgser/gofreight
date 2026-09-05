@@ -157,7 +157,11 @@ func (q *Query[T]) UpdateAll(attrs map[string]any) (int64, error) {
 // DeleteAll deletes all matching records without loading them.
 func (q *Query[T]) DeleteAll() (int64, error) {
 	if q.softDelete {
-		return q.UpdateAll(map[string]any{"deleted_at": database.NowFunc()})
+		col := q.deletedColumn
+		if col == "" {
+			col = "deleted_at"
+		}
+		return q.UpdateAll(map[string]any{col: database.NowFunc()})
 	}
 
 	sql := fmt.Sprintf("DELETE FROM %s", q.table)

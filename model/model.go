@@ -11,17 +11,24 @@ import (
 
 // Record is the base struct for all models, similar to ActiveRecord::Base.
 type Record struct {
-	ID        int64  `db:"id" json:"id"`
-	CreatedAt string `db:"created_at" json:"created_at"`
-	UpdatedAt string `db:"updated_at" json:"updated_at"`
+	ID        int64   `db:"id" json:"id"`
+	CreatedAt string  `db:"created_at" json:"created_at"`
+	UpdatedAt string  `db:"updated_at" json:"updated_at"`
+	DeletedAt *string `db:"deleted_at" json:"deleted_at,omitempty"`
+}
+
+// IsSoftDeleted reports whether the record has a deleted_at timestamp set.
+func (r *Record) IsSoftDeleted() bool {
+	return r.DeletedAt != nil && *r.DeletedAt != ""
 }
 
 // Repository is the main ORM entry point for a model, like ActiveRecord::Base or Eloquent Model.
 type Repository[T any] struct {
-	TableName    string
-	associations map[string]Association
-	scopes       map[string]ScopeFunc[T]
-	softDelete   bool
+	TableName     string
+	associations  map[string]Association
+	scopes        map[string]ScopeFunc[T]
+	softDelete    bool
+	deletedColumn string
 }
 
 // NewRepository creates an ORM repository for the given table.
@@ -39,7 +46,7 @@ func (r *Repository[T]) Query(ctx context.Context) *Query[T] {
 	q.repo = r
 	q.scopeFuncs = r.scopes
 	if r.softDelete {
-		q.SoftDelete()
+		q.SoftDelete(r.deletedColumnName())
 	}
 	return q
 }
@@ -57,8 +64,13 @@ func (r *Repository[T]) Scope(name string, fn ScopeFunc[T]) *Repository[T] {
 }
 
 // EnableSoftDelete enables soft delete for this model.
-func (r *Repository[T]) EnableSoftDelete() *Repository[T] {
+// Add a nullable deleted_at column to your table (see docs/orm.md).
+func (r *Repository[T]) EnableSoftDelete(column ...string) *Repository[T] {
 	r.softDelete = true
+	r.deletedColumn = "deleted_at"
+	if len(column) > 0 && column[0] != "" {
+		r.deletedColumn = column[0]
+	}
 	return r
 }
 
@@ -213,8 +225,9 @@ func (r *Repository[T]) Destroy(ctx context.Context, record *T) error {
 	}
 
 	if r.softDelete {
+		col := r.deletedColumnName()
 		_, err := r.Query(ctx).WhereEq("id", recordID(record)).UpdateAll(map[string]any{
-			"deleted_at": database.NowFunc(),
+			col: database.NowFunc(),
 		})
 		if err != nil {
 			return err

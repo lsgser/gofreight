@@ -8,6 +8,7 @@ Welcome to the Gofreight docs. Gofreight is a Rails/Laravel-inspired web framewo
 
 | Guide | Description |
 |-------|-------------|
+| [Generators & field types](generators.md) | Scaffold commands and all `name:type` field types |
 | [Project structure](project-structure.md) | Framework vs app layout, where code lives |
 | [Getting Started](getting-started.md) | Install, create an app, run migrations |
 | [Admin Dashboard](admin.md) | Local database admin (phpMyAdmin-style) |

@@ -81,6 +81,8 @@ gofreight make scaffold Post title:string body:text published:boolean
 gofreight db:migrate
 ```
 
+Field types (`string`, `text`, `integer`, `boolean`, `enum`, `json`, `datetime`, `references`, …): see **[Generators & field types](generators.md)**.
+
 Or individual generators:
 
 ```bash
