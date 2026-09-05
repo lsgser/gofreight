@@ -7,7 +7,7 @@
 </p>
 
 <p align="center">
-  <strong>Gofreight</strong> is a batteries-included web framework for Go — routing, controllers, an ORM, migrations, <strong>Gofreight Templates (GFT)</strong>, CLI, jobs, auth, cache, mail, and tests in one framework.
+  <strong>Gofreight</strong> is a batteries-included web framework for Go - routing, controllers, an ORM, migrations, <strong>Gofreight Templates (GFT)</strong>, CLI, jobs, auth, cache, mail, and tests in one framework.
 </p>
 
 <p align="center">
