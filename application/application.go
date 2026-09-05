@@ -13,10 +13,13 @@ import (
 	"github.com/lsgser/gofreight/admin"
 	"github.com/lsgser/gofreight/assets"
 	"github.com/lsgser/gofreight/cache"
+	"github.com/lsgser/gofreight/channels"
 	"github.com/lsgser/gofreight/config"
+	"github.com/lsgser/gofreight/container"
 	"github.com/lsgser/gofreight/controller"
 	"github.com/lsgser/gofreight/database"
 	"github.com/lsgser/gofreight/health"
+	"github.com/lsgser/gofreight/i18n"
 	"github.com/lsgser/gofreight/integrations"
 	"github.com/lsgser/gofreight/jobs"
 	"github.com/lsgser/gofreight/mail"
@@ -29,18 +32,22 @@ import (
 
 // Application is the central hub of a Gofreight app, like Rails.application.
 type Application struct {
-	Config   *config.Config
-	Router   *router.Router
-	Server   *http.Server
-	Views    *view.Engine
-	Assets   *assets.Pipeline
-	Sessions *middleware.Sessions
-	CSRF     *middleware.CSRF
-	Admin    *admin.Panel
-	Cache    cache.Cacher
-	Mailer   mail.Mailer
-	Jobs     *jobs.Queue
-	Worker   *jobs.Worker
+	Config     *config.Config
+	FileConfig *config.FileConfig
+	Router     *router.Router
+	Server     *http.Server
+	Views      *view.Engine
+	Assets     *assets.Pipeline
+	Sessions   *middleware.Sessions
+	CSRF       *middleware.CSRF
+	Admin      *admin.Panel
+	Cache      cache.Cacher
+	Mailer     mail.Mailer
+	Jobs       jobs.QueueBackend
+	Worker     *jobs.Worker
+	I18n       *i18n.Translator
+	Channels   *channels.Hub
+	Container  *container.Container
 }
 
 // New creates and configures a new Application instance.
@@ -48,6 +55,7 @@ func New() *Application {
 	_ = godotenv.Load()
 
 	cfg := config.Load()
+	fileCfg := config.LoadFiles(cfg.Environment)
 	r := router.New()
 	if cfg.IsProduction() {
 		r.Use(middleware.StructuredLogger, middleware.Recovery, middleware.SecurityHeaders)
@@ -55,32 +63,115 @@ func New() *Application {
 		r.Use(middleware.Logger, middleware.Recovery)
 	}
 
-	sessions := middleware.NewSessions(cfg.SecretKey)
+	sessions := middleware.NewSessions(cfg.AppKey)
 	csrf := middleware.NewCSRF()
 	r.Use(sessions.Middleware)
 
 	views := view.New("app/views")
 	assetPipeline := assets.New("public")
 	jobQueue := jobs.New()
+	translator := i18n.New(cfg.Locale(), "en")
 
 	return &Application{
-		Config:   cfg,
-		Router:   r,
-		Views:    views,
-		Sessions: sessions,
-		CSRF:     csrf,
-		Assets:   assetPipeline,
-		Cache:    cache.New(),
-		Mailer:   mail.NewLogMailer(),
-		Jobs:     jobQueue,
-		Worker:   jobs.NewWorker(jobQueue),
+		Config:     cfg,
+		FileConfig: fileCfg,
+		Router:     r,
+		Views:      views,
+		Sessions:   sessions,
+		CSRF:       csrf,
+		Assets:     assetPipeline,
+		Cache:      cache.New(),
+		Mailer:     mail.NewLogMailer(),
+		Jobs:       jobQueue,
+		Worker:     jobs.NewWorker(jobQueue),
+		I18n:       translator,
+		Channels:   channels.NewHub(),
+		Container:  container.New(),
 	}
+}
+
+// Bind registers a transient service in the container.
+func (app *Application) Bind(name string, factory func() any) {
+	app.Container.Bind(name, factory)
+}
+
+// Singleton registers a shared service in the container.
+func (app *Application) Singleton(name string, factory func() any) {
+	app.Container.Singleton(name, factory)
+}
+
+// Make resolves a service from the container.
+func (app *Application) Make(name string) any {
+	return app.Container.MustResolve(name)
 }
 
 // ConnectDatabase establishes the database connection using config.
 func (app *Application) ConnectDatabase() error {
 	_, err := database.Connect(app.Config.DatabaseURL)
 	return err
+}
+
+// UseRedisSessions switches session storage to Redis.
+func (app *Application) UseRedisSessions(redisURL string) error {
+	store, err := middleware.NewRedisSessionStore(redisURL, "gofreight:session:")
+	if err != nil {
+		return err
+	}
+	app.Sessions.UseStore(store)
+	return nil
+}
+
+// UseRedisQueue switches the job queue to Redis.
+func (app *Application) UseRedisQueue(redisURL string) error {
+	q, err := jobs.NewRedisQueue(redisURL, "gofreight:jobs")
+	if err != nil {
+		return err
+	}
+	app.Jobs = q
+	return nil
+}
+
+// UseLocale enables locale detection middleware.
+func (app *Application) UseLocale() {
+	if app.I18n != nil {
+		app.Router.Use(middleware.LocaleMiddleware(app.I18n, app.Config.Locale()))
+	}
+}
+
+// LoadLocales loads translation files from config/locales/.
+func (app *Application) LoadLocales(dir string) error {
+	if dir == "" {
+		dir = "config/locales"
+	}
+	return app.I18n.LoadDir(dir)
+}
+
+// MountChannels registers WebSocket channel endpoint.
+func (app *Application) MountChannels(path string) {
+	if path == "" {
+		path = "/cable"
+	}
+	app.Channels.Mount(app.Router, path)
+}
+
+// LoadAssetManifest loads Vite/webpack manifest for production assets.
+func (app *Application) LoadAssetManifest(path string) error {
+	m, err := assets.LoadManifest(path)
+	if err != nil {
+		return err
+	}
+	app.Assets.Manifest = m
+	return nil
+}
+
+// QueuedMailer returns a mailer that sends via the job queue.
+func (app *Application) QueuedMailer() *mail.QueuedMailer {
+	return &mail.QueuedMailer{Mailer: app.Mailer, Queue: app.Jobs}
+}
+
+// UseHTTPCache adds HTTP caching headers middleware.
+func (app *Application) UseHTTPCache(ttl time.Duration) {
+	app.Router.Use(cache.HTTPCacheMiddleware(ttl))
 }
 
 // ConfigureIntegrations initializes third-party services from environment variables.
@@ -156,7 +247,14 @@ func (app *Application) UseRateLimit(limit int, window time.Duration) {
 
 // StartJobs starts the background job worker.
 func (app *Application) StartJobs(concurrency int) {
-	app.Worker.Start(concurrency)
+	if rq, ok := app.Jobs.(*jobs.RedisQueue); ok {
+		rq.StartWorker(context.Background(), concurrency)
+		return
+	}
+	if q, ok := app.Jobs.(*jobs.Queue); ok {
+		app.Worker = jobs.NewWorker(q)
+		app.Worker.Start(concurrency)
+	}
 }
 
 // Routes is a callback where apps define their routes (like config/routes.rb).
@@ -205,14 +303,16 @@ func (app *Application) Run() {
 	}
 
 	if app.Config.IsDevelopment() {
-		log.Println("Routes:")
+		log.Printf("\n  Gofreight development server")
+		log.Printf("  → http://localhost:%d", app.Config.Port)
+		log.Printf("  → http://localhost:%d/admin (database admin)\n", app.Config.Port)
 		for _, route := range app.Router.Routes() {
 			log.Println(" ", route)
 		}
 	}
 
 	go func() {
-		log.Printf("Gofreight server starting on http://%s [%s]", addr, app.Config.Environment)
+		log.Printf("Gofreight listening on http://%s [%s]", addr, app.Config.Environment)
 		if err := app.Server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			log.Fatalf("server error: %v", err)
 		}

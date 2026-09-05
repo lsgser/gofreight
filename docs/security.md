@@ -4,7 +4,7 @@
 
 - Admin panel (`/admin`) is **never mounted** when `GOFREIGHT_ENV=production`
 - Set `ADMIN_PASSWORD` in development if your dev server is network-accessible
-- Use a strong `SECRET_KEY` for sessions and CSRF tokens
+- Run `gofreight key:generate` and keep `APP_KEY` secret — it signs sessions, CSRF tokens, and encrypted cookies
 
 ## Authentication
 
@@ -20,7 +20,7 @@ auth.CheckPassword(storedHash, inputPassword)
 Generate auth scaffolding:
 
 ```bash
-gofreight generate auth
+gofreight make:auth
 ```
 
 ## Authorization (policies)

@@ -1,0 +1,14 @@
+#--------------------------------------------------------------------------
+# Application Configuration
+#--------------------------------------------------------------------------
+#
+# Values here are loaded from config/app.yaml and overridden by
+# config/{environment}.yaml and .env variables.
+#
+# See: docs/getting-started.md
+#
+host: "0.0.0.0"
+port: 5000
+database_url: "sqlite://db/development.db"
+app_key: ""
+log_level: "info"

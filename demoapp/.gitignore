@@ -1,0 +1,8 @@
+.env
+db/*.db
+tmp/
+*.exe
+storage/logs/*
+storage/framework/cache/*
+storage/framework/sessions/*
+!storage/**/.gitkeep

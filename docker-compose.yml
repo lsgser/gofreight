@@ -2,12 +2,12 @@ services:
   app:
     build: .
     ports:
-      - "3000:3000"
+      - "5000:5000"
     environment:
       GOFREIGHT_ENV: development
       DATABASE_URL: postgres://gofreight:gofreight@db:5432/gofreight_development?sslmode=disable
       REDIS_URL: redis://redis:6379
-      SECRET_KEY: dev-secret-key
+      APP_KEY: base64:c2VjcmV0LWtleS1mb3ItZG9ja2VyLWRldg==
     depends_on:
       - db
       - redis

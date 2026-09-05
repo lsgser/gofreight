@@ -1,6 +1,6 @@
 # ORM
 
-Gofreight includes an ActiveRecord/Eloquent-style ORM. See the [main README](../README.md#orm-activerecord--eloquent) for the full API reference.
+Gofreight includes a type-safe ORM for Go structs. See the [main README](../README.md#orm) for the full API reference.
 
 ## Highlights
 
@@ -107,7 +107,7 @@ Use the CLI for schema versioning:
 
 ```bash
 gofreight generate migration create_posts
-gofreight db:migrate
+gofreight migrate
 gofreight db:rollback
 gofreight db:status
 ```

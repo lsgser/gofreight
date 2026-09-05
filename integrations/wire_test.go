@@ -20,13 +20,13 @@ func TestBuildServicesLogMailer(t *testing.T) {
 	}
 }
 
-func TestStripeNotConfigured(t *testing.T) {
+func TestStorageNotConfigured(t *testing.T) {
 	_ = integrations.ConfigureAll(mockEnv{})
-	s, ok := integrations.Get("stripe")
+	s, ok := integrations.Get("storage")
 	if !ok {
-		t.Fatal("stripe should be registered")
+		t.Fatal("storage should be registered")
 	}
 	if s.Enabled() {
-		t.Fatal("stripe should not be enabled without key")
+		t.Fatal("storage should not be enabled without bucket")
 	}
 }

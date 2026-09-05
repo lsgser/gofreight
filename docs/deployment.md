@@ -6,14 +6,14 @@
 docker compose up --build
 ```
 
-The app listens on port 3000. PostgreSQL and Redis are included for local/staging stacks.
+The app listens on port 5000. PostgreSQL and Redis are included for local/staging stacks.
 
 ## Production checklist
 
 1. Set `GOFREIGHT_ENV=production`
-2. Set a strong `SECRET_KEY`
-3. Configure `DATABASE_URL` (managed PostgreSQL recommended)
-4. Run migrations: `gofreight db:migrate`
+2. Run `gofreight key:generate` to set a unique `APP_KEY`
+3. Configure database (`DB_*` in `.env` or managed PostgreSQL — see `.env.example`)
+4. Run migrations: `gofreight migrate`
 5. Precompile assets (automatic in `app.Run()` when production)
 6. Mount health check: `GET /health` (automatic via `app.Run()`)
 7. Configure integrations via environment variables (see [integrations.md](integrations.md))
@@ -28,7 +28,7 @@ See [.env.example](../.env.example) for the full list.
 ## Health checks
 
 ```bash
-curl http://localhost:3000/health
+curl http://localhost:5000/health
 ```
 
 Returns JSON with database status:

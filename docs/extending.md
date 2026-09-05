@@ -2,22 +2,56 @@
 
 Gofreight is designed to be extended without forking the framework.
 
-## Custom integrations
+## Third-party agnostic design
 
-Register your own services in `main.go` or an `init()` in your app package:
+The **core framework** (MVC, ORM, routing, GFT, generators) does not ship vendor-specific clients for Stripe, PayFast, Twilio, or any SaaS product. Third-party APIs connect through the **integrations registry**:
+
+- Register any API client with `integrations.Register()` or `RegisterCustom()`.
+- Select the active driver per category via env (`PAYMENT_PROVIDER`, `SMS_PROVIDER`, etc.).
+- Built-in connectors cover **protocols** (SMTP, S3-compatible storage, Redis) — not branded products.
 
 ```go
-import "github.com/lsgser/gofreight/integrations"
+storage, _ := integrations.ActiveStorage(integrations.OsEnv{})
+email, _ := integrations.ActiveEmail(integrations.OsEnv{})
+payment, _ := integrations.ActivePayment(integrations.OsEnv{}) // after you register a driver
+```
 
-func init() {
-    integrations.RegisterCustom("slack", func(cfg map[string]string) error {
-        // cfg contains SLACK_URL, SLACK_API_KEY, etc.
+## Integration providers
+
+Register integrations at application boot:
+
+```go
+type AppIntegrations struct{}
+
+func (AppIntegrations) Name() string { return "app" }
+
+func (AppIntegrations) Register(r *integrations.Registry) {
+    integrations.Register("my_gateway", func() integrations.Integration {
+        return &MyPaymentGateway{}
+    })
+    integrations.RegisterCustom("twilio", func(cfg map[string]string) error {
         return nil
     })
 }
+
+func (AppIntegrations) Boot(env integrations.EnvReader) error { return nil }
+
+func init() {
+    integrations.RegisterProvider(AppIntegrations{})
+}
 ```
 
-Environment variables follow the pattern `{NAME}_{KEY}`:
+`app.ConfigureIntegrations()` calls `BootProviders()` automatically.
+
+## Custom integrations
+
+```go
+integrations.RegisterCustom("slack", func(cfg map[string]string) error {
+    return nil
+})
+```
+
+Environment variables follow `{NAME}_{KEY}`:
 
 ```env
 SLACK_URL=https://hooks.slack.com/services/...
@@ -25,37 +59,50 @@ SLACK_API_KEY=xoxb-...
 SLACK_ENABLED=true
 ```
 
-## Event bus
-
-Subscribe to integration events for decoupled workflows:
+## Registering a category driver
 
 ```go
-integrations.Subscribe("payment.completed", func(e integrations.Event) {
-    orderID := e.Payload["order_id"]
-    // fulfill order, send email, etc.
-})
+type MyGateway struct {
+    enabled bool
+    apiKey  string
+}
 
-integrations.Publish(ctx, integrations.Event{
-    Name: "payment.completed",
-    Payload: map[string]any{"order_id": 42},
-})
-```
+func (g *MyGateway) Name() string { return "my_gateway" }
+func (g *MyGateway) Category() integrations.Category { return integrations.CategoryPayment }
+func (g *MyGateway) DriverID() string { return "my_gateway" }
 
-## Registering low-level integrations
+func (g *MyGateway) Configure(env integrations.EnvReader) error {
+    g.apiKey = env.Get("MY_GATEWAY_API_KEY")
+    g.enabled = g.apiKey != ""
+    return nil
+}
 
-For full control, register a factory:
+func (g *MyGateway) Enabled() bool { return g.enabled }
 
-```go
-integrations.Register("my_service", func() integrations.Integration {
-    return &MyService{}
-})
+func init() {
+    integrations.Register("my_gateway", func() integrations.Integration {
+        return &MyGateway{}
+    })
+}
 ```
 
 Your type must implement `Name()`, `Configure(env)`, and `Enabled()`.
 
-## Middleware
+## Event bus
 
-Add global middleware in your application:
+```go
+integrations.Subscribe("order.shipped", func(e integrations.Event) {
+    orderID := e.Payload["order_id"]
+    // call your carrier API, send email, etc.
+})
+
+integrations.Publish(ctx, integrations.Event{
+    Name: "order.shipped",
+    Payload: map[string]any{"order_id": 42},
+})
+```
+
+## Middleware
 
 ```go
 app := application.New()
@@ -71,8 +118,6 @@ Extend the CLI with custom generators by adding templates under `generator/templ
 The admin panel lives in `admin/` and uses embedded templates. Fork or wrap `admin.Panel` to customize the UI for your organization.
 
 ## Models and scopes
-
-Define reusable query scopes on your models:
 
 ```go
 func (Posts) Published(ctx context.Context) ([]Post, error) {

@@ -81,6 +81,38 @@ func (m *Migrator) Up() error {
 	return nil
 }
 
+// Reset rolls back all applied migrations.
+func (m *Migrator) Reset() error {
+	for {
+		applied, err := m.appliedVersionsList()
+		if err != nil {
+			return err
+		}
+		if len(applied) == 0 {
+			return nil
+		}
+		if err := m.Down(); err != nil {
+			return err
+		}
+	}
+}
+
+// Refresh resets and re-runs all migrations.
+func (m *Migrator) Refresh() error {
+	if err := m.Reset(); err != nil {
+		return err
+	}
+	return m.Up()
+}
+
+// Fresh drops all tables and re-runs all migrations.
+func (m *Migrator) Fresh() error {
+	if err := Wipe(); err != nil {
+		return err
+	}
+	return m.Up()
+}
+
 // Down rolls back the most recent migration.
 func (m *Migrator) Down() error {
 	if err := m.ensureTable(); err != nil {

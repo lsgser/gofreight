@@ -80,12 +80,19 @@ func (f *Factory[T]) RawCreate(t *testing.T, overrides ...map[string]any) *T {
 func (f *Factory[T]) mergeAttrs(overrides ...map[string]any) map[string]any {
 	attrs := make(map[string]any)
 	for k, v := range f.defaults {
-		attrs[k] = v
+		attrs[k] = resolveAttr(v)
 	}
 	for _, o := range overrides {
 		for k, v := range o {
-			attrs[k] = v
+			attrs[k] = resolveAttr(v)
 		}
 	}
 	return attrs
+}
+
+func resolveAttr(v any) any {
+	if fn, ok := v.(func() any); ok {
+		return fn()
+	}
+	return v
 }

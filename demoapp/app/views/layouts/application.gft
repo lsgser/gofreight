@@ -1,0 +1,26 @@
+{# -------------------------------------------------------------------------- #}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>#place "title" "demoapp"</title>
+  <link rel="stylesheet" href="/assets/app.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="/">demoapp</a>
+      <span class="framework-badge">Gofreight</span>
+    </div>
+  </header>
+  <main class="container">
+    #place "content"
+  </main>
+  <footer class="site-footer">
+    <div class="container">
+      <small>Built with <strong>Gofreight</strong> — batteries-included Go web framework</small>
+    </div>
+  </footer>
+</body>
+</html>

@@ -1,19 +1,29 @@
 package main
 
+/*
+|--------------------------------------------------------------------------
+| Application Entry Point
+|--------------------------------------------------------------------------
+|
+| Bootstraps the Gofreight application and starts the HTTP server.
+| Wiring: bootstrap/app.go · Routes: routes/
+|
+*/
+
 import (
 	"log"
 
-	"blog/config"
-	"github.com/lsgser/gofreight/application"
+	"blog/bootstrap"
+	"blog/routes"
 )
 
 func main() {
-	app := application.New()
+	app := bootstrap.Application()
 
 	if err := app.ConnectDatabase(); err != nil {
 		log.Printf("warning: database not connected: %v", err)
 	}
 
-	app.Draw(config.Routes)
+	app.Draw(routes.Register)
 	app.Run()
 }

@@ -2,7 +2,9 @@ package integrations
 
 import (
 	"fmt"
+	"strings"
 
+	"github.com/lsgser/gofreight/config"
 	"github.com/redis/go-redis/v9"
 )
 
@@ -18,15 +20,32 @@ type Storage struct {
 func (s *Storage) Name() string { return "storage" }
 
 func (s *Storage) Configure(env EnvReader) error {
-	s.Provider = env.Get("STORAGE_PROVIDER") // s3, r2, minio
-	s.Bucket = env.Get("STORAGE_BUCKET")
-	s.Region = env.Get("STORAGE_REGION")
-	s.Endpoint = env.Get("STORAGE_ENDPOINT")
-	s.enabled = s.Bucket != "" && (env.Get("AWS_ACCESS_KEY_ID") != "" || s.Endpoint != "")
+	disk := strings.ToLower(envGet(env, "FILESYSTEM_DISK", "STORAGE_PROVIDER"))
+	if disk == "" || disk == "local" {
+		s.enabled = false
+		return nil
+	}
+	s.Provider = disk
+	s.Bucket = envGet(env, "AWS_BUCKET", "STORAGE_BUCKET")
+	s.Region = envGet(env, "AWS_DEFAULT_REGION", "STORAGE_REGION")
+	s.Endpoint = envGet(env, "AWS_ENDPOINT", "STORAGE_ENDPOINT")
+	if envGet(env, "AWS_USE_PATH_STYLE_ENDPOINT") == "true" && s.Endpoint == "" {
+		s.Endpoint = envGet(env, "STORAGE_ENDPOINT")
+	}
+	s.enabled = s.Bucket != "" && (envGet(env, "AWS_ACCESS_KEY_ID") != "" || s.Endpoint != "")
 	return nil
 }
 
 func (s *Storage) Enabled() bool { return s.enabled }
+
+func (s *Storage) Category() Category { return CategoryStorage }
+
+func (s *Storage) DriverID() string {
+	if s.Provider != "" {
+		return s.Provider
+	}
+	return "s3"
+}
 
 // URL returns the public URL for an object key.
 func (s *Storage) URL(key string) string {
@@ -48,38 +67,34 @@ type Email struct {
 func (e *Email) Name() string { return "email" }
 
 func (e *Email) Configure(env EnvReader) error {
-	e.Provider = env.Get("EMAIL_PROVIDER") // smtp, sendgrid, ses, mailgun
-	e.From = env.Get("EMAIL_FROM")
-	e.Host = env.Get("SMTP_HOST")
-	e.APIKey = env.Get("EMAIL_API_KEY")
-	if e.APIKey == "" {
-		e.APIKey = env.Get("SENDGRID_API_KEY")
+	e.Provider = strings.ToLower(envGet(env, "MAIL_MAILER", "EMAIL_PROVIDER", "MAIL_DRIVER"))
+	if e.Provider == "" {
+		e.Provider = "smtp"
 	}
-	e.enabled = e.From != "" && (e.Host != "" || e.APIKey != "")
+	if e.Provider == "log" {
+		e.enabled = false
+		return nil
+	}
+	e.From = envGet(env, "MAIL_FROM_ADDRESS", "EMAIL_FROM")
+	if name := envGet(env, "MAIL_FROM_NAME"); name != "" && e.From == "" {
+		e.From = name
+	}
+	e.Host = envGet(env, "MAIL_HOST", "SMTP_HOST")
+	e.APIKey = envGet(env, "SENDGRID_API_KEY", "EMAIL_API_KEY")
+	e.enabled = e.From != "" && (e.Host != "" || e.APIKey != "" || e.Provider == "sendgrid")
 	return nil
 }
 
 func (e *Email) Enabled() bool { return e.enabled }
 
-// Stripe provides payment processing.
-type Stripe struct {
-	SecretKey      string
-	WebhookSecret  string
-	PublishableKey string
-	enabled        bool
+func (e *Email) Category() Category { return CategoryMail }
+
+func (e *Email) DriverID() string {
+	if e.Provider != "" {
+		return e.Provider
+	}
+	return "smtp"
 }
-
-func (s *Stripe) Name() string { return "stripe" }
-
-func (s *Stripe) Configure(env EnvReader) error {
-	s.SecretKey = env.Get("STRIPE_SECRET_KEY")
-	s.WebhookSecret = env.Get("STRIPE_WEBHOOK_SECRET")
-	s.PublishableKey = env.Get("STRIPE_PUBLISHABLE_KEY")
-	s.enabled = s.SecretKey != ""
-	return nil
-}
-
-func (s *Stripe) Enabled() bool { return s.enabled }
 
 // Redis provides caching and pub/sub via Redis/Upstash.
 type Redis struct {
@@ -91,15 +106,19 @@ type Redis struct {
 func (r *Redis) Name() string { return "redis" }
 
 func (r *Redis) Configure(env EnvReader) error {
-	r.URL = env.Get("REDIS_URL")
+	r.URL = envGet(env, "REDIS_URL", "UPSTASH_REDIS_URL")
 	if r.URL == "" {
-		r.URL = env.Get("UPSTASH_REDIS_URL")
+		r.URL = config.ResolveRedisURL()
 	}
 	r.enabled = r.URL != ""
 	return nil
 }
 
 func (r *Redis) Enabled() bool { return r.enabled }
+
+func (r *Redis) Category() Category { return CategoryCache }
+
+func (r *Redis) DriverID() string { return "redis" }
 
 // Webhook provides outbound webhook delivery.
 type Webhook struct {
@@ -116,6 +135,10 @@ func (w *Webhook) Configure(env EnvReader) error {
 }
 
 func (w *Webhook) Enabled() bool { return w.enabled }
+
+func (w *Webhook) Category() Category { return CategoryWebhook }
+
+func (w *Webhook) DriverID() string { return "webhook" }
 
 // Analytics provides event tracking (Mixpanel, Segment, PostHog).
 type Analytics struct {
@@ -135,6 +158,15 @@ func (a *Analytics) Configure(env EnvReader) error {
 
 func (a *Analytics) Enabled() bool { return a.enabled }
 
+func (a *Analytics) Category() Category { return CategoryAnalytics }
+
+func (a *Analytics) DriverID() string {
+	if a.Provider != "" {
+		return a.Provider
+	}
+	return "analytics"
+}
+
 // AsStorage returns the storage integration if enabled.
 func AsStorage(i Integration) (*Storage, bool) {
 	s, ok := i.(*Storage)
@@ -145,12 +177,6 @@ func AsStorage(i Integration) (*Storage, bool) {
 func AsEmail(i Integration) (*Email, bool) {
 	e, ok := i.(*Email)
 	return e, ok && e.Enabled()
-}
-
-// AsStripe returns the stripe integration if enabled.
-func AsStripe(i Integration) (*Stripe, bool) {
-	s, ok := i.(*Stripe)
-	return s, ok && s.Enabled()
 }
 
 // AsRedis returns the redis integration if enabled.

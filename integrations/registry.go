@@ -8,7 +8,7 @@ import (
 
 // Integration represents a third-party or cloud service connection.
 type Integration interface {
-	// Name returns the integration identifier (e.g. "s3", "stripe").
+	// Name returns the integration identifier (e.g. "storage", "email").
 	Name() string
 	// Configure initializes the integration from environment/config.
 	Configure(env EnvReader) error
@@ -135,7 +135,6 @@ func MustGet(name string) Integration {
 func init() {
 	Register("storage", func() Integration { return &Storage{} })
 	Register("email", func() Integration { return &Email{} })
-	Register("stripe", func() Integration { return &Stripe{} })
 	Register("redis", func() Integration { return &Redis{} })
 	Register("webhook", func() Integration { return &Webhook{} })
 	Register("analytics", func() Integration { return &Analytics{} })

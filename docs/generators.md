@@ -3,10 +3,10 @@
 Gofreight generators accept fields as `name:type` pairs:
 
 ```bash
-gofreight make scaffold Article title:string body:text status:enum:draft,published price:float published:boolean
+gofreight make:scaffold Article title:string body:text status:enum:draft,published price:float published:boolean
 ```
 
-Use **`gofreight make scaffold`**, **`gofreight generate scaffold`**, **`gofreight generate model`**, or **`gofreight generate resource`** — they share the same field type vocabulary.
+Use **`gofreight make:scaffold`**, **`gofreight make:model`**, or **`gofreight make:resource`** — they share the same field type vocabulary.
 
 ---
 
@@ -39,19 +39,19 @@ Use **`gofreight make scaffold`**, **`gofreight generate scaffold`**, **`gofreig
 ### Strings & text
 
 ```bash
-gofreight make scaffold Post title:string slug:str body:text summary:text
+gofreight make:scaffold Post title:string slug:str body:text summary:text
 ```
 
 ### Numbers
 
 ```bash
-gofreight make scaffold Product name:string sku:string price:float stock:integer legacy_id:bigint
+gofreight make:scaffold Product name:string sku:string price:float stock:integer legacy_id:bigint
 ```
 
 ### Booleans
 
 ```bash
-gofreight make scaffold Post title:string published:boolean featured:bool
+gofreight make:scaffold Post title:string published:boolean featured:bool
 ```
 
 ### Dates & times
@@ -59,13 +59,13 @@ gofreight make scaffold Post title:string published:boolean featured:bool
 Stored as `TEXT` in SQLite (ISO-8601 strings). Use `datetime`, `date`, or `time`:
 
 ```bash
-gofreight make scaffold Event name:string starts_on:date opens_at:time published_at:datetime
+gofreight make:scaffold Event name:string starts_on:date opens_at:time published_at:datetime
 ```
 
 ### Email & URL
 
 ```bash
-gofreight make scaffold Contact name:string email:email website:url
+gofreight make:scaffold Contact name:string email:email website:url
 ```
 
 ### JSON
@@ -73,7 +73,7 @@ gofreight make scaffold Contact name:string email:email website:url
 Stored as `TEXT`; validate/parse in application code:
 
 ```bash
-gofreight make scaffold Setting key:string metadata:json config:jsonb
+gofreight make:scaffold Setting key:string metadata:json config:jsonb
 ```
 
 ### Enums
@@ -81,7 +81,7 @@ gofreight make scaffold Setting key:string metadata:json config:jsonb
 Comma-separated allowed values. Generates a `CHECK` constraint and a `<select>` in forms:
 
 ```bash
-gofreight make scaffold Article title:string status:enum:draft,published,archived
+gofreight make:scaffold Article title:string status:enum:draft,published,archived
 ```
 
 Migration column:
@@ -95,7 +95,7 @@ status TEXT NOT NULL CHECK (status IN ('draft', 'published', 'archived')),
 Use for `belongs_to` associations. Column name should follow `*_id` convention:
 
 ```bash
-gofreight make scaffold Comment body:text post_id:references:posts author_id:belongs_to:users
+gofreight make:scaffold Comment body:text post_id:references:posts author_id:belongs_to:users
 ```
 
 Syntax:
@@ -109,7 +109,7 @@ Generates `INTEGER NOT NULL` and a number input in forms. Add explicit `FOREIGN 
 ### UUID
 
 ```bash
-gofreight make scaffold ApiToken name:string token:uuid
+gofreight make:scaffold ApiToken name:string token:uuid
 ```
 
 ---
@@ -117,7 +117,7 @@ gofreight make scaffold ApiToken name:string token:uuid
 ## Full scaffold example
 
 ```bash
-gofreight make scaffold Article \
+gofreight make:scaffold Article \
   title:string \
   slug:string \
   body:text \
@@ -139,7 +139,7 @@ Creates:
 | `db/migrate/NNN_create_articles.sql` | SQLite migration |
 | `tests/article_test.go` | HTTP tests |
 | `tests/factories/article_factory.go` | Test factory |
-| Route registration in `config/routes.go` | REST routes |
+| Route registration in `routes/web.go` | REST routes |
 
 ---
 
@@ -160,12 +160,40 @@ Field names are lowercased for database columns (`title` → `db:"title"`) and t
 
 | Command | Description |
 |---------|-------------|
-| `gofreight make scaffold Name fields...` | Full CRUD (recommended) |
-| `gofreight generate scaffold Name fields...` | Same as above |
-| `gofreight generate resource Name fields...` | Alias for scaffold |
-| `gofreight generate model Name fields...` | Model + migration only |
-| `gofreight generate controller Name` | Controller only |
-| `gofreight generate migration name` | Empty migration stub |
-| `gofreight generate auth` | User model + auth scaffolding |
+| `gofreight make:scaffold Name fields...` | Full CRUD (recommended) |
+| `gofreight make:model Name fields...` | Model + migration only |
+| `gofreight make:controller Name` | Controller only |
+| `gofreight make:migration name` | Empty migration stub |
+| `gofreight make:api Name fields...` | JSON API controller + resource |
+| `gofreight make:service Name` | Service class in `app/services/` |
+| `gofreight make:mail Name` | Mailable + view in `app/mail/` |
+| `gofreight make:job Name` | Job class in `app/jobs/` |
+| `gofreight make:middleware Name` | Middleware in `app/middleware/` |
+| `gofreight make:policy Name` | Policy in `app/policies/` |
+| `gofreight make:request Name` | Form request in `app/requests/` |
+| `gofreight make:seeder Name` | Go seeder in `db/seeders/` |
+| `gofreight make:factory Name` | Test factory in `tests/factories/` |
+| `gofreight make:test Name` | Feature test in `tests/` |
+| `gofreight make:auth` | User model + auth scaffolding |
 
-See also [Getting Started](getting-started.md) and [ORM](orm.md).
+Legacy: `gofreight generate …` and `gofreight make …` work the same way (`generate resource` = `make:scaffold`). Run **`gofreight list make`** for the full list. See [commands.md](commands.md).
+
+### Services
+
+Keep controllers thin — put business logic in services:
+
+```bash
+gofreight make service PaymentProcessing
+# → app/services/payment_processing_service.go
+```
+
+Use in a controller:
+
+```go
+import "{{module}}/app/services"
+
+svc := services.NewPaymentProcessingService()
+// svc.Process(...)
+```
+
+See also [Getting Started](getting-started.md), [Project structure](project-structure.md), and [ORM](orm.md).

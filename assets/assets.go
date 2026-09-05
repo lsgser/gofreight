@@ -16,6 +16,7 @@ import (
 type Pipeline struct {
 	Root      string
 	Prefix    string
+	Manifest  *Manifest
 	mu        sync.RWMutex
 	digestMap map[string]string
 }
@@ -58,6 +59,11 @@ func (p *Pipeline) Precompile() error {
 // Path returns the asset URL path, with digest in production mode.
 func (p *Pipeline) Path(assetPath string) string {
 	assetPath = strings.TrimPrefix(assetPath, "/")
+	if p.Manifest != nil {
+		if path := p.Manifest.Path(assetPath); path != "/assets/"+assetPath {
+			return path
+		}
+	}
 
 	p.mu.RLock()
 	digested, ok := p.digestMap[assetPath]

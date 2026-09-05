@@ -1,6 +1,6 @@
 # Database Admin Dashboard
 
-Gofreight includes a **local-only** database admin panel inspired by phpMyAdmin and Django Admin. It is available at `/admin` when `GOFREIGHT_ENV=development` and is **never mounted in production**.
+Gofreight includes a **local-only** database admin panel for development. It is available at `/admin` when `GOFREIGHT_ENV=development` and is **never mounted in production**.
 
 ## Features
 
@@ -10,7 +10,7 @@ Gofreight includes a **local-only** database admin panel inspired by phpMyAdmin 
 - Create, edit, and delete rows
 - Form fields inferred from column types
 
-### Schema management (phpMyAdmin-style)
+### Schema management
 - **Create Table** — define columns, types, primary keys, defaults
 - **Table Structure** — view column definitions
 - **Add Column** — alter existing tables
@@ -26,7 +26,7 @@ Gofreight includes a **local-only** database admin panel inspired by phpMyAdmin 
 
 ```bash
 GOFREIGHT_ENV=development go run .
-# Open http://localhost:3000/admin
+# Open http://localhost:5000/admin
 ```
 
 ## Manual mounting
@@ -35,7 +35,7 @@ GOFREIGHT_ENV=development go run .
 app := application.New()
 app.ConnectDatabase()
 app.MountAdmin() // only in development/test
-app.Draw(config.Routes)
+app.Draw(routes.Register)
 app.Run()
 ```
 

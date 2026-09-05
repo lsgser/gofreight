@@ -61,12 +61,26 @@ func TestFactoryMake(t *testing.T) {
 	}
 
 	f := gftest.NewFactory[Article](nil).Define(map[string]any{
-		"title": "Hello",
-		"body":  "World",
+		"title": func() any { return "Hello" },
+		"body":  func() any { return "World" },
 	})
 
 	article := f.Make()
 	if article.Title != "Hello" {
 		t.Fatalf("got title %q", article.Title)
+	}
+}
+
+func TestFactoryLazyAttrs(t *testing.T) {
+	type Article struct {
+		Title string `db:"title"`
+	}
+
+	f := gftest.NewFactory[Article](nil).Define(map[string]any{
+		"title": func() any { return "A" },
+	})
+	a := f.Make(map[string]any{"title": func() any { return "B" }})
+	if a.Title != "B" {
+		t.Fatalf("got title %q", a.Title)
 	}
 }

@@ -1,8 +1,18 @@
-# Gofreight
+<p align="center">
+  <img src="docs/assets/gofreight-logo.png" alt="Gofreight" width="520">
+</p>
 
-**v0.1.0** · [github.com/lsgser/gofreight](https://github.com/lsgser/gofreight)
+<p align="center">
+  <strong>v0.1.0</strong> · <a href="https://github.com/lsgser/gofreight">github.com/lsgser/gofreight</a>
+</p>
 
-A **Ruby on Rails / Laravel-inspired web framework for Go**. Gofreight brings MVC architecture, **Gofreight Templates (GFT)**, ActiveRecord-style models, RESTful routing, code generators, and batteries-included tooling to the Go ecosystem.
+<p align="center">
+  <strong>Gofreight</strong> is a batteries-included web framework for Go — routing, controllers, an ORM, migrations, <strong>Gofreight Templates (GFT)</strong>, CLI, jobs, auth, cache, mail, and tests in one framework.
+</p>
+
+<p align="center">
+  Ship a complete web application as a <strong>single Go binary</strong>.
+</p>
 
 ---
 
@@ -13,11 +23,11 @@ A **Ruby on Rails / Laravel-inspired web framework for Go**. Gofreight brings MV
 - [Project structure](#project-structure)
 - [Setup guide](#setup-guide)
 - [Templating (GFT)](#templating-gofreight-templates-gft)
-- [Generators (Artisan-style)](#generators-artisan-style)
+- [Generators & CLI](#generators--cli)
 - [Routes & controllers](#routes--controllers)
-- [ORM](#orm-activerecord--eloquent)
+- [ORM](#orm)
 - [Database & migrations](#database--migrations)
-- [Testing](#testing-gftest--pest-inspired)
+- [Testing](#testing)
 - [Admin dashboard](#database-admin-local-only)
 - [Integrations](#integrations)
 - [Example app](#example-app)
@@ -28,11 +38,13 @@ A **Ruby on Rails / Laravel-inspired web framework for Go**. Gofreight brings MV
 
 ## Philosophy
 
-- **Convention over configuration** — sensible defaults, minimal boilerplate
-- **Familiar ergonomics** — GFT views, Laravel-style generators, Rails-style routing
-- **MVC architecture** — models, views, controllers with clear separation
-- **RESTful by default** — `resources :posts` generates seven standard routes
-- **Idiomatic Go** — leverages Go's strengths under the hood
+- **Go-first** — stdlib HTTP, explicit types, goroutines, and `go mod` dependencies; compile to one binary
+- **Batteries included** — routing, ORM, views, migrations, CLI, queues, sessions, auth, mail, cache, and tests in one framework
+- **Convention over configuration** — predictable folders, generators, and defaults so you write product code, not plumbing
+- **MVC architecture** — models, views (GFT), and controllers with clear boundaries
+- **RESTful by default** — resource routing generates standard CRUD endpoints
+- **Vendor-neutral** — no bundled payment or SaaS clients; register the integrations your app needs
+- **Production-ready paths** — health checks, graceful shutdown, multi-database support, Redis queues, and Docker examples
 
 ---
 
@@ -55,20 +67,20 @@ cd myapp
 go mod tidy
 
 # 3. Database (SQLite — no server required)
-gofreight db:create      # creates db/development.db
-gofreight db:migrate
+gofreight db:create
+gofreight migrate
 
 # 4. Generate your first resource (optional)
-gofreight make scaffold Post title:string body:text published:boolean
-gofreight db:migrate
+gofreight make:scaffold Post title:string body:text published:boolean
+gofreight migrate
 
 # 5. Run the server
-go run .
+gofreight serve
 ```
 
-Open **http://localhost:3000** — admin at **http://localhost:3000/admin** (development only).
+Open **http://localhost:5000** — admin at **http://localhost:5000/admin** (development only).
 
-New apps ship with `DATABASE_URL=sqlite://db/development.db` in `.env`. No PostgreSQL install needed to get started.
+New apps ship with SQLite via `DB_CONNECTION=sqlite` — the database file is created at `db/development.db` automatically; no database server required.
 
 ---
 
@@ -79,24 +91,36 @@ After `gofreight new myapp`:
 ```bash
 cd myapp
 go mod tidy
-gofreight db:create      # create db/development.db (SQLite)
-gofreight db:migrate     # apply db/migrate/*.sql
-go run .                 # start on http://localhost:3000
+gofreight db:create
+gofreight migrate
+gofreight serve          # or: go run .
 ```
 
 | Command | What it does |
 |---------|----------------|
-| `go run .` | Start the web server (port 3000) |
-| `gofreight watch` | Auto-restart on file changes |
+| `gofreight list` | List all CLI commands by namespace |
+| `gofreight serve` | Start the dev server (`go run .`) |
+| `gofreight dev` | Auto-restart on file changes |
 | `gofreight test` | Run the test suite |
-| `gofreight db:migrate` | Apply pending migrations |
-| `gofreight db:status` | Show migration status |
+| `gofreight migrate` | Apply pending migrations |
+| `gofreight db:seed` | Seed the database |
+| `gofreight make:seeder Name` | Create a Go seeder class |
 
-**Switch to PostgreSQL/MySQL later** — change `DATABASE_URL` in `.env`:
+Full command reference: **[docs/commands.md](docs/commands.md)**
+
+**Switch to PostgreSQL/MySQL later** — in `.env`, set `DB_CONNECTION`, uncomment the host/credential lines, and update `DB_DATABASE`:
 
 ```env
-DATABASE_URL=postgres://localhost/myapp_development?sslmode=disable
+DB_CONNECTION=pgsql
+DB_HOST=127.0.0.1
+DB_PORT=5432
+DB_DATABASE=myapp
+DB_USERNAME=postgres
+DB_PASSWORD=
+DB_SSLMODE=disable
 ```
+
+For MySQL, use `DB_CONNECTION=mysql` and `DB_PORT=3306`.
 
 ---
 
@@ -114,22 +138,25 @@ Full guide: **[docs/project-structure.md](docs/project-structure.md)** — appli
 ```
 myapp/
 ├── main.go                 # Boot Application, draw routes, run
+├── bootstrap/app.go        # Service container, middleware, bindings
+├── routes/
+│   ├── register.go         # Wires web + API routes
+│   ├── web.go              # Browser routes
+│   └── api.go              # JSON API routes
 ├── config/
-│   ├── routes.go           # Routes (like routes.rb / web.php)
+│   ├── app.yaml            # App configuration
 │   └── database.go
 ├── app/
 │   ├── controllers/
 │   ├── models/
-│   └── views/              # GFT templates (.gft)
-│       ├── layouts/
-│       ├── partials/
-│       ├── components/
-│       └── posts/
+│   ├── services/
+│   ├── views/              # GFT templates (.gft)
+│   └── …                   # mail, jobs, middleware, policies, requests
 ├── public/                 # Static files → /assets/*
 ├── db/
 │   ├── migrate/
-│   └── seeds/
-├── storage/uploads/
+│   ├── seeds/
+│   └── seeders/
 └── tests/
 ```
 
@@ -140,20 +167,20 @@ Repository: **[github.com/lsgser/gofreight](https://github.com/lsgser/gofreight)
 
 | Package | Purpose |
 |---------|---------|
-| `application` | App bootstrap, wiring |
+| `application` | App bootstrap, server, wiring |
 | `router` | RESTful routing |
 | `controller` | HTTP controllers |
-| `model` | ORM |
+| `model` | ORM — queries, associations, validations |
 | `view` | Gofreight Templates (GFT) engine |
-| `database` | Migrations, schema |
-| `middleware` | Sessions, CSRF, CORS, auth |
-| `generator` | Code generators |
-| `gftest` | Pest-style testing |
-| `admin` | Dev database dashboard |
-| `integrations` | S3, SMTP, Stripe, Redis |
-| `auth` | Bcrypt, login, policies |
-| `validation` | Request validation |
-| `cache`, `mail`, `jobs` | Infrastructure |
+| `database` | Migrations, schema, seeding |
+| `middleware` | Sessions, CSRF, CORS, auth, locale |
+| `generator` | Code generators (used by CLI) |
+| `gftest` | HTTP and database testing helpers |
+| `admin` | Development database dashboard |
+| `integrations` | Pluggable mail, storage, cache, and custom APIs |
+| `auth` | Passwords, tokens, OAuth, verification |
+| `jobs` | Background jobs (memory or Redis) |
+| `cache`, `mail`, `i18n`, `channels` | Infrastructure |
 
 ---
 
@@ -179,38 +206,39 @@ go mod tidy
 
 ```env
 GOFREIGHT_ENV=development
-PORT=3000
-DATABASE_URL=sqlite://db/development.db
-SECRET_KEY=your-secret-key-here
+PORT=5000
+DB_CONNECTION=sqlite
+APP_KEY=
 ```
+
+Run `gofreight key:generate` to set the application encryption key.
 
 **3. Set up the database**
 
 ```bash
-gofreight db:create      # creates db/development.db
-gofreight db:migrate     # runs db/migrate/*.sql
-gofreight db:status      # shows migration status
-gofreight db:seed        # runs db/seeds/*.sql
+gofreight db:create
+gofreight migrate
+gofreight migrate:status
+gofreight db:seed
 ```
 
 **4. Run the app**
 
 ```bash
-go run .                 # http://localhost:3000
+gofreight serve            # http://localhost:5000
 ```
 
 **5. Generate resources**
 
 ```bash
-# Full CRUD (recommended — like php artisan make:scaffold)
-gofreight make scaffold Post title:string body:text
+gofreight make:scaffold Post title:string body:text
 
 # Or individual pieces:
-gofreight generate model Comment body:text post_id:integer
-gofreight generate controller Comment
-gofreight generate migration add_index_to_posts
-gofreight generate auth
-gofreight db:migrate
+gofreight make:model Comment body:text post_id:integer
+gofreight make:controller Comment
+gofreight make:migration add_index_to_posts
+gofreight make:auth
+gofreight migrate
 ```
 
 **6. Bootstrap in `main.go`**
@@ -218,16 +246,17 @@ gofreight db:migrate
 ```go
 app := application.New()
 app.ConnectDatabase()
-app.Draw(config.Routes)
-app.Run() // loads .gft views, mounts /health, /assets, /admin (dev)
+app.Draw(routes.Register)
+app.Run() // views, /health, /assets, /admin (dev), graceful shutdown
 ```
 
 **7. Development workflow**
 
 ```bash
-gofreight watch          # auto-reload on file changes
-gofreight console        # interactive SQL REPL
-gofreight test           # run test suite
+gofreight dev              # auto-reload on file changes
+gofreight tinker           # interactive SQL REPL
+gofreight test             # run test suite
+gofreight route:list       # inspect route definitions
 ```
 
 **8. Docker (optional)**
@@ -242,7 +271,7 @@ See [docs/deployment.md](docs/deployment.md) for production deployment.
 
 ## Templating (Gofreight Templates — GFT)
 
-**GFT** is Gofreight's native view language — inspired by Laravel and Rails, with its own syntax. See **[docs/templating.md](docs/templating.md)**.
+**GFT** is Gofreight's native view language. It compiles to Go `html/template` at load time — layouts, partials, loops, and conditionals with a syntax designed for Gofreight. See **[docs/templating.md](docs/templating.md)**.
 
 ### Example (`app/views/posts/index.gft`)
 
@@ -294,29 +323,26 @@ See [docs/deployment.md](docs/deployment.md) for production deployment.
 
 ---
 
-## Generators (Artisan-style)
+## Generators & CLI
 
-Gofreight includes Laravel/Rails-inspired generators via the CLI.
+The `gofreight` CLI scaffolds models, controllers, migrations, services, mail, jobs, tests, and full CRUD resources. Run **`gofreight list`** for every command.
 
 ### Commands
 
 ```bash
-# Laravel-style alias
-gofreight make scaffold Post title:string body:text published:boolean
-gofreight make model User email:string
-gofreight make controller Post
-
-# Rails-style
-gofreight generate scaffold Post title:string body:text
-gofreight generate model Post title:string
-gofreight generate controller Post
-gofreight generate migration add_slug_to_posts
-gofreight generate auth
+gofreight make:scaffold Post title:string body:text published:boolean
+gofreight make:model User email:string
+gofreight make:controller Post
+gofreight make:service PaymentProcessing
+gofreight make:seeder DatabaseSeeder
+gofreight make:auth
 ```
 
-### What `scaffold` generates
+Legacy: `gofreight generate …` and `gofreight make …` still work.
 
-Running `gofreight make scaffold Post title:string body:text` creates:
+### What `make:scaffold` generates
+
+Running `gofreight make:scaffold Post title:string body:text` creates:
 
 | File | Description |
 |------|-------------|
@@ -324,9 +350,9 @@ Running `gofreight make scaffold Post title:string body:text` creates:
 | `app/controllers/post_controller.go` | Full REST controller (index, show, new, create, edit, update, destroy) |
 | `app/views/posts/*.gft` | GFT views with layouts |
 | `db/migrate/001_create_posts.sql` | Migration |
-| `tests/post_test.go` | Pest-style tests |
+| `tests/post_test.go` | HTTP tests |
 | `tests/factories/post_factory.go` | Test factory |
-| Updates `config/routes.go` | Registers routes automatically |
+| Updates `routes/web.go` | Registers routes automatically |
 
 ### Field types
 
@@ -354,13 +380,13 @@ Generators accept `name:type` pairs. Full reference: **[docs/generators.md](docs
 
 ```bash
 # Basic
-gofreight make scaffold Post title:string body:text published:boolean views:integer
+gofreight make:scaffold Post title:string body:text published:boolean views:integer
 
 # Enum + JSON + datetime
-gofreight make scaffold Article title:string status:enum:draft,published,archived metadata:json published_at:datetime
+gofreight make:scaffold Article title:string status:enum:draft,published,archived metadata:json published_at:datetime
 
 # Foreign key
-gofreight make scaffold Comment body:text post_id:references:posts
+gofreight make:scaffold Comment body:text post_id:references:posts
 ```
 
 ---
@@ -370,7 +396,8 @@ gofreight make scaffold Comment body:text post_id:references:posts
 ### RESTful routes
 
 ```go
-func Routes(r *router.Router) {
+// routes/web.go
+func Web(r *router.Router) {
     controllers.RegisterPostRoutes(r)
 }
 ```
@@ -399,14 +426,14 @@ func (c PostController) Index(base controller.Base) error {
 
 ---
 
-## ORM (ActiveRecord / Eloquent)
+## ORM
 
-Gofreight includes a full-featured ORM with chainable queries, associations, scopes, and more.
+Gofreight includes a type-safe ORM with chainable queries, associations, scopes, validations, and callbacks — built for Go structs and `context.Context`.
 
 #### Query Builder
 
 ```go
-// Chainable queries (like ActiveRecord::Relation / Eloquent Builder)
+// Chainable queries
 posts, _ := Posts.Query(ctx).
     WhereEq("published", true).
     Where("views", model.OpGt, 100).
@@ -539,21 +566,31 @@ Posts.Upsert(ctx, &post, []string{"slug"})
 
 ## Database & migrations
 
-Supports **SQLite** (default for new apps), **PostgreSQL**, **MySQL**, and **MariaDB** — auto-detected from `DATABASE_URL`:
+Supports **SQLite** (default), **PostgreSQL**, **MySQL**, and **MariaDB**.
 
-```
-DATABASE_URL=sqlite://db/development.db          # default — file in db/
-DATABASE_URL=postgres://localhost/myapp_development?sslmode=disable
-DATABASE_URL=mysql://user:pass@localhost/myapp_development
-DATABASE_URL=mariadb://user:pass@localhost/myapp_development
+Configure with discrete **`DB_*` variables** (recommended) or `DATABASE_URL`:
+
+```env
+# SQLite (default — file path resolved automatically)
+DB_CONNECTION=sqlite
+
+# PostgreSQL
+DB_CONNECTION=pgsql
+DB_HOST=127.0.0.1
+DB_PORT=5432
+DB_DATABASE=myapp
+DB_USERNAME=postgres
+DB_PASSWORD=
+DB_SSLMODE=disable
 ```
 
 ```bash
-gofreight db:create      # Create database (SQLite)
-gofreight db:migrate     # Run pending migrations
-gofreight db:rollback    # Rollback last migration
-gofreight db:status      # Show migration status
-gofreight db:seed        # Run db/seeds/*.sql
+gofreight db:create
+gofreight migrate
+gofreight migrate:rollback
+gofreight migrate:status
+gofreight migrate:fresh --seed
+gofreight db:seed
 ```
 
 Migration files are plain SQL in `db/migrate/`:
@@ -571,7 +608,9 @@ CREATE TABLE posts (
 
 ---
 
-## Testing (gftest — Pest-inspired)
+## Testing
+
+`gftest` provides readable HTTP tests with database setup, factories, and assertions:
 
 ```go
 func TestPosts(t *testing.T) {
@@ -580,7 +619,7 @@ func TestPosts(t *testing.T) {
 
         d.BeforeEach(func(t *testing.T) {
             app = gftest.NewApp(t, gftest.WithDatabase("sqlite://:memory:"))
-            app.Draw(config.Routes)
+            app.Draw(routes.Register)
         })
 
         d.It("lists posts", func(t *testing.T) {
@@ -605,7 +644,7 @@ Built-in database dashboard at `/admin` (development only). Schema management, C
 
 ```bash
 GOFREIGHT_ENV=development ADMIN_PASSWORD=secret go run .
-# http://localhost:3000/admin
+# http://localhost:5000/admin
 ```
 
 See [docs/admin.md](docs/admin.md).
@@ -615,13 +654,16 @@ See [docs/admin.md](docs/admin.md).
 ## Integrations
 
 ```go
-app.ConfigureIntegrations() // auto in Run()
-storage, _ := integrations.AsStorage(integrations.MustGet("storage"))
+app.ConfigureIntegrations() // auto in Run() — wires cache + mail from .env
+
+storage, _ := integrations.ActiveStorage(integrations.OsEnv{})
+email, _ := integrations.ActiveEmail(integrations.OsEnv{})
+
+// Register your own payment, SMS, CRM, or any API — then resolve by category:
+payment, _ := integrations.ActivePayment(integrations.OsEnv{})
 ```
 
-Built-in: S3/R2/MinIO, SMTP/SendGrid, Stripe, Redis, webhooks, analytics.
-
-See [docs/integrations.md](docs/integrations.md) and [.env.example](.env.example).
+The framework ships **no vendor-specific clients** (no Stripe, PayFast, etc.). Register third-party APIs in your app — see [Integrations](docs/integrations.md).
 
 ---
 
@@ -631,9 +673,9 @@ Full blog with GFT views, validations, and tests:
 
 ```bash
 cd examples/blog
-gofreight db:migrate
+gofreight migrate
 GOFREIGHT_ENV=development go run .
-# http://localhost:3000/posts
+# http://localhost:5000/posts
 ```
 
 The blog uses Gofreight Templates:
@@ -656,15 +698,18 @@ The blog uses Gofreight Templates:
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `GOFREIGHT_ENV` | development | `development`, `test`, `production` |
-| `PORT` | 3000 | Server port |
+| `PORT` | 5000 | Server port |
 | `HOST` | 0.0.0.0 | Bind address |
-| `DATABASE_URL` | `sqlite://db/development.db` | SQLite (default), or Postgres/MySQL URL |
-| `SECRET_KEY` | change-me | Session/CSRF secret |
+| `DB_CONNECTION` | `sqlite` | `sqlite`, `pgsql`, `mysql`, `mariadb` |
+| `DB_DATABASE` | `db/development.db` (SQLite) | Database name (Postgres/MySQL/MariaDB); optional for SQLite |
+| `DB_HOST` / `DB_PORT` | — | Server host and port (Postgres/MySQL) |
+| `DB_USERNAME` / `DB_PASSWORD` | — | Credentials (Postgres/MySQL) |
+| `DATABASE_URL` | — | Optional full URL override |
+| `APP_KEY` | (empty) | Application encryption key — run `gofreight key:generate` |
+| `SECRET_KEY` | — | Legacy alias for `APP_KEY` |
 | `ADMIN_PASSWORD` | — | Protect /admin in dev |
-| `REDIS_URL` | — | Redis cache/queues |
-| `MAIL_DRIVER` | log | `log`, `smtp`, `sendgrid` |
 
-Full list: [.env.example](.env.example)
+Integration variables (`SESSION_DRIVER`, `QUEUE_CONNECTION`, `CACHE_STORE`, `FILESYSTEM_DISK`, `MAIL_MAILER`, `REDIS_HOST`, `AWS_*`, …): see [.env.example](.env.example).
 
 ---
 
@@ -672,14 +717,17 @@ Full list: [.env.example](.env.example)
 
 | Guide | Description |
 |-------|-------------|
-| [docs/generators.md](docs/generators.md) | Scaffold commands & field types |
-| [docs/project-structure.md](docs/project-structure.md) | Application vs framework layout |
 | [docs/README.md](docs/README.md) | Documentation index |
 | [docs/getting-started.md](docs/getting-started.md) | Detailed setup |
+| [docs/commands.md](docs/commands.md) | Full CLI reference |
+| [docs/generators.md](docs/generators.md) | Generators & field types |
+| [docs/project-structure.md](docs/project-structure.md) | Application vs framework layout |
+| [docs/features.md](docs/features.md) | Sessions, queues, API, i18n, channels |
 | [docs/templating.md](docs/templating.md) | GFT reference |
-| [docs/admin.md](docs/admin.md) | Database admin |
-| [docs/integrations.md](docs/integrations.md) | Cloud services |
+| [docs/orm.md](docs/orm.md) | Models, queries, associations |
 | [docs/testing.md](docs/testing.md) | gftest guide |
+| [docs/integrations.md](docs/integrations.md) | Pluggable services |
+| [docs/admin.md](docs/admin.md) | Database admin |
 | [docs/deployment.md](docs/deployment.md) | Docker & production |
 | [docs/security.md](docs/security.md) | Auth & security |
 
@@ -688,16 +736,20 @@ Full list: [.env.example](.env.example)
 ## Roadmap
 
 - [x] Gofreight Templates (GFT) engine
-- [x] Laravel-style generators (`make scaffold`)
-- [x] Database migration runner CLI
+- [x] Full CLI with generators (`make:*`, migrations, seeders, queues)
+- [x] Database migration runner
 - [x] Validations and callbacks on models
-- [x] Middleware stack (CSRF, sessions, CORS, rate limit)
-- [x] Testing helpers (`gofreight test`)
+- [x] Middleware stack (CSRF, sessions, CORS, rate limit, locale)
+- [x] Testing helpers (`gftest`, factories)
 - [x] Multi-database support (Postgres, SQLite, MySQL, MariaDB)
-- [x] Database admin dashboard
-- [x] Integrations registry
-- [x] Auth package (bcrypt, login, policies)
-- [x] Production: health check, Docker, structured logging
+- [x] Development database admin
+- [x] Integrations registry (vendor-neutral)
+- [x] Auth (bcrypt, tokens, OAuth, email verification)
+- [x] Redis sessions & job queues with retries
+- [x] Migration blueprint DSL
+- [x] API resources, form requests, mailables
+- [x] i18n, YAML config, HTTP/fragment cache, WebSocket channels
+- [x] Service container, split routes, failed job handling
 
 ## License
 

@@ -2,7 +2,7 @@
 
 Gofreight involves **two different trees**:
 
-1. **The Gofreight framework** — a Go library and CLI ([github.com/lsgser/gofreight](https://github.com/lsgser/gofreight)). You install it; you do not copy it into your app.
+1. **The Gofreight framework** — a Go library and CLI ([github.com/lsgser/gofreight](https://github.com/lsgser/gofreight)). You install it via `go mod`; you do not copy it into your app.
 2. **Your application** — a separate project directory created with `gofreight new`. This is where your product code lives.
 
 When you run `gofreight new myapp`, a new folder `myapp/` is created **in your current working directory**. That folder is your app. It is not nested inside the framework repo unless you choose to create it there.
@@ -14,65 +14,72 @@ When you run `gofreight new myapp`, a new folder `myapp/` is created **in your c
 This is the canonical layout every generated app follows. Paths below are **fixed conventions** — the framework looks for views in `app/views`, static files in `public`, migrations in `db/migrate`, and so on.
 
 ```
-myapp/                              # Go module root (module name = folder name by default)
-├── main.go                         # Entry point — boot Application, draw routes, run server
-├── go.mod                          # Depends on github.com/lsgser/gofreight
-├── .env                            # Local secrets (gitignored)
-├── .env.example                    # Committed template for environment variables
+myapp/
+├── main.go
+├── go.mod
+├── .env
+├── .env.example
 ├── .gitignore
 │
-├── config/                         # App configuration (not framework config)
-│   ├── routes.go                   # Route map — like routes.rb or routes/web.php
-│   └── database.go                 # Optional: programmatic migration runner
+├── bootstrap/
+│   └── app.go                      # Service container, middleware, bindings
 │
-├── app/                            # Application code (MVC)
-│   ├── controllers/                # HTTP handlers
-│   │   ├── home_controller.go
-│   │   └── post_controller.go
-│   ├── models/                     # ORM models + validations
-│   │   └── post.go
-│   └── views/                      # Gofreight Templates (.gft)
-│       ├── layouts/
-│       │   └── application.gft     # Default layout
-│       ├── partials/
-│       │   └── flash.gft           # Reusable fragments (#partial)
-│       ├── components/             # Optional UI building blocks (partials convention)
-│       ├── home/
-│       │   └── index.gft
-│       └── posts/                  # One folder per resource
-│           ├── index.gft
-│           ├── show.gft
-│           ├── new.gft
-│           └── edit.gft
+├── routes/                         # HTTP route definitions
+│   ├── register.go                 # Wires web + API
+│   ├── web.go                      # Browser routes
+│   └── api.go                      # JSON API routes
 │
-├── public/                         # Static assets served at /assets/*
-│   └── app.css
+├── config/
+│   ├── database.go
+│   ├── app.yaml
+│   └── locales/
 │
-├── db/
-│   ├── migrate/                    # SQL migrations (001_create_posts.sql, …)
-│   └── seeds/                      # Seed SQL run via gofreight db:seed
+├── app/
+│   ├── controllers/
+│   ├── models/
+│   ├── services/
+│   ├── resources/
+│   ├── mail/
+│   ├── jobs/
+│   ├── middleware/
+│   ├── policies/
+│   ├── requests/
+│   └── views/
 │
+├── public/
+├── db/migrate/
+├── db/seeds/
+├── db/seeders/
+├── cmd/seed/                       # Go seeder runner (created by make:seeder)
 ├── storage/
-│   └── uploads/                    # Local file uploads (development)
-│
-└── tests/                          # Integration / HTTP tests (gftest)
-    ├── example_test.go
-    └── factories/
-        └── factories.go            # Test data factories
+└── tests/
 ```
 
 ### What each layer does
 
-| Path | Role | Rails / Laravel analogue |
-|------|------|---------------------------|
-| `main.go` | Bootstraps `application.New()`, DB, routes | `config.ru` / `public/index.php` |
-| `config/routes.go` | URL → controller mapping | `config/routes.rb` / `routes/web.php` |
-| `app/controllers/` | Request/response logic | `app/controllers/` |
-| `app/models/` | Data, validations, associations | `app/models/` |
-| `app/views/` | GFT templates | `app/views/` |
-| `public/` | CSS, JS, images | `public/` |
-| `db/migrate/` | Schema changes | `db/migrate/` |
-| `tests/` | HTTP + DB tests | `spec/` / `tests/` |
+| Path | Role |
+|------|------|
+| `main.go` | Entry point — bootstraps `application.New()`, DB, routes, server |
+| `bootstrap/app.go` | Application wiring, service container, middleware registration |
+| `routes/web.go` | Browser URL mapping |
+| `routes/api.go` | JSON API URL mapping |
+| `routes/register.go` | Combines web and API route groups |
+| `app/controllers/` | HTTP request handlers (`doc.go` explains the folder) |
+| `app/models/` | Data layer — structs, validations, associations |
+| `app/services/` | Business logic (keep controllers thin) |
+| `app/resources/` | API JSON serializers |
+| `app/mail/` | Mailable email classes |
+| `app/jobs/` | Background job handlers |
+| `app/middleware/` | Application HTTP middleware |
+| `app/policies/` | Authorization policies |
+| `app/requests/` | Form request validation |
+| `app/views/` | GFT templates (`.gft`) |
+| `config/` | YAML config, locales, database helpers |
+| `public/` | Static assets (CSS, JS, images) |
+| `db/migrate/` | SQL schema migrations |
+| `db/seeds/` | SQL seed files |
+| `db/seeders/` | Go seeder classes |
+| `tests/` | HTTP and integration tests |
 
 ### Hard-coded paths the framework expects
 
@@ -80,9 +87,9 @@ These paths are wired in `application.New()` and related packages:
 
 | Concern | Path | Override |
 |---------|------|----------|
-| Views | `app/views` | `view.New("app/views")` in Application (customize in bootstrap if needed) |
+| Views | `app/views` | Customize in bootstrap if needed |
 | Static assets | `public` | `assets.New("public")` |
-| Migrations | `db/migrate/*.sql` | CLI `gofreight db:migrate` |
+| Migrations | `db/migrate/*.sql` | CLI `gofreight migrate` |
 | Uploads (local) | `storage/uploads` | Upload config |
 | Environment | `.env` in module root | Loaded via `godotenv` at startup |
 
@@ -94,20 +101,23 @@ Keep these names unless you intentionally change bootstrap code.
 
 | I want to… | Put it here |
 |------------|-------------|
-| Add a page or API endpoint | `config/routes.go` + new method in `app/controllers/` |
-| Add a database table | `gofreight make migration …` → `db/migrate/` + model in `app/models/` |
+| Add a page or API endpoint | `routes/web.go` or `routes/api.go` + controller in `app/controllers/` |
+| Add business logic | `gofreight make:service OrderProcessing` → `app/services/` |
+| Add a database table | `gofreight make:migration …` → `db/migrate/` + model in `app/models/` |
 | Add HTML | `app/views/<resource>/` as `.gft` files |
 | Share markup across views | `app/views/partials/` or `app/views/components/` |
 | Add CSS/JS | `public/` (served under `/assets/`) |
-| Add background work | Enqueue in controller; worker runs via Application |
+| Add background work | Job in `app/jobs/`; worker via `queue:work` or Application |
 | Add tests | `tests/` with `gftest` |
-| Add seed data | `db/seeds/*.sql` |
-| Configure services (S3, Stripe, …) | `.env` — see [Integrations](integrations.md) |
+| Add seed data | `db/seeds/*.sql` or `gofreight make:seeder` → `db/seeders/` |
+| Configure services (mail, storage, custom APIs) | `.env` — see [Integrations](integrations.md) |
 
 ### Generators keep structure consistent
 
 ```bash
-gofreight make scaffold Post title:string body:text
+gofreight make:scaffold Post title:string body:text
+gofreight make:service PaymentProcessing
+gofreight make:api Post title:string
 ```
 
 Creates, in the right places:
@@ -116,9 +126,12 @@ Creates, in the right places:
 - `app/controllers/post_controller.go`
 - `app/views/posts/*.gft`
 - `db/migrate/NNN_create_posts.sql`
-- Route registration snippet for `config/routes.go`
+- `app/services/payment_processing_service.go` (service generator)
+- Route registration snippet for `routes/web.go`
 
-You should not need to invent folder names — use generators and match existing resources.
+Use generators and match existing resources — you should not need to invent folder names.
+
+Each `app/*` directory includes a **`doc.go`** file with block comments explaining the folder's purpose and the relevant `gofreight make:*` commands — similar to guided defaults in a new project scaffold.
 
 ---
 
@@ -128,7 +141,7 @@ If you clone [github.com/lsgser/gofreight](https://github.com/lsgser/gofreight),
 
 ```
 gofreight/                          # Framework module (library)
-├── cmd/gofreight/                  # CLI binary (gofreight new, db:migrate, make, …)
+├── cmd/gofreight/                  # CLI (gofreight new, migrate, make:*, …)
 ├── application/                    # App bootstrap, server, wiring
 ├── router/                         # RESTful routing
 ├── controller/                     # Base controller, RenderView, JSON helpers
@@ -139,9 +152,9 @@ gofreight/                          # Framework module (library)
 ├── generator/                      # Code generators (used by CLI)
 ├── gftest/                         # Testing helpers
 ├── admin/                          # Development database dashboard
-├── auth/                           # Passwords, login, policies
+├── auth/                           # Passwords, tokens, OAuth, verification
 ├── validation/                     # Request validation
-├── integrations/                   # S3, SMTP, Stripe, Redis, webhooks
+├── integrations/                   # Pluggable registry; SMTP, S3, Redis connectors
 ├── cache/, mail/, jobs/, upload/   # Infrastructure
 ├── assets/, health/, plugins/, dev/
 ├── docs/                           # Documentation (you are here)
@@ -166,7 +179,8 @@ The blog under `examples/blog/` uses **the same layout** as a generated app. Use
 ```
 examples/blog/
 ├── main.go
-├── config/routes.go
+├── bootstrap/app.go
+├── routes/
 ├── app/controllers/
 ├── app/models/
 ├── app/views/
@@ -243,22 +257,23 @@ The framework repo includes `Dockerfile` and `docker-compose.yml` as **examples 
 │                                                           │
 │  ~/projects/shop/          ← your app (gofreight new)     │
 │    app/ controllers models views                        │
-│    config/ db/ public/ tests/                           │
+│    routes/ config/ db/ public/ tests/                   │
 │         │                                                 │
-│         │  import                                         │
+│         │  go.mod import                                │
 │         ▼                                                 │
 │  Go module cache / github.com/lsgser/gofreight        │
 │    router, model, view, application, …                    │
 └─────────────────────────────────────────────────────────┘
 ```
 
-Your app is a **thin MVC shell**. Gofreight is the **engine** imported as a dependency — similar to how a Rails app lives in one folder and loads the `rails` gem from RubyGems.
+Your app is a **thin MVC shell**. Gofreight is the **engine** imported as a Go module dependency — the same pattern as importing any other library, but with a full web stack built in.
 
 ---
 
 ## See also
 
 - [Getting Started](getting-started.md) — create and run your first app
+- [CLI commands](commands.md) — full command reference
 - [Templating](templating.md) — GFT views under `app/views/`
 - [Testing](testing.md) — tests under `tests/`
 - [Main README](../README.md) — quick reference

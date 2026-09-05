@@ -1,0 +1,39 @@
+{# View: home/index — rendered by the / route in routes/web.go #}
+#layout "layouts.application"
+
+#slot "title"
+{= .Name } — Welcome
+#endslot
+
+#slot "content"
+<section class="hero">
+  <p class="eyebrow">Powered by Gofreight</p>
+  <h1>Welcome to {= .Name }</h1>
+  <p class="lead">Your Go web application is ready. Start building routes, models, and views — then ship it as a single binary.</p>
+  <div class="hero-actions">
+    <a class="btn btn-primary" href="https://github.com/lsgser/gofreight/tree/main/docs">Read the docs</a>
+    <a class="btn btn-secondary" href="/admin">Open admin</a>
+  </div>
+</section>
+
+<section class="steps">
+  <h2>Get started</h2>
+  <div class="step-grid">
+    <article class="step-card">
+      <span class="step-num">1</span>
+      <h3>Generate a resource</h3>
+      <p><code>gofreight make:scaffold Post title:string body:text</code></p>
+    </article>
+    <article class="step-card">
+      <span class="step-num">2</span>
+      <h3>Run migrations</h3>
+      <p><code>gofreight migrate</code></p>
+    </article>
+    <article class="step-card">
+      <span class="step-num">3</span>
+      <h3>Customize this page</h3>
+      <p>Edit <code>app/views/home/index.gft</code> and <code>public/app.css</code></p>
+    </article>
+  </div>
+</section>
+#endslot

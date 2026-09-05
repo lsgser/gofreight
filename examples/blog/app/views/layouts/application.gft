@@ -7,13 +7,23 @@
   <link rel="stylesheet" href="/assets/app.css">
 </head>
 <body>
-  <header>
-    <h1><a href="/">Gofreight Blog</a></h1>
-    <nav>
-      <a href="/">Home</a>
-      <a href="/posts">Posts</a>
-    </nav>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="/">Gofreight Blog</a>
+      <div class="header-right">
+        <nav>
+          <a href="/">Home</a>
+          <a href="/posts">Posts</a>
+        </nav>
+        <span class="framework-badge">Gofreight</span>
+      </div>
+    </div>
   </header>
-  <main>#place "content"</main>
+  <main class="container">#place "content"</main>
+  <footer class="site-footer">
+    <div class="container">
+      <small>Built with <strong>Gofreight</strong> — example application</small>
+    </div>
+  </footer>
 </body>
 </html>

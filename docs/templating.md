@@ -1,6 +1,6 @@
 # Gofreight Templates (GFT)
 
-**Gofreight Templates** (`.gft`) is Gofreight's native view language. It takes inspiration from Laravel and Rails ergonomics — layouts, partials, loops, conditionals — but uses its **own syntax and naming**. GFT compiles to Go `html/template` at load time.
+**Gofreight Templates** (`.gft`) is Gofreight's native view language. It provides layouts, partials, loops, conditionals, and CSRF helpers with its **own syntax**, and compiles to Go `html/template` at load time.
 
 ## File extension
 
@@ -159,17 +159,17 @@ return base.RenderPartial("partials.flash", data)
 
 ## Design philosophy
 
-GFT is **not** Blade or ERB. It is Gofreight's own language:
+GFT is Gofreight's own view language — not a port of another template engine. Directives use a `#` prefix; output uses `{= }` (escaped) and `{! !}` (raw).
 
-| Concept | GFT | Inspired by |
-|---------|-----|-------------|
-| Layout inheritance | `#layout` | Laravel `@extends` |
-| Content regions | `#slot` / `#place` | `@section` / `@yield` |
-| Partials | `#partial` | `@include` |
-| Conditionals | `#when` / `#endwhen` | `@if` / `@endif` |
-| Loops | `#each` / `#endeach` | `@foreach` |
-| Empty fallback | `#eachor` / `#otherwise` | `@forelse` |
-| CSRF | `#token` | `@csrf` |
-| Output | `{= }` / `{! !}` | `{{ }}` / `{!! !!}` |
+| Concept | GFT directive |
+|---------|---------------|
+| Layout inheritance | `#layout` |
+| Content regions | `#slot` / `#place` |
+| Partials | `#partial` |
+| Conditionals | `#when` / `#endwhen` |
+| Loops | `#each` / `#endeach` |
+| Empty fallback | `#eachor` / `#otherwise` |
+| CSRF | `#token` |
+| Output | `{= }` / `{! !}` |
 
-The `#` prefix and `{= }` output delimiters keep GFT visually distinct while remaining easy to learn if you know Laravel or Rails.
+GFT is designed to be readable on its own while fitting naturally into Go projects that already use `html/template` under the hood.

@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"testing"
 
-	"blog/config"
+	"blog/routes"
 	"blog/tests/factories"
 	"github.com/lsgser/gofreight/gftest"
 )
@@ -32,7 +32,7 @@ func newTestApp(t *testing.T) *gftest.App {
 		gftest.WithMigrations(postsMigration),
 		gftest.WithViewsRoot("../app/views"),
 	)
-	app.Draw(config.Routes)
+	app.Draw(routes.Register)
 	return app
 }
 
@@ -46,7 +46,7 @@ func TestPostsSuite(t *testing.T) {
 				gftest.WithMigrations(postsMigration),
 				gftest.WithViewsRoot("../app/views"),
 			)
-			app.Draw(config.Routes)
+			app.Draw(routes.Register)
 		})
 
 		d.It("lists posts as HTML", func(t *testing.T) {
@@ -84,7 +84,7 @@ func TestHomeSuite(t *testing.T) {
 	gftest.Describe(t, "Home", func(d *gftest.DescribeContext) {
 		d.It("renders the welcome page", func(t *testing.T) {
 			app := newTestApp(t)
-			app.Get("/").AssertOk().AssertSee("Welcome to Gofreight")
+			app.Get("/").AssertOk().AssertSee("Powered by Gofreight")
 		})
 	})
 }
@@ -96,7 +96,8 @@ func TestFactories(t *testing.T) {
 
 		post := factories.PostFactory.Create(t)
 		gftest.Expect(post.ID).Bind(t).ToBeGreaterThan(0)
-		gftest.Expect(post.Title).Bind(t).ToEqual("Test Post")
+		gftest.Expect(post.Title).Bind(t).Not().ToBeEmpty()
+		gftest.Expect(post.Body).Bind(t).Not().ToBeEmpty()
 	})
 
 	gftest.Test(t, "post factory create many", func(t *testing.T) {

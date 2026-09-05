@@ -9,6 +9,6 @@ FROM alpine:3.20
 RUN apk add --no-cache ca-certificates
 WORKDIR /app
 COPY --from=builder /gofreight /usr/local/bin/gofreight
-EXPOSE 3000
+EXPOSE 5000
 ENV GOFREIGHT_ENV=production
 CMD ["gofreight"]

@@ -42,63 +42,73 @@ New apps use **SQLite by default** — no database server to install.
 gofreight new myapp
 cd myapp
 go mod tidy
-gofreight db:create      # creates db/development.db
-gofreight db:migrate     # runs db/migrate/*.sql
-go run .                 # http://localhost:3000
+gofreight db:create
+gofreight migrate
+gofreight serve          # http://localhost:5000
 ```
 
-Visit **http://localhost:3000**. In development, the database admin is at **http://localhost:3000/admin**.
+Visit **http://localhost:5000**. In development, the database admin is at **http://localhost:5000/admin**.
 
 ### `.env` defaults (created by `gofreight new`)
 
 ```env
+APP_NAME=myapp
 GOFREIGHT_ENV=development
-PORT=3000
-DATABASE_URL=sqlite://db/development.db
-SECRET_KEY=change-me-in-production
+PORT=5000
+DB_CONNECTION=sqlite
+APP_KEY=
 ```
 
-To use PostgreSQL or MySQL instead, change `DATABASE_URL` in `.env` and ensure the server is running before `gofreight db:migrate`.
+Run `gofreight key:generate` after scaffolding to set a unique encryption key.
 
-See **[Project structure](project-structure.md)** for the full application layout, where each kind of file belongs, and how the framework repo differs from your app.
+See `.env.example` for all variables. SQLite uses `db/development.db` by default — no `DB_DATABASE` line needed. For PostgreSQL, MySQL, or MariaDB, set `DB_CONNECTION` and uncomment `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME`, and `DB_PASSWORD` (use port `5432` for PostgreSQL or `3306` for MySQL/MariaDB).
+
+See **[Project structure](project-structure.md)** for the full application layout and how the framework module differs from your app.
 
 ## Application bootstrap
 
 ```go
 app := application.New()
 app.ConnectDatabase()
-app.ConfigureIntegrations() // optional: load S3, Stripe, etc. from env
-app.Draw(config.Routes)
+app.ConfigureIntegrations() // optional: wire mail, cache, storage from .env
+app.Draw(routes.Register)   // web + API routes
 app.Run()
 ```
 
-`Run()` automatically mounts assets, the admin panel (development only), and configures integrations from environment variables.
+`Run()` mounts static assets, the admin panel (development only), health checks, and graceful shutdown.
 
 ## Generate code
 
 ```bash
-gofreight make scaffold Post title:string body:text published:boolean
-gofreight db:migrate
+gofreight make:scaffold Post title:string body:text published:boolean
+gofreight migrate
 ```
 
 Field types (`string`, `text`, `integer`, `boolean`, `enum`, `json`, `datetime`, `references`, …): see **[Generators & field types](generators.md)**.
 
-Or individual generators:
+Individual generators:
 
 ```bash
-gofreight generate model Post title:string body:text published:boolean
-gofreight generate controller Post
-gofreight generate migration add_slug_to_posts
-gofreight db:migrate
+gofreight make:model Post title:string body:text published:boolean
+gofreight make:controller Post
+gofreight make:migration add_slug_to_posts
+gofreight make:seeder DatabaseSeeder
+gofreight migrate
 ```
+
+Run **`gofreight list`** for the complete CLI. See **[CLI commands](commands.md)**.
 
 ## Environment variables
 
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `GOFREIGHT_ENV` | development | `development`, `test`, or `production` |
-| `PORT` | 3000 | HTTP port |
-| `DATABASE_URL` | `sqlite://db/development.db` | SQLite, PostgreSQL, MySQL, or MariaDB URL |
-| `SECRET_KEY` | change-me | Session and CSRF secret |
+| `PORT` | 5000 | HTTP port |
+| `APP_URL` | http://localhost:5000 | Public application URL |
+| `DB_CONNECTION` | sqlite | Database driver |
+| `DB_DATABASE` | db/development.db (SQLite) | Database name for Postgres/MySQL/MariaDB; optional for SQLite |
+| `APP_KEY` | (empty) | Application encryption key — run `gofreight key:generate` |
 
-See [Integrations](integrations.md) for third-party service configuration.
+Optional integration keys match `.env.example`: `SESSION_DRIVER`, `QUEUE_CONNECTION`, `CACHE_STORE`, `FILESYSTEM_DISK`, `MAIL_MAILER`, `REDIS_HOST`, `AWS_*`, etc.
+
+See [Integrations](integrations.md) for configuring mail, storage, cache, and custom API drivers via environment variables.

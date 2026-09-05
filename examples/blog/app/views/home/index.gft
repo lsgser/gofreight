@@ -1,0 +1,38 @@
+#layout "layouts.application"
+
+#slot "title"
+Gofreight Blog — Example App
+#endslot
+
+#slot "content"
+<section class="hero">
+  <p class="eyebrow">Powered by Gofreight</p>
+  <h1>Gofreight Blog</h1>
+  <p class="lead">A working example application — posts, migrations, factories, and feature tests included.</p>
+  <div class="hero-actions">
+    <a class="btn btn-primary" href="/posts">Browse posts</a>
+    <a class="btn btn-secondary" href="https://github.com/lsgser/gofreight/tree/main/docs">Read the docs</a>
+  </div>
+</section>
+
+<section class="steps">
+  <h2>Explore this example</h2>
+  <div class="step-grid">
+    <article class="step-card">
+      <span class="step-num">1</span>
+      <h3>CRUD posts</h3>
+      <p>See <code>app/controllers/post_controller.go</code> and GFT views under <code>app/views/posts/</code></p>
+    </article>
+    <article class="step-card">
+      <span class="step-num">2</span>
+      <h3>Run the tests</h3>
+      <p><code>gofreight test</code> from the blog directory</p>
+    </article>
+    <article class="step-card">
+      <span class="step-num">3</span>
+      <h3>Start your own app</h3>
+      <p><code>gofreight new myapp</code> to scaffold a fresh project</p>
+    </article>
+  </div>
+</section>
+#endslot

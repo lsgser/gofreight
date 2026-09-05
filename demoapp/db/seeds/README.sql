@@ -1,0 +1,11 @@
+-- --------------------------------------------------------------------------
+-- Database Seed Files (SQL)
+-- --------------------------------------------------------------------------
+--
+-- Place .sql files in this directory. They run in alphabetical order when
+-- you execute:
+--
+--   gofreight db:seed
+--
+-- For Go-based seeders, use db/seeders/ and gofreight make:seeder.
+--

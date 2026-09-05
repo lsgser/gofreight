@@ -1,9 +1,10 @@
 package integrations
 
 import (
-	"os"
+	"strings"
 
 	"github.com/lsgser/gofreight/cache"
+	"github.com/lsgser/gofreight/config"
 	"github.com/lsgser/gofreight/mail"
 )
 
@@ -15,7 +16,7 @@ type Services struct {
 
 // BuildServices creates cache and mailer from configured integrations.
 func BuildServices(env EnvReader) (*Services, error) {
-	if err := ConfigureAll(env); err != nil {
+	if err := BootProviders(env); err != nil {
 		return nil, err
 	}
 
@@ -24,34 +25,32 @@ func BuildServices(env EnvReader) (*Services, error) {
 		Mail:  mail.NewLogMailer(),
 	}
 
-	if r, ok := Get("redis"); ok {
-		if redis, ok := r.(*Redis); ok && redis.Enabled() {
+	if config.ResolveCacheStore() == "redis" {
+		if redis, ok := ActiveRedis(env); ok {
 			if store, err := cache.NewRedis(redis.URL, "gofreight:"); err == nil {
 				svc.Cache = store
 			}
 		}
 	}
 
-	if e, ok := Get("email"); ok {
-		if em, ok := e.(*Email); ok && em.Enabled() {
-			switch em.Provider {
-			case "sendgrid":
-				svc.Mail = mail.NewSendGrid(em.APIKey, em.From)
-			default:
-				svc.Mail = mail.NewSMTP(
-					em.Host,
-					env.Get("SMTP_PORT"),
-					env.Get("SMTP_USER"),
-					env.Get("SMTP_PASSWORD"),
-					em.From,
-				)
-			}
-		}
+	mailer := strings.ToLower(envGet(env, "MAIL_MAILER", "MAIL_DRIVER"))
+	if mailer == "log" || mailer == "" {
+		return svc, nil
 	}
 
-	// Allow explicit mail override via env
-	if os.Getenv("MAIL_DRIVER") == "log" {
-		svc.Mail = mail.NewLogMailer()
+	if em, ok := ActiveEmail(env); ok {
+		switch em.Provider {
+		case "sendgrid":
+			svc.Mail = mail.NewSendGrid(em.APIKey, em.From)
+		default:
+			svc.Mail = mail.NewSMTP(
+				em.Host,
+				envGet(env, "MAIL_PORT", "SMTP_PORT"),
+				envGet(env, "MAIL_USERNAME", "SMTP_USER"),
+				envGet(env, "MAIL_PASSWORD", "SMTP_PASSWORD"),
+				em.From,
+			)
+		}
 	}
 
 	return svc, nil

@@ -17,25 +17,81 @@ const (
 // Config holds application-wide configuration, loaded from environment variables.
 type Config struct {
 	Environment Environment
+	AppName     string
+	AppURL      string
+	AppDebug    bool
 	Host        string
 	Port        int
-	DatabaseURL string
-	SecretKey   string
+	Database    DatabaseConfig
+	DatabaseURL string // resolved URL for database.Connect
+	AppKey      string // application encryption/signing key (APP_KEY)
+	SecretKey   string // deprecated alias of AppKey (SECRET_KEY env)
 	LogLevel    string
+	LogChannel  string
 }
 
-// Load reads configuration from environment variables with sensible defaults.
+// Load reads configuration from config files and environment variables.
 func Load() *Config {
-	port, _ := strconv.Atoi(getEnv("PORT", "3000"))
+	env := Environment(getEnv("GOFREIGHT_ENV", getEnv("APP_ENV", "development")))
+	if env == "local" {
+		env = Development
+	}
+	files := LoadFiles(env)
+	files.ApplyEnv(map[string]string{
+		"PORT":       "port",
+		"HOST":       "host",
+		"APP_KEY":    "app_key",
+		"SECRET_KEY": "secret_key",
+		"LOG_LEVEL":  "log_level",
+		"APP_NAME":   "app_name",
+		"APP_URL":    "app_url",
+	})
+
+	port, _ := strconv.Atoi(getEnv("PORT", "5000"))
+	if files.GetInt("port", 0) > 0 && getEnv("PORT", "") == "" {
+		port = files.GetInt("port", port)
+	}
+	if port == 0 {
+		port = DefaultPort
+	}
+
+	db := LoadDatabaseConfig(files)
+	appURL := files.GetString("app_url", getEnv("APP_URL", ""))
+	if appURL == "" {
+		appURL = DefaultAppURL()
+	}
+
+	appKey := ResolveAppKey(files)
 
 	return &Config{
-		Environment: Environment(getEnv("GOFREIGHT_ENV", "development")),
-		Host:        getEnv("HOST", "0.0.0.0"),
+		Environment: env,
+		AppName:     files.GetString("app_name", getEnv("APP_NAME", "Gofreight")),
+		AppURL:      appURL,
+		AppDebug:    getEnv("APP_DEBUG", "true") == "true",
+		Host:        files.GetString("host", getEnv("HOST", "0.0.0.0")),
 		Port:        port,
-		DatabaseURL: getEnv("DATABASE_URL", "sqlite://db/development.db"),
-		SecretKey:   getEnv("SECRET_KEY", "change-me-in-production"),
-		LogLevel:    getEnv("LOG_LEVEL", "info"),
+		Database:    db,
+		DatabaseURL: ResolveDatabaseURL(files),
+		AppKey:      appKey,
+		SecretKey:   appKey,
+		LogLevel:    files.GetString("log_level", getEnv("LOG_LEVEL", "info")),
+		LogChannel:  getEnv("LOG_CHANNEL", "stack"),
 	}
+}
+
+// Timezone returns the app timezone (override via DEFAULT_TIMEZONE).
+func (c *Config) Timezone() string {
+	return getEnv("DEFAULT_TIMEZONE", "UTC")
+}
+
+// Currency returns the default ISO 4217 currency code (override via DEFAULT_CURRENCY).
+func (c *Config) Currency() string {
+	return getEnv("DEFAULT_CURRENCY", "USD")
+}
+
+// Locale returns the default locale tag (override via DEFAULT_LOCALE).
+func (c *Config) Locale() string {
+	return getEnv("DEFAULT_LOCALE", "en")
 }
 
 func (c *Config) IsDevelopment() bool { return c.Environment == Development }

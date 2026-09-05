@@ -1,6 +1,6 @@
 # Testing
 
-Gofreight ships with `gftest`, a Pest/Jest-inspired testing library.
+Gofreight ships with `gftest`, a testing library for HTTP endpoints and database-backed features.
 
 ## Running tests
 
@@ -10,7 +10,7 @@ go test ./...               # standard Go
 cd examples/blog && go test ./...
 ```
 
-## Pest-style syntax
+## Describe / It syntax
 
 ```go
 gftest.Describe("Posts", func() {
@@ -38,7 +38,7 @@ gftest.Expect(err).ToBeNil()
 ```go
 app := gftest.NewApp(t,
     gftest.WithMigrations(migrationSQL),
-    gftest.WithRoutes(config.Routes),
+    gftest.WithRoutes(routes.Register),
 )
 app.Get("/posts").AssertOk().AssertSee("Title")
 app.Post("/posts", body).AssertRedirect("/posts/1")
@@ -46,10 +46,40 @@ app.Post("/posts", body).AssertRedirect("/posts/1")
 
 ## Factories and fakes
 
+Factories use **`gftest/faker`** for random defaults (like Laravel Faker). Values are generated fresh on each `Create` via lazy attributes:
+
 ```go
-post := factories.Post(t, map[string]any{"title": "Test"})
-gftest.UseFakeMailer()
-gftest.UseFakeCache()
+import (
+    "github.com/lsgser/gofreight/gftest/faker"
+)
+
+post := factories.CreatePost(t) // random title + body
+user := factories.CreateUser(t, map[string]any{"email": "fixed@example.com"})
+```
+
+Generate a factory with faker wired in:
+
+```bash
+gofreight make:factory Post
+gofreight make:scaffold Article title:string body:text  # includes faker factory
+```
+
+Manual factory example:
+
+```go
+var UserFactory = gftest.NewFactory(models.Users).Define(map[string]any{
+    "name":  faker.Lazy(func() any { return faker.Name() }),
+    "email": faker.Lazy(func() any { return faker.Email() }),
+})
+```
+
+Faker helpers: `Name`, `Email`, `Sentence`, `Paragraph`, `URL`, `UUID`, `Date`, `DateTime`, `Int`, `Bool`, and more — see `gftest/faker/`.
+
+Service fakes (mail, cache, queue):
+
+```go
+gftest.UseFakes()
+gftest.AssertMailSent(t, 1)
 ```
 
 ## Database assertions

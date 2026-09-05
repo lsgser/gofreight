@@ -214,11 +214,11 @@ func writeResourceTest(appPath string, data ResourceData) error {
 }
 
 func appendRouteRegistration(appPath string, data ResourceData) error {
-	path := filepath.Join(appPath, "config", "routes.go")
+	path := filepath.Join(appPath, "routes", "web.go")
 	content, err := os.ReadFile(path)
 	if err != nil {
 		snippet := fmt.Sprintf("\n\tcontrollers.Register%sRoutes(r)\n", data.Name)
-		return os.WriteFile(filepath.Join(appPath, "config", "routes_snippet.txt"), []byte(snippet), 0644)
+		return os.WriteFile(filepath.Join(appPath, "routes", "web_snippet.txt"), []byte(snippet), 0644)
 	}
 	importLine := fmt.Sprintf("\t\"%s/app/controllers\"\n", data.Module)
 	registerLine := fmt.Sprintf("\tcontrollers.Register%sRoutes(r)\n", data.Name)
@@ -227,7 +227,7 @@ func appendRouteRegistration(appPath string, data ResourceData) error {
 		if !strings.Contains(s, data.Module+"/app/controllers") {
 			s = strings.Replace(s, "import (\n", "import (\n"+importLine, 1)
 		}
-		s = strings.Replace(s, "// Add your routes here:", "// Add your routes here:\n"+registerLine, 1)
+		s = strings.Replace(s, "// Generated resources register here", "// Generated resources register here\n"+registerLine, 1)
 	}
 	return os.WriteFile(path, []byte(s), 0644)
 }
@@ -410,10 +410,11 @@ import (
 
 	"{{.Module}}/app/models"
 	"github.com/lsgser/gofreight/gftest"
+	"github.com/lsgser/gofreight/gftest/faker"
 )
 
 var {{.Name}}Factory = gftest.NewFactory(models.{{.Name}}s).Define(map[string]any{
-{{range .Fields}}	"{{.DBTag}}": "sample {{.DBTag}}",
+{{range .Fields}}	"{{.DBTag}}": faker.Lazy(func() any { return {{.FakerExpr}} }),
 {{end}}})
 
 func Create{{.Name}}(t *testing.T, attrs ...map[string]any) *models.{{.Name}} {

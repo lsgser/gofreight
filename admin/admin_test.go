@@ -142,5 +142,5 @@ func TestAdminImportSQL(t *testing.T) {
 
 func TestAdminIntegrations(t *testing.T) {
 	app := setupAdmin(t)
-	app.Get("/admin/integrations").AssertOk().AssertSee("storage").AssertSee("stripe")
+	app.Get("/admin/integrations").AssertOk().AssertSee("storage").AssertSee("email")
 }

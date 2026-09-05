@@ -88,8 +88,36 @@ type Sessions struct {
 	Secret     string
 	CookieName string
 	MaxAge     time.Duration
-	store      map[string]*Session
-	mu         sync.RWMutex
+	store      SessionStore
+}
+
+// memorySessionStore is the default in-memory session backend.
+type memorySessionStore struct {
+	mu    sync.RWMutex
+	items map[string]*Session
+}
+
+func newMemorySessionStore() *memorySessionStore {
+	return &memorySessionStore{items: make(map[string]*Session)}
+}
+
+func (m *memorySessionStore) Get(id string) (*Session, bool) {
+	m.mu.RLock()
+	defer m.mu.RUnlock()
+	s, ok := m.items[id]
+	return s, ok
+}
+
+func (m *memorySessionStore) Save(session *Session, _ time.Duration) {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	m.items[session.id] = session
+}
+
+func (m *memorySessionStore) Delete(id string) {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	delete(m.items, id)
 }
 
 // NewSessions creates session middleware with an in-memory store.
@@ -98,8 +126,13 @@ func NewSessions(secret string) *Sessions {
 		Secret:     secret,
 		CookieName: "_gofreight_session",
 		MaxAge:     24 * time.Hour,
-		store:      make(map[string]*Session),
+		store:      newMemorySessionStore(),
 	}
+}
+
+// UseStore sets a custom session store (e.g. Redis for production).
+func (sm *Sessions) UseStore(store SessionStore) {
+	sm.store = store
 }
 
 // Middleware loads or creates a session for each request.
@@ -117,21 +150,14 @@ func (sm *Sessions) load(r *http.Request) *Session {
 	if err != nil {
 		return NewSession()
 	}
-
-	sm.mu.RLock()
-	session, ok := sm.store[cookie.Value]
-	sm.mu.RUnlock()
-
-	if !ok {
-		return NewSession()
+	if session, ok := sm.store.Get(cookie.Value); ok {
+		return session
 	}
-	return session
+	return NewSession()
 }
 
 func (sm *Sessions) save(w http.ResponseWriter, session *Session) {
-	sm.mu.Lock()
-	sm.store[session.id] = session
-	sm.mu.Unlock()
+	sm.store.Save(session, sm.MaxAge)
 
 	http.SetCookie(w, &http.Cookie{
 		Name:     sm.CookieName,

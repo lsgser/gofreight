@@ -1,112 +1,168 @@
 # Integrations
 
-Gofreight provides a pluggable integration registry for cloud services and third-party APIs. Integrations are configured via environment variables and initialized at startup.
+Gofreight provides a **generic integration registry** for connecting third-party APIs. The framework ships **no vendor-specific payment, CRM, or SaaS clients**. You register what your app needs via categories and drivers.
 
-## Built-in integrations
+## How it works
 
-| Name | Purpose | Enable with |
-|------|---------|-------------|
-| `storage` | S3, Cloudflare R2, MinIO | `STORAGE_BUCKET`, credentials |
-| `email` | SMTP, SendGrid | `EMAIL_FROM`, `SMTP_HOST` or `SENDGRID_API_KEY` |
-| `stripe` | Payments | `STRIPE_SECRET_KEY` |
-| `redis` | Cache / pub-sub | `REDIS_URL` or `UPSTASH_REDIS_URL` |
-| `webhook` | Outbound webhooks | `WEBHOOK_SECRET` |
-| `analytics` | Mixpanel, Segment, PostHog | `ANALYTICS_API_KEY` |
+| Concept | Description |
+|---------|-------------|
+| **Category** | Service type: mail, storage, cache, payment, analytics, webhook, or your own |
+| **Driver** | A registered implementation for that category |
+| **Env selection** | Laravel-style keys: `MAIL_MAILER`, `FILESYSTEM_DISK`, `CACHE_STORE`, `QUEUE_CONNECTION`, `REDIS_HOST`, … |
+| **Registry** | `integrations.Register()` adds drivers at boot |
+
+Built-in **category connectors** (protocol-level, not vendor-branded):
+
+| Category | Primary env | Also accepts |
+|----------|-------------|--------------|
+| Mail | `MAIL_MAILER` | `MAIL_DRIVER`, `EMAIL_PROVIDER` |
+| Storage | `FILESYSTEM_DISK` | `STORAGE_PROVIDER` |
+| Cache | `CACHE_STORE` | `CACHE_DRIVER` |
+| Queue | `QUEUE_CONNECTION` | `QUEUE_DRIVER` |
+| Session | `SESSION_DRIVER` | — |
+| Analytics | `ANALYTICS_PROVIDER` | — |
+| Webhooks | `WEBHOOK_DRIVER` | — |
+
+**Payments, SMS, CRM, billing, and every other API** — register in your application:
+
+```go
+integrations.Register("my_gateway", func() integrations.Integration {
+    return &MyPaymentGateway{}
+})
+```
+
+```env
+PAYMENT_PROVIDER=my_gateway
+MY_GATEWAY_API_KEY=...
+```
 
 ## Setup
 
 ```go
 app := application.New()
-app.ConfigureIntegrations() // reads os.Getenv
-// or call integrations.ConfigureAll(integrations.OsEnv{}) directly
+app.ConfigureIntegrations() // wires cache + mail from .env
+// or: integrations.BootProviders(integrations.OsEnv{})
 ```
 
-Integrations are also configured automatically when you call `app.Run()`.
+Integrations configure automatically when you call `app.Run()`.
 
-## Using an integration
+## Resolving the active driver
 
 ```go
 import "github.com/lsgser/gofreight/integrations"
 
-storage, ok := integrations.AsStorage(integrations.MustGet("storage"))
+storage, _ := integrations.ActiveStorage(integrations.OsEnv{})
+email, _ := integrations.ActiveEmail(integrations.OsEnv{})
+redis, _ := integrations.ActiveRedis(integrations.OsEnv{})
+
+// Any category — including payment after you register a driver
+payment, ok := integrations.ActivePayment(integrations.OsEnv{})
 if ok {
-    url := storage.URL("uploads/photo.jpg")
+    cd, _ := integrations.AsCategorizedDriver(payment)
+    log.Println("payments via", cd.DriverID())
 }
 
-stripe, _ := integrations.AsStripe(integrations.MustGet("stripe"))
-_ = stripe.SecretKey
+// Or generic resolution
+i, ok := integrations.Active(integrations.CategoryPayment, integrations.OsEnv{})
 ```
 
-Use `integrations.Get("name")` when the integration is optional:
+## Registering a third-party API
+
+Implement `Integration` and optionally `CategorizedDriver`:
 
 ```go
-if email, ok := integrations.Get("email"); ok && email.Enabled() {
-    // send mail
+type MyGateway struct {
+    apiKey  string
+    enabled bool
+}
+
+func (g *MyGateway) Name() string { return "my_gateway" }
+func (g *MyGateway) Category() integrations.Category { return integrations.CategoryPayment }
+func (g *MyGateway) DriverID() string { return "my_gateway" }
+
+func (g *MyGateway) Configure(env integrations.EnvReader) error {
+    g.apiKey = env.Get("MY_GATEWAY_API_KEY")
+    g.enabled = g.apiKey != ""
+    return nil
+}
+
+func (g *MyGateway) Enabled() bool { return g.enabled }
+
+func init() {
+    integrations.Register("my_gateway", func() integrations.Integration {
+        return &MyGateway{}
+    })
 }
 ```
+
+For quick one-off clients without a full type, use `RegisterCustom`:
+
+```go
+integrations.RegisterCustom("slack", func(cfg map[string]string) error {
+    // SLACK_API_KEY, SLACK_URL from env
+    return nil
+})
+```
+
+See [Extending Gofreight](extending.md) for service providers and the event bus.
 
 ## Environment variables
 
-### Storage (S3 / R2 / MinIO)
+### Mail
 
 ```env
-STORAGE_PROVIDER=s3       # s3, r2, minio
-STORAGE_BUCKET=my-bucket
-STORAGE_REGION=us-east-1
-STORAGE_ENDPOINT=          # required for MinIO/R2
-AWS_ACCESS_KEY_ID=...
-AWS_SECRET_ACCESS_KEY=...
+MAIL_MAILER=smtp
+MAIL_HOST=smtp.example.com
+MAIL_PORT=587
+MAIL_USERNAME=
+MAIL_PASSWORD=
+MAIL_FROM_ADDRESS=noreply@example.com
+MAIL_FROM_NAME="${APP_NAME}"
 ```
 
-### Email
+Use `MAIL_MAILER=log` for development (default in `.env.example`).
+
+### Storage (S3-compatible)
 
 ```env
-EMAIL_PROVIDER=smtp       # smtp, sendgrid, ses, mailgun
-EMAIL_FROM=noreply@example.com
-SMTP_HOST=smtp.example.com
-SMTP_PORT=587
-SENDGRID_API_KEY=         # alternative to SMTP
+FILESYSTEM_DISK=s3
+AWS_BUCKET=my-bucket
+AWS_DEFAULT_REGION=us-east-1
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_ACCESS_KEY=
 ```
 
-### Stripe
+Use `FILESYSTEM_DISK=local` for local disk (default).
+
+### Cache, queue, session, Redis
 
 ```env
-STRIPE_SECRET_KEY=sk_test_...
-STRIPE_PUBLISHABLE_KEY=pk_test_...
-STRIPE_WEBHOOK_SECRET=whsec_...
+CACHE_STORE=redis
+QUEUE_CONNECTION=redis
+SESSION_DRIVER=redis
+
+REDIS_HOST=127.0.0.1
+REDIS_PORT=6379
+REDIS_PASSWORD=null
 ```
 
-### Redis
-
-```env
-REDIS_URL=redis://localhost:6379
-# or
-UPSTASH_REDIS_URL=...
-```
+Or set `REDIS_URL` directly. For local dev defaults use `CACHE_STORE=file`, `QUEUE_CONNECTION=sync`, `SESSION_DRIVER=file`.
 
 ### Webhooks
 
 ```env
+WEBHOOK_DRIVER=webhook
 WEBHOOK_SECRET=your-signing-secret
 ```
 
-### Analytics
+### Your integrations
 
-```env
-ANALYTICS_PROVIDER=posthog  # mixpanel, segment, posthog
-ANALYTICS_API_KEY=...
-```
+Use `{NAME}_{KEY}` env vars (e.g. `TWILIO_API_KEY`, `MY_GATEWAY_API_KEY`). Set `{CATEGORY}_PROVIDER` to the registered driver name.
 
 ## Admin status page
 
-In development, visit `/admin/integrations` to see which integrations are active.
-
-JSON API (development):
+In development, visit `/admin/integrations` to see registered integrations and their status.
 
 ```go
 r.Get("/integrations/status", integrations.StatusHandler())
 ```
-
-## Custom integrations
-
-See [Extending Gofreight](extending.md#custom-integrations).

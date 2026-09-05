@@ -1,0 +1,8 @@
+app_name: "blog"
+host: "0.0.0.0"
+port: 5000
+app_key: ""
+log_level: "info"
+
+db_connection: sqlite
+db_database: db/development.db

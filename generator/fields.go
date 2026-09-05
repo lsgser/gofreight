@@ -74,6 +74,55 @@ func ParseField(name, typeSpec string) ParsedField {
 	return pf
 }
 
+// FakerExpr returns a Go expression for fake data in generated factories.
+func (pf ParsedField) FakerExpr() string {
+	base, _, _ := strings.Cut(strings.ToLower(strings.TrimSpace(pf.RawType)), ":")
+	switch base {
+	case "email":
+		return "gfaker.Email()"
+	case "url":
+		return "gfaker.URL()"
+	case "text":
+		return "gfaker.Paragraph()"
+	case "int", "integer":
+		return "gfaker.Int()"
+	case "bigint", "references", "reference", "belongs_to":
+		return "gfaker.Int64()"
+	case "float", "decimal", "double":
+		return "gfaker.Float()"
+	case "bool", "boolean":
+		return "gfaker.Bool()"
+	case "datetime", "timestamp":
+		return "gfaker.DateTime()"
+	case "date":
+		return "gfaker.Date()"
+	case "time":
+		return "gfaker.Time()"
+	case "uuid":
+		return "gfaker.UUID()"
+	case "json", "jsonb":
+		return `"{}"`
+	case "enum":
+		if len(pf.EnumValues) > 0 {
+			return `"` + pf.EnumValues[0] + `"`
+		}
+		return "gfaker.Word()"
+	case "string", "str":
+		if strings.Contains(pf.DBTag, "email") {
+			return "gfaker.Email()"
+		}
+		if strings.Contains(pf.DBTag, "title") || strings.Contains(pf.DBTag, "subject") {
+			return "gfaker.Sentence()"
+		}
+		if strings.Contains(pf.DBTag, "name") {
+			return "gfaker.Name()"
+		}
+		return "gfaker.Word()"
+	default:
+		return "gfaker.Word()"
+	}
+}
+
 func splitTypeSpec(spec string) (base, extra string) {
 	switch {
 	case strings.HasPrefix(spec, "enum:"):

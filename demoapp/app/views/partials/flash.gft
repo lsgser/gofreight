@@ -1,0 +1,4 @@
+{# Partial: flash messages — include with #partial "partials.flash" #}
+#when .Flash
+<div class="flash">{= .Flash }</div>
+#endwhen
