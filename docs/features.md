@@ -109,14 +109,34 @@ app.UseHTTPCache(time.Hour)
 cache.NewFragmentCache(app.Cache).Remember("sidebar", time.Minute, renderSidebar)
 ```
 
-## 11. Real-time channels
+## 11. Real-time WebSockets
+
+Socket.io-style rooms and events over WebSockets:
 
 ```go
-app.MountChannels("/cable")
-app.Channels.Broadcast("posts", "created", map[string]any{"id": 1})
+app.MountSocket("/socket")
+
+app.Channels.OnConnect(func(c *channels.Connection) {
+    c.Join("chat:lobby")
+})
+
+app.Channels.On("chat:message", func(c *channels.Connection, raw json.RawMessage) {
+    app.Channels.To("chat:lobby").Emit("chat:message", raw)
+})
 ```
 
-Client: `{"action":"subscribe","channel":"posts"}`
+Browser client (`channels/gofreight-socket.ts`):
+
+```typescript
+const socket = new GofreightSocket('/socket')
+socket.join('chat:lobby')
+socket.on('chat:message', (msg) => render(msg))
+socket.emit('chat:message', { text: 'Hello' })
+```
+
+Legacy channel subscribe still works: `{"action":"subscribe","channel":"posts"}` with `app.Channels.Broadcast(...)`.
+
+Full guide: **[Real-time WebSockets](realtime.md)**
 
 ## 12. Application wiring
 
@@ -127,7 +147,7 @@ app := application.New()
 app.UseRedisSessions(os.Getenv("REDIS_URL"))
 app.UseLocale()
 app.LoadLocales("")
-app.MountChannels("/cable")
+app.MountSocket("/socket")
 app.StartJobs(2)
 app.Run()
 ```

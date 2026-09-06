@@ -150,9 +150,14 @@ func (app *Application) LoadLocales(dir string) error {
 // MountChannels registers WebSocket channel endpoint.
 func (app *Application) MountChannels(path string) {
 	if path == "" {
-		path = "/cable"
+		path = "/socket"
 	}
 	app.Channels.Mount(app.Router, path)
+}
+
+// MountSocket is an alias for MountChannels with a socket.io-style default path.
+func (app *Application) MountSocket(path string) {
+	app.MountChannels(path)
 }
 
 // LoadAssetManifest loads Vite/webpack manifest for production assets.

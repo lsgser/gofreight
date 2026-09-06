@@ -22,6 +22,7 @@
 | [Generators & field types](generators.md) | `make:*` commands and `name:type` fields |
 | [Features](features.md) | Redis sessions/queues, API resources, i18n, channels, caching |
 | [Routes & routing](routing.md) | Route groups, API resources, middleware |
+| [Real-time WebSockets](realtime.md) | Rooms, events, TypeScript client |
 | [Forms & validation](forms-validation.md) | Vine schemas, GFT form components, flash errors |
 | [Templating](templating.md) | Gofreight Templates (GFT) syntax |
 | [Testing](testing.md) | HTTP tests with `gftest` |

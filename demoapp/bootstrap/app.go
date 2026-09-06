@@ -1,39 +1,26 @@
 package bootstrap
 
-/*
-|--------------------------------------------------------------------------
-| Application Bootstrap
-|--------------------------------------------------------------------------
-|
-| Configure the Gofreight application here: middleware, sessions, queues,
-| locale, and service container bindings. This file is loaded on every
-| request via main.go.
-|
-| Register services:
-|   app.Singleton("payment", func() any { return services.NewPaymentService() })
-|
-| Resolve in controllers:
-|   svc := app.Make("payment").(*services.PaymentService)
-|
-*/
-
 import (
+	"encoding/json"
 	"os"
+	"sync"
 
 	"demoapp/app/services"
 	"github.com/lsgser/gofreight/application"
+	"github.com/lsgser/gofreight/channels"
 )
+
+var chatMu sync.Mutex
+var chatMessages []map[string]string
 
 // Application creates and configures the Gofreight application instance.
 func Application() *application.Application {
 	app := application.New()
 
-	// Session driver: memory (default) or redis (set SESSION_DRIVER=redis).
 	if os.Getenv("SESSION_DRIVER") == "redis" {
 		_ = app.UseRedisSessions(os.Getenv("REDIS_URL"))
 	}
 
-	// Background jobs: memory (default) or redis (set QUEUE_DRIVER=redis).
 	if os.Getenv("QUEUE_DRIVER") == "redis" {
 		_ = app.UseRedisQueue(os.Getenv("REDIS_URL"))
 	}
@@ -42,10 +29,54 @@ func Application() *application.Application {
 	app.UseLocale()
 	app.UseCSRF()
 
-	// Service container — register application services here.
 	app.Singleton("example", func() any {
 		return services.NewExampleService()
 	})
 
+	wireRealtime(app)
+
 	return app
+}
+
+func wireRealtime(app *application.Application) {
+	app.Channels.OnConnect(func(c *channels.Connection) {
+		c.Join("chat:lobby")
+	})
+
+	app.Channels.On("chat:history", func(c *channels.Connection, _ json.RawMessage) {
+		chatMu.Lock()
+		history := append([]map[string]string(nil), chatMessages...)
+		chatMu.Unlock()
+		app.Channels.To("chat:lobby").Emit("chat:history", history)
+	})
+
+	app.Channels.On("chat:message", func(c *channels.Connection, raw json.RawMessage) {
+		var payload struct {
+			Text string `json:"text"`
+			User string `json:"user"`
+		}
+		if json.Unmarshal(raw, &payload) != nil || payload.Text == "" {
+			return
+		}
+		if payload.User == "" {
+			payload.User = "guest"
+		}
+
+		msg := map[string]string{
+			"text": payload.Text,
+			"user": payload.User,
+			"id":   c.ID,
+		}
+
+		chatMu.Lock()
+		chatMessages = append(chatMessages, msg)
+		if len(chatMessages) > 50 {
+			chatMessages = chatMessages[len(chatMessages)-50:]
+		}
+		chatMu.Unlock()
+
+		app.Channels.To("chat:lobby").Emit("chat:message", msg)
+	})
+
+	app.MountSocket("/socket")
 }
