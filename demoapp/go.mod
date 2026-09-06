@@ -2,7 +2,7 @@ module demoapp
 
 go 1.26.0
 
-require github.com/lsgser/gofreight v0.1.0
+require github.com/lsgser/gofreight v0.2.0
 
 require (
 	filippo.io/edwards25519 v1.1.0 // indirect

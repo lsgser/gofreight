@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-  <strong>v0.1.0</strong> · <a href="https://github.com/lsgser/gofreight">github.com/lsgser/gofreight</a>
+  <strong>v0.2.0</strong> · <a href="https://github.com/lsgser/gofreight">github.com/lsgser/gofreight</a>
 </p>
 
 <p align="center">
@@ -764,6 +764,7 @@ Integration variables (`SESSION_DRIVER`, `QUEUE_CONNECTION`, `CACHE_STORE`, `FIL
 | Guide | Description |
 |-------|-------------|
 | [docs/README.md](docs/README.md) | Documentation index |
+| [docs/changelog.md](docs/changelog.md) | Release history |
 | [docs/getting-started.md](docs/getting-started.md) | Detailed setup |
 | [docs/commands.md](docs/commands.md) | Full CLI reference |
 | [docs/generators.md](docs/generators.md) | Generators & field types |

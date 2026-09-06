@@ -10,7 +10,7 @@ go install github.com/lsgser/gofreight/cmd/gofreight@latest
 
 ```bash
 export PATH="$PATH:$(go env GOPATH)/bin"
-gofreight version   # should print: gofreight v0.1.0
+gofreight version   # should print: gofreight v0.2.0
 ```
 
 **macOS (zsh)** — add to `~/.zshrc` so it persists:
