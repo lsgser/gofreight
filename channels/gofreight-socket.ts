@@ -13,6 +13,10 @@ export type GofreightSocketOptions = {
   autoConnect?: boolean
   reconnect?: boolean
   reconnectDelayMs?: number
+  /** Override host (e.g. `localhost:5000`). Defaults to `window.location.host`. */
+  host?: string
+  /** Force secure WebSocket (`wss:`). Auto-detected from the page when omitted. */
+  secure?: boolean
 }
 
 type WireEnvelope = {
@@ -29,7 +33,10 @@ export class GofreightSocket {
   private url: string
   private ws: WebSocket | null = null
   private handlers = new Map<string, Set<EventHandler>>()
-  private opts: Required<GofreightSocketOptions>
+  private opts: Required<Pick<GofreightSocketOptions, 'autoConnect' | 'reconnect' | 'reconnectDelayMs'>> & {
+    host?: string
+    secure?: boolean
+  }
   private _id: string | undefined
   private reconnectTimer: ReturnType<typeof setTimeout> | null = null
   private manualClose = false
@@ -40,6 +47,8 @@ export class GofreightSocket {
       autoConnect: options.autoConnect ?? true,
       reconnect: options.reconnect ?? true,
       reconnectDelayMs: options.reconnectDelayMs ?? 1500,
+      host: options.host,
+      secure: options.secure,
     }
     if (this.opts.autoConnect) {
       this.connect()
@@ -56,10 +65,7 @@ export class GofreightSocket {
 
   connect(): this {
     this.manualClose = false
-    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
-    const host = window.location.host
-    const path = this.url.startsWith('/') ? this.url : `/${this.url}`
-    this.ws = new WebSocket(`${protocol}//${host}${path}`)
+    this.ws = new WebSocket(this.resolveURL())
 
     this.ws.onopen = () => {
       this.emitLocal('connect', undefined)
@@ -135,6 +141,23 @@ export class GofreightSocket {
   subscribe(channel: string): this {
     this.send({ action: 'subscribe', channel })
     return this
+  }
+
+  private resolveURL(): string {
+    if (this.url.startsWith('ws://') || this.url.startsWith('wss://')) {
+      return this.url
+    }
+
+    const path = this.url.startsWith('/') ? this.url : `/${this.url}`
+
+    if (typeof window === 'undefined') {
+      throw new Error('GofreightSocket: pass an absolute ws:// or wss:// URL outside the browser')
+    }
+
+    const secure = this.opts.secure ?? window.location.protocol === 'https:'
+    const protocol = secure ? 'wss:' : 'ws:'
+    const host = this.opts.host ?? window.location.host
+    return `${protocol}//${host}${path}`
   }
 
   private send(payload: Record<string, unknown>): void {

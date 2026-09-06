@@ -145,6 +145,24 @@ socket.id          // set after 'connected' event
 socket.connected   // boolean
 ```
 
+### Platform support
+
+| Platform | Server (Go) | Browser client |
+|----------|-------------|----------------|
+| **macOS** | Supported | Supported (Chrome, Firefox, Safari, Edge) |
+| **Linux** | Supported | Supported |
+| **Windows** | Supported | Supported |
+
+The Go server and CLI run anywhere Go 1.22+ runs. The TypeScript client uses the browser WebSocket API — works the same on all desktop operating systems.
+
+Connect to a different host during local development:
+
+```typescript
+const socket = new GofreightSocket('/socket', { host: 'localhost:5000' })
+// Or absolute URL:
+const socket = new GofreightSocket('ws://localhost:5000/socket')
+```
+
 ## Broadcasting from controllers
 
 After creating a post, notify subscribers:

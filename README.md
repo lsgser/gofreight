@@ -55,9 +55,10 @@
 # 1. Install the CLI
 go install github.com/lsgser/gofreight/cmd/gofreight@latest
 
-# Add Go's bin directory to PATH (once per machine; usually ~/go/bin)
-export PATH="$PATH:$(go env GOPATH)/bin"
-# macOS zsh — persist: echo 'export PATH="$PATH:$(go env GOPATH)/bin"' >> ~/.zshrc
+# Add Go's bin directory to PATH (once per machine)
+export PATH="$PATH:$(go env GOPATH)/bin"          # macOS / Linux
+# Windows PowerShell: $env:Path += ";$(go env GOPATH)\bin"
+# See docs/getting-started.md for full Windows & Linux setup
 
 # or clone https://github.com/lsgser/gofreight and from source:
 git clone https://github.com/lsgser/gofreight.git && cd gofreight && go install ./cmd/gofreight

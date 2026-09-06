@@ -6,18 +6,53 @@
 go install github.com/lsgser/gofreight/cmd/gofreight@latest
 ```
 
-`go install` puts the binary in `$(go env GOPATH)/bin` (usually `~/go/bin`). That folder must be on your `PATH`:
+`go install` puts the binary in `$(go env GOPATH)/bin` (usually `~/go/bin` on macOS/Linux, or `%USERPROFILE%\go\bin` on Windows). That folder must be on your `PATH`:
 
 ```bash
 export PATH="$PATH:$(go env GOPATH)/bin"
 gofreight version   # should print: gofreight v0.1.0
 ```
 
-**macOS (zsh)** — add to `~/.zshrc` so it persists:
+### macOS (zsh / bash)
+
+Add to `~/.zshrc` or `~/.bashrc` so it persists:
 
 ```bash
 echo 'export PATH="$PATH:$(go env GOPATH)/bin"' >> ~/.zshrc
 source ~/.zshrc
+```
+
+### Linux (bash)
+
+```bash
+echo 'export PATH="$PATH:$(go env GOPATH)/bin"' >> ~/.bashrc
+source ~/.bashrc
+```
+
+### Windows (PowerShell)
+
+Current session:
+
+```powershell
+$env:Path += ";$(go env GOPATH)\bin"
+gofreight version
+```
+
+Persist for your user (PowerShell):
+
+```powershell
+[Environment]::SetEnvironmentVariable(
+  "Path",
+  [Environment]::GetEnvironmentVariable("Path", "User") + ";$(go env GOPATH)\bin",
+  "User"
+)
+```
+
+Windows **Command Prompt** (current session):
+
+```cmd
+set PATH=%PATH%;%USERPROFILE%\go\bin
+gofreight version
 ```
 
 Or run without changing PATH:
