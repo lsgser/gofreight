@@ -1,178 +1,87 @@
 # Framework features
 
-Built-in capabilities that ship with Gofreight — no extra packages required for a production-grade Go web stack.
+Overview of built-in Gofreight capabilities. Each topic has a dedicated guide — this page links to them.
 
-> **Routing:** Route groups, nested prefixes, group and route middleware, web `Resources`, and API `ApiResource` — see **[Routing](routing.md)**.
+## Core MVC
 
-## 1. Redis sessions & queues
+| Feature | Guide |
+|---------|-------|
+| HTTP routing & REST resources | [Routing](routing.md) |
+| Controllers & request handling | [Controllers](controllers.md) |
+| Middleware pipeline | [Middleware](middleware.md) |
+| GFT templating | [Templating](templating.md) |
+| Forms & Vine validation | [Forms & Validation](forms-validation.md) |
 
-```go
-app.UseRedisSessions(os.Getenv("REDIS_URL"))
-app.UseRedisQueue(os.Getenv("REDIS_URL"))
-app.StartJobs(2)
-```
+## Data layer
 
-```env
-SESSION_DRIVER=redis
-QUEUE_DRIVER=redis
-REDIS_URL=redis://localhost:6379
-```
+| Feature | Guide |
+|---------|-------|
+| ORM — models, queries, associations | [ORM](orm.md) |
+| Migrations, seeding, blueprint DSL | [Database](database.md) |
+| API JSON serializers | [API Resources](api-resources.md) |
 
-## 2. Migration blueprint DSL
+## Auth & security
 
-Programmatic migrations with auto-generated rollback:
+| Feature | Guide |
+|---------|-------|
+| Session login, JWT, API tokens, OAuth | [Authentication](authentication.md) |
+| Policies & roles | [Authorization](authorization.md) |
+| Sessions & flash messages | [Sessions](sessions.md) |
+| CSRF, rate limiting, production hardening | [Security](security.md) |
 
-```go
-up, down := database.CreateTableBlueprint("comments", func(b *database.Blueprint) {
-    b.IntegerColumn("post_id", colNotNull())
-    b.StringColumn("body")
-})
-database.WriteMigrationPair("db/migrate", "004_create_comments", up, down)
-```
+## Infrastructure
 
-## 3. API resources
+| Feature | Guide |
+|---------|-------|
+| Background jobs & queues | [Jobs & Queues](jobs.md) |
+| Email & mailables | [Mail](mail.md) |
+| Caching (memory, Redis, HTTP) | [Cache](cache.md) |
+| Service container & business logic | [Services & Container](services.md) |
+| Configuration & environment | [Configuration](configuration.md) |
+| Mail, storage, cache drivers | [Integrations](integrations.md) |
 
-```bash
-gofreight make:api Post title:string body:text
-```
+## Real-time & API
 
-```go
-api.Group(r, "v1", func(api *router.Router) {
-    api.ApiResource("posts", router.ApiResourceHandlers{ ... })
-}, auth.APITokenMiddleware(store))
-```
+| Feature | Guide |
+|---------|-------|
+| WebSockets & channels | [Real-time WebSockets](realtime.md) |
+| Modular GraphQL | [GraphQL](graphql.md) |
 
-## 4. Auth tokens, JWT & password reset
+## Developer tools
 
-```go
-jwtMgr := auth.JWTFromEnv(app.Config.AppKey)
+| Feature | Guide |
+|---------|-------|
+| CLI commands | [CLI Commands](commands.md) |
+| Code generators | [Generators](generators.md) |
+| HTTP & database testing | [Testing](testing.md) |
+| Dev database admin | [Admin Dashboard](admin.md) |
+| Date/time helpers | [Date & Time](datetime.md) |
+| Custom integrations & events | [Extending](extending.md) |
+| Docker & production | [Deployment](deployment.md) |
 
-r.Post("/api/login", controller.Handler(auth.LoginWithJWT(
-    auth.DefaultLoginConfig(findUserByEmail),
-    jwtMgr,
-)))
-
-api.Group(r, "v1", func(api *router.Router) {
-    api.ApiResource("posts", router.ApiResourceHandlers{ ... })
-}, auth.JWTMiddleware(jwtMgr))
-
-// Or combine JWT, opaque tokens, and session:
-guard := auth.Guard{JWT: jwtMgr, TokenStore: tokenStore, SessionKey: "current_user_id"}
-// r.Group(...).Use(guard.Middleware).Apply()
-```
-
-Run `gofreight generate auth` for User model + migration stubs.
-
-## 5. Internationalization
-
-```go
-app.LoadLocales("config/locales")
-app.UseLocale()
-msg := app.I18n.T("welcome", map[string]string{"name": "World"})
-```
-
-Translation files: `config/locales/en.json`
-
-## 6. Config files
-
-Layered YAML config in `config/app.yaml` and `config/{env}.yaml`. Env vars override files.
-
-## 7. Mailables & queued mail
-
-```go
-m := mail.NewMailable("app/views/mail", "welcome.html", "Welcome", "user@example.com")
-m.With("Name", "Ada")
-app.QueuedMailer().Send(mail.Message{...}) // or m.Send(app.Mailer)
-```
-
-## 8. Form requests
-
-```go
-fr, _ := request.NewFormRequest(r)
-fr.Required("email", "password").MinLength("password", 8)
-if !fr.Validate() {
-    base.Unprocessable(fr.Errors)
-}
-```
-
-## 9. Asset manifest (Vite)
-
-```go
-app.LoadAssetManifest("public/manifest.json")
-url := app.Assets.Path("app.js")
-```
-
-## 10. HTTP & fragment caching
-
-```go
-app.UseHTTPCache(time.Hour)
-cache.NewFragmentCache(app.Cache).Remember("sidebar", time.Minute, renderSidebar)
-```
-
-## 11. Real-time WebSockets
-
-Socket.io-style rooms and events over WebSockets:
-
-```go
-app.MountSocket("/socket")
-
-app.Channels.OnConnect(func(c *channels.Connection) {
-    c.Join("chat:lobby")
-})
-
-app.Channels.On("chat:message", func(c *channels.Connection, raw json.RawMessage) {
-    app.Channels.To("chat:lobby").Emit("chat:message", raw)
-})
-```
-
-Browser client (`channels/gofreight-socket.ts`):
-
-```typescript
-const socket = new GofreightSocket('/socket')
-socket.join('chat:lobby')
-socket.on('chat:message', (msg) => render(msg))
-socket.emit('chat:message', { text: 'Hello' })
-```
-
-Legacy channel subscribe still works: `{"action":"subscribe","channel":"posts"}` with `app.Channels.Broadcast(...)`.
-
-Full guide: **[Real-time WebSockets](realtime.md)**
-
-## 12. Application wiring
+## Quick wiring example
 
 All features integrate via `application.Application`:
 
 ```go
 app := application.New()
+app.ConnectDatabase()
 app.UseRedisSessions(os.Getenv("REDIS_URL"))
+app.UseRedisQueue(os.Getenv("REDIS_URL"))
+app.UseCSRF()
 app.UseLocale()
-app.LoadLocales("")
+app.LoadLocales("config/locales")
 app.MountSocket("/socket")
 app.StartJobs(2)
 app.Run()
 ```
 
-## 13. Date/time & faker
+## Tutorials
 
-**Carbon-style dates** via `support/datetime`:
+Step-by-step guides on the docs site:
 
-```go
-import "github.com/lsgser/gofreight/support/datetime"
-
-due := datetime.Now().AddDays(7)
-record.DueAt = datetime.DateTimeString(due)
-```
-
-**Fake data** for tests and seeders via `gftest/faker`:
-
-```go
-import "github.com/lsgser/gofreight/gftest/faker"
-
-name := faker.Name()
-email := faker.Email()
-
-// Generated factories use faker automatically:
-// gofreight make:factory Post
-```
-
-See [Date & time](datetime.md) and [Testing](testing.md).
+- [Your First App](tutorial-first-app.md) — create and run a project
+- [Build a REST API](tutorial-rest-api.md) — JSON endpoints
+- [HTML CRUD with GFT](tutorial-html-crud.md) — browser forms
+- [JWT Authentication](tutorial-auth-jwt.md) — protected API routes
+- [Real-time WebSockets](tutorial-realtime.md) — live chat

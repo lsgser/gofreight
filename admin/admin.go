@@ -105,24 +105,6 @@ func (p *Panel) Mount(r *router.Router) {
 	}).Prefix(p.cfg.Prefix).Apply()
 }
 
-func (p *Panel) mountSchemaRoutes(a *router.Router, wrap func(func(controller.Base) error) http.HandlerFunc) {
-	a.Get("/schema/new", wrap(p.SchemaNew))
-	a.Post("/schema/create", wrap(p.SchemaCreate))
-	a.Get("/import", wrap(p.ImportForm))
-	a.Post("/import", wrap(p.ImportRun))
-	a.Get("/integrations", wrap(p.IntegrationsStatus))
-	a.Get("/tables/:table/structure", wrap(p.TableStructure))
-	a.Post("/tables/:table/drop", wrap(p.TableDrop))
-	a.Get("/tables/:table/columns/new", wrap(p.ColumnNew))
-	a.Post("/tables/:table/columns", wrap(p.ColumnAdd))
-	a.Post("/tables/:table/columns/:column/drop", wrap(p.ColumnDrop))
-	a.Get("/tables/:table/columns/:column/rename", wrap(p.ColumnRenameForm))
-	a.Post("/tables/:table/columns/:column/rename", wrap(p.ColumnRename))
-	a.Post("/tables/:table/indexes", wrap(p.IndexAdd))
-	a.Get("/tables/:table/migration", wrap(p.TableMigration))
-	a.Get("/export/:table", wrap(p.TableExport))
-}
-
 func (p *Panel) render(base controller.Base, name string, data any) error {
 	base.Response.Header().Set("Content-Type", "text/html; charset=utf-8")
 	return p.tmpl.ExecuteTemplate(base.Response, name, data)

@@ -6,6 +6,7 @@ import (
 	"sync"
 
 	"demoapp/app/services"
+	appgraphql "demoapp/graphql"
 	"github.com/lsgser/gofreight/application"
 	"github.com/lsgser/gofreight/channels"
 )
@@ -34,6 +35,7 @@ func Application() *application.Application {
 	})
 
 	wireRealtime(app)
+	appgraphql.Mount(app)
 
 	return app
 }
