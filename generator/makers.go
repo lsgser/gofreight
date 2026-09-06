@@ -104,7 +104,14 @@ import (
 	gofmail "github.com/lsgser/gofreight/mail"
 )
 
-// {{.StructName}} is a mailable email.
+/*
+|--------------------------------------------------------------------------
+| {{.StructName}}
+|--------------------------------------------------------------------------
+|
+| Mailable email class.
+|
+*/
 type {{.StructName}} struct {
 	To      []string
 	Subject string
@@ -150,7 +157,14 @@ import (
 	"github.com/lsgser/gofreight/jobs"
 )
 
-// {{.StructName}} handles background work.
+/*
+|--------------------------------------------------------------------------
+| {{.StructName}}
+|--------------------------------------------------------------------------
+|
+| Handles background work.
+|
+*/
 type {{.StructName}} struct{}
 
 func New{{.StructName}}() *{{.StructName}} { return &{{.StructName}}{} }
@@ -178,7 +192,14 @@ const middlewareTmpl = `package middleware
 
 import "net/http"
 
-// {{.StructName}} is application HTTP middleware.
+/*
+|--------------------------------------------------------------------------
+| {{.StructName}}
+|--------------------------------------------------------------------------
+|
+| Application HTTP middleware.
+|
+*/
 func {{.StructName}}(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		next.ServeHTTP(w, r)
@@ -199,7 +220,14 @@ const policyTmpl = `package policies
 
 import "net/http"
 
-// {{.StructName}} authorizes actions for a resource.
+/*
+|--------------------------------------------------------------------------
+| {{.StructName}}
+|--------------------------------------------------------------------------
+|
+| Authorizes actions for a resource.
+|
+*/
 type {{.StructName}} struct{}
 
 func New{{.StructName}}() *{{.StructName}} { return &{{.StructName}}{} }
@@ -223,7 +251,14 @@ const requestTmpl = `package requests
 
 import "github.com/lsgser/gofreight/vine"
 
-// {{.StructName}}Validator validates {{.StructName}} input.
+/*
+|--------------------------------------------------------------------------
+| {{.StructName}}Validator
+|--------------------------------------------------------------------------
+|
+| Validates {{.StructName}} input.
+|
+*/
 var {{.StructName}}Validator = vine.Object(map[string]vine.Rule{
 	"email": vine.String().Required().Email(),
 })

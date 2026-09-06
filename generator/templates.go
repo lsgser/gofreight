@@ -61,7 +61,14 @@ import (
 	"github.com/lsgser/gofreight/config"
 )
 
-// Application creates and configures the Gofreight application instance.
+/*
+|--------------------------------------------------------------------------
+| Application
+|--------------------------------------------------------------------------
+|
+| Creates and configures the Gofreight application instance.
+|
+*/
 func Application() *application.Application {
 	app := application.New()
 
@@ -77,7 +84,14 @@ func Application() *application.Application {
 	app.UseLocale()
 	app.UseCSRF()
 
-	// Service container — register application services here.
+	/*
+	|--------------------------------------------------------------------------
+	| Service Container
+	|--------------------------------------------------------------------------
+	|
+	| Register application services here.
+	|
+	*/
 	app.Singleton("example", func() any {
 		return services.NewExampleService()
 	})
@@ -101,7 +115,14 @@ const routesRegisterTmpl = `package routes
 
 import "github.com/lsgser/gofreight/router"
 
-// Register loads web and API route groups onto the router.
+/*
+|--------------------------------------------------------------------------
+| Register
+|--------------------------------------------------------------------------
+|
+| Loads web and API route groups onto the router.
+|
+*/
 func Register(r *router.Router) {
 	Web(r)
 
@@ -134,14 +155,30 @@ import (
 	"github.com/lsgser/gofreight/router"
 )
 
-// Web registers browser-facing HTTP routes.
+/*
+|--------------------------------------------------------------------------
+| Web
+|--------------------------------------------------------------------------
+|
+| Registers browser-facing HTTP routes.
+|
+*/
 func Web(r *router.Router) {
 	r.Get("/", controller.Handler(func(base controller.Base) error {
 		return base.RenderView("home/index", map[string]any{"Name": "{{.Name}}"})
 	}))
 
-	// Generated resources register here, e.g.:
-	// controllers.RegisterPostRoutes(r)
+	/*
+	|--------------------------------------------------------------------------
+	| Generated Resources
+	|--------------------------------------------------------------------------
+	|
+	| Register scaffold routes below, e.g.:
+	|   controllers.RegisterPostRoutes(r)
+	|
+	*/
+
+	/* gofreight:generated-resources */
 }
 `
 
@@ -170,7 +207,14 @@ import (
 	"github.com/lsgser/gofreight/router"
 )
 
-// API registers JSON API routes (prefix applied by Register).
+/*
+|--------------------------------------------------------------------------
+| API
+|--------------------------------------------------------------------------
+|
+| Registers JSON API routes (prefix applied by Register).
+|
+*/
 func API(r *router.Router) {
 	r.Get("/health", controller.Handler(func(base controller.Base) error {
 		base.RenderJSON(map[string]string{"status": "ok"})
@@ -304,10 +348,24 @@ const exampleServiceTmpl = `package services
 |
 */
 
-// ExampleService demonstrates the service layer pattern.
+/*
+|--------------------------------------------------------------------------
+| ExampleService
+|--------------------------------------------------------------------------
+|
+| Demonstrates the service layer pattern.
+|
+*/
 type ExampleService struct{}
 
-// NewExampleService creates a new ExampleService instance.
+/*
+|--------------------------------------------------------------------------
+| NewExampleService
+|--------------------------------------------------------------------------
+|
+| Creates a new ExampleService instance.
+|
+*/
 func NewExampleService() *ExampleService { return &ExampleService{} }
 `
 
@@ -493,8 +551,17 @@ func Routes(r *router.Router) {
 		return base.RenderView("home/index", map[string]any{"Name": "{{.Name}}"})
 	}))
 
-	// Generated resources register here, e.g.:
-	// controllers.RegisterPostRoutes(r)
+	/*
+	|--------------------------------------------------------------------------
+	| Generated Resources
+	|--------------------------------------------------------------------------
+	|
+	| Register scaffold routes below, e.g.:
+	|   controllers.RegisterPostRoutes(r)
+	|
+	*/
+
+	/* gofreight:generated-resources */
 }
 `
 
@@ -512,10 +579,17 @@ const databaseTmpl = `package config
 
 import "github.com/lsgser/gofreight/database"
 
-// RunMigrations runs inline SQL migrations (optional — prefer db/migrate/).
+/*
+|--------------------------------------------------------------------------
+| RunMigrations
+|--------------------------------------------------------------------------
+|
+| Runs inline SQL migrations (optional — prefer db/migrate/).
+|
+*/
 func RunMigrations() error {
 	return database.Migrate(
-		// Add migration SQL here
+		/* Add migration SQL here */
 	)
 }
 `
@@ -891,7 +965,14 @@ const testFactoriesTmpl = `package factories
 
 import "github.com/lsgser/gofreight/gftest/faker"
 
-// Add model factories here — see gofreight make:factory.
+/*
+|--------------------------------------------------------------------------
+| Factories
+|--------------------------------------------------------------------------
+|
+| Add model factories here — see gofreight make:factory.
+|
+*/
 `
 
 const controllerTmpl = `package controllers
@@ -940,7 +1021,14 @@ func (c {{.Name}}Controller) Show(base controller.Base) error {
 }
 
 func (c {{.Name}}Controller) Create(base controller.Base) error {
-	// Parse request body and create record
+	/*
+	|--------------------------------------------------------------------------
+	| Create
+	|--------------------------------------------------------------------------
+	|
+	| Parse request body and create record.
+	|
+	*/
 	base.Status = http.StatusCreated
 	base.RenderJSON(map[string]string{"message": "created"})
 	return nil

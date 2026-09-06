@@ -241,7 +241,7 @@ func appendRouteRegistration(appPath string, data ResourceData) error {
 		if !strings.Contains(s, data.Module+"/app/controllers") {
 			s = strings.Replace(s, "import (\n", "import (\n"+importLine, 1)
 		}
-		s = strings.Replace(s, "// Generated resources register here", "// Generated resources register here\n"+registerLine, 1)
+		s = strings.Replace(s, "/* gofreight:generated-resources */", strings.TrimSpace(registerLine), 1)
 	}
 	return os.WriteFile(path, []byte(s), 0644)
 }
@@ -259,23 +259,51 @@ import (
 	"github.com/lsgser/gofreight/model"
 )
 
-// {{.Name}} represents a {{.Singular}} record.
+/*
+|--------------------------------------------------------------------------
+| {{.Name}}
+|--------------------------------------------------------------------------
+|
+| Represents a {{.Singular}} record.
+|
+*/
 type {{.Name}} struct {
 	model.Record
 {{range .Fields}}	{{.Name}} {{.GoType}} ` + "`db:\"{{.DBTag}}\" json:\"{{.JSONTag}}\"`" + `
 {{end}}}
 
-// {{.Name}}s is the repository for {{.Name}}.
+/*
+|--------------------------------------------------------------------------
+| {{.Name}} Repository
+|--------------------------------------------------------------------------
+|
+| Repository for {{.Name}} records.
+|
+*/
 var {{.Name}}s = model.NewRepository[{{.Name}}]("{{.Table}}")
 
-// Validators returns validation rules for {{.Name}}.
+/*
+|--------------------------------------------------------------------------
+| Validators
+|--------------------------------------------------------------------------
+|
+| Returns validation rules for {{.Name}}.
+|
+*/
 func (m *{{.Name}}) Validators() []model.Validator {
 	return []model.Validator{
 {{range .Fields}}		model.Presence("{{.Name}}"),
 {{end}}	}
 }
 
-// Save validates and persists the record.
+/*
+|--------------------------------------------------------------------------
+| Save
+|--------------------------------------------------------------------------
+|
+| Validates and persists the record.
+|
+*/
 func (m *{{.Name}}) Save(ctx context.Context) error {
 	return {{.Name}}s.Save(ctx, m)
 }
@@ -298,10 +326,24 @@ var store{{.Name}}Validator = vine.Object(map[string]vine.Rule{
 {{range .Fields}}	"{{.DBTag}}": {{.VineRule}},
 {{end}}})
 
-// {{.Name}}Controller handles {{.Plural}} resources.
+/*
+|--------------------------------------------------------------------------
+| {{.Name}}Controller
+|--------------------------------------------------------------------------
+|
+| Handles {{.Plural}} resources.
+|
+*/
 type {{.Name}}Controller struct{}
 
-// Register{{.Name}}Routes registers RESTful routes for {{.Plural}}.
+/*
+|--------------------------------------------------------------------------
+| Register{{.Name}}Routes
+|--------------------------------------------------------------------------
+|
+| Registers RESTful routes for {{.Plural}}.
+|
+*/
 func Register{{.Name}}Routes(r *router.Router) {
 	c := {{.Name}}Controller{}
 	r.Resources("{{.Plural}}", router.ResourceHandlers{

@@ -15,7 +15,14 @@ import (
 	"github.com/lsgser/gofreight/router"
 )
 
-// Web registers browser-facing HTTP routes.
+/*
+|--------------------------------------------------------------------------
+| Web
+|--------------------------------------------------------------------------
+|
+| Registers browser-facing HTTP routes.
+|
+*/
 func Web(r *router.Router) {
 	controllers.RegisterHomeRoutes(r)
 	controllers.RegisterPostRoutes(r)

@@ -88,13 +88,34 @@ import (
 	"github.com/lsgser/gofreight/database"
 )
 
-// {{.StructName}} seeds database records.
+/*
+|--------------------------------------------------------------------------
+| {{.StructName}}
+|--------------------------------------------------------------------------
+|
+| Seeds database records.
+|
+*/
 type {{.StructName}} struct{}
 
-// New{{.StructName}} creates a new seeder instance.
+/*
+|--------------------------------------------------------------------------
+| New{{.StructName}}
+|--------------------------------------------------------------------------
+|
+| Creates a new seeder instance.
+|
+*/
 func New{{.StructName}}() *{{.StructName}} { return &{{.StructName}}{} }
 
-// Run executes the seeder.
+/*
+|--------------------------------------------------------------------------
+| Run
+|--------------------------------------------------------------------------
+|
+| Executes the seeder.
+|
+*/
 func (s *{{.StructName}}) Run(ctx context.Context) error {
 	_, err := database.DB().ExecContext(ctx, "-- add seed SQL here")
 	return err
@@ -137,8 +158,16 @@ func main() {
 		os.Exit(1)
 	}
 
+	/*
+	|--------------------------------------------------------------------------
+	| Seeder Registry
+	|--------------------------------------------------------------------------
+	|
+	| Register seeders here, e.g.:
+	|   "UserSeeder": seeders.NewUserSeeder().Run,
+	|
+	*/
 	registry := map[string]func(context.Context) error{
-		// Register seeders here, e.g. "UserSeeder": seeders.NewUserSeeder().Run,
 	}
 
 	if *class == "" {

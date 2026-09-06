@@ -15,7 +15,14 @@ import (
 	"github.com/lsgser/gofreight/config"
 )
 
-// Application creates and configures the Gofreight application instance.
+/*
+|--------------------------------------------------------------------------
+| Application
+|--------------------------------------------------------------------------
+|
+| Creates and configures the Gofreight application instance.
+|
+*/
 func Application() *application.Application {
 	app := application.New()
 

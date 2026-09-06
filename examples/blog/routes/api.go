@@ -32,7 +32,14 @@ import (
 	"github.com/lsgser/gofreight/router"
 )
 
-// API registers JSON API routes (prefix applied by Register).
+/*
+|--------------------------------------------------------------------------
+| API
+|--------------------------------------------------------------------------
+|
+| Registers JSON API routes (prefix applied by Register).
+|
+*/
 func API(r *router.Router) {
 	r.Get("/health", controller.Handler(func(base controller.Base) error {
 		base.RenderJSON(map[string]string{"status": "ok"})

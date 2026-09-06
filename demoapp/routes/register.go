@@ -13,7 +13,14 @@ package routes
 
 import "github.com/lsgser/gofreight/router"
 
-// Register loads web and API route groups onto the router.
+/*
+|--------------------------------------------------------------------------
+| Register
+|--------------------------------------------------------------------------
+|
+| Loads web and API route groups onto the router.
+|
+*/
 func Register(r *router.Router) {
 	Web(r)
 

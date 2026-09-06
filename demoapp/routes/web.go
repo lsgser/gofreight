@@ -21,12 +21,28 @@ import (
 	"github.com/lsgser/gofreight/router"
 )
 
-// Web registers browser-facing HTTP routes.
+/*
+|--------------------------------------------------------------------------
+| Web
+|--------------------------------------------------------------------------
+|
+| Registers browser-facing HTTP routes.
+|
+*/
 func Web(r *router.Router) {
 	r.Get("/", controller.Handler(func(base controller.Base) error {
 		return base.RenderView("home/index", map[string]any{"Name": "demoapp"})
 	}))
 
-	// Generated resources register here, e.g.:
-	// controllers.RegisterPostRoutes(r)
+	/*
+	|--------------------------------------------------------------------------
+	| Generated Resources
+	|--------------------------------------------------------------------------
+	|
+	| Register scaffold routes below, e.g.:
+	|   controllers.RegisterPostRoutes(r)
+	|
+	*/
+
+	/* gofreight:generated-resources */
 }

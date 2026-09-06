@@ -63,11 +63,25 @@ const serviceTmpl = `package services
 |
 */
 
-// {{.StructName}} handles domain business logic.
+/*
+|--------------------------------------------------------------------------
+| {{.StructName}}
+|--------------------------------------------------------------------------
+|
+| Handles domain business logic.
+|
+*/
 type {{.StructName}} struct {
 }
 
-// New{{.StructName}} creates a new {{.StructName}} instance.
+/*
+|--------------------------------------------------------------------------
+| New{{.StructName}}
+|--------------------------------------------------------------------------
+|
+| Creates a new {{.StructName}} instance.
+|
+*/
 func New{{.StructName}}() *{{.StructName}} {
 	return &{{.StructName}}{}
 }

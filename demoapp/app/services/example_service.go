@@ -15,8 +15,22 @@ package services
 |
 */
 
-// ExampleService demonstrates the service layer pattern.
+/*
+|--------------------------------------------------------------------------
+| ExampleService
+|--------------------------------------------------------------------------
+|
+| Demonstrates the service layer pattern.
+|
+*/
 type ExampleService struct{}
 
-// NewExampleService creates a new ExampleService instance.
+/*
+|--------------------------------------------------------------------------
+| NewExampleService
+|--------------------------------------------------------------------------
+|
+| Creates a new ExampleService instance.
+|
+*/
 func NewExampleService() *ExampleService { return &ExampleService{} }

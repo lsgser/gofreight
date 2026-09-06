@@ -15,4 +15,11 @@ package factories
 
 import "github.com/lsgser/gofreight/gftest"
 
-// Add model factories here — see gofreight make:factory.
+/*
+|--------------------------------------------------------------------------
+| Factories
+|--------------------------------------------------------------------------
+|
+| Add model factories here — see gofreight make:factory.
+|
+*/

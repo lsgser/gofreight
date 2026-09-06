@@ -14,7 +14,14 @@ import (
 var chatMu sync.Mutex
 var chatMessages []map[string]string
 
-// Application creates and configures the Gofreight application instance.
+/*
+|--------------------------------------------------------------------------
+| Application
+|--------------------------------------------------------------------------
+|
+| Creates and configures the Gofreight application instance.
+|
+*/
 func Application() *application.Application {
 	app := application.New()
 

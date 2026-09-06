@@ -23,7 +23,14 @@ var (
 	}
 )
 
-// Modules returns demo GraphQL modules (user + post) built with CreateModule.
+/*
+|--------------------------------------------------------------------------
+| Modules
+|--------------------------------------------------------------------------
+|
+| Returns demo GraphQL modules (user + post) built with CreateModule.
+|
+*/
 func Modules() []gfgraphql.Module {
 	userType := gql.NewObject(gql.ObjectConfig{
 		Name: "User",
@@ -130,7 +137,14 @@ func Modules() []gfgraphql.Module {
 	return []gfgraphql.Module{userModule, postModule}
 }
 
-// RegisterLoaders attaches dataloaders to each GraphQL request.
+/*
+|--------------------------------------------------------------------------
+| RegisterLoaders
+|--------------------------------------------------------------------------
+|
+| Attaches dataloaders to each GraphQL request.
+|
+*/
 func RegisterLoaders(reg *gfgraphql.LoaderRegistry) {
 	reg.Register("user", func() any {
 		return gfgraphql.NewLoader[string, map[string]any](func(ctx context.Context, keys []string) []*dataloader.Result[map[string]any] {

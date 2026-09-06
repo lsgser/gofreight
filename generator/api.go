@@ -89,10 +89,18 @@ func (r {{.Name}}Resource) ToMap() map[string]any {
 		return err
 	}
 
-	snippet := fmt.Sprintf(`// API routes — add to routes/api.go:
-// api := r.Group(api.VersionPrefix("v1"))
-// api.Get("/%s", controller.Handler((&controllers.%sAPIController{}).Index))
-// api.Get("/%s/:id", controller.Handler((&controllers.%sAPIController{}).Show))
+	snippet := fmt.Sprintf(`/*
+|--------------------------------------------------------------------------
+| API Routes
+|--------------------------------------------------------------------------
+|
+| Add to routes/api.go:
+|
+|   api := r.Group(api.VersionPrefix("v1"))
+|   api.Get("/%s", controller.Handler((&controllers.%sAPIController{}).Index))
+|   api.Get("/%s/:id", controller.Handler((&controllers.%sAPIController{}).Show))
+|
+*/
 `, plural, title, plural, title)
 	snippetPath := filepath.Join(appPath, "config", "api_routes_"+plural+".txt")
 	return os.WriteFile(snippetPath, []byte(snippet), 0644)

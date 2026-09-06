@@ -12,9 +12,16 @@ package config
 
 import "github.com/lsgser/gofreight/database"
 
-// RunMigrations runs inline SQL migrations (optional — prefer db/migrate/).
+/*
+|--------------------------------------------------------------------------
+| RunMigrations
+|--------------------------------------------------------------------------
+|
+| Runs inline SQL migrations (optional — prefer db/migrate/).
+|
+*/
 func RunMigrations() error {
 	return database.Migrate(
-		// Add migration SQL here
+		/* Add migration SQL here */
 	)
 }
