@@ -17,6 +17,7 @@
 | Guide | Description |
 |-------|-------------|
 | [Getting Started](getting-started.md) | Install the CLI, create an app, run migrations |
+| [Changelog](changelog.md) | Release history from v0.1.0 onward |
 | [Project structure](project-structure.md) | Framework vs application layout |
 | [Configuration](configuration.md) | Environment variables and YAML config |
 
