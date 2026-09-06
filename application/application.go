@@ -18,6 +18,7 @@ import (
 	"github.com/lsgser/gofreight/container"
 	"github.com/lsgser/gofreight/controller"
 	"github.com/lsgser/gofreight/database"
+	"github.com/lsgser/gofreight/graphql"
 	"github.com/lsgser/gofreight/health"
 	"github.com/lsgser/gofreight/i18n"
 	"github.com/lsgser/gofreight/integrations"
@@ -47,6 +48,7 @@ type Application struct {
 	Worker     *jobs.Worker
 	I18n       *i18n.Translator
 	Channels   *channels.Hub
+	GraphQL    *graphql.Server
 	Container  *container.Container
 }
 
@@ -158,6 +160,47 @@ func (app *Application) MountChannels(path string) {
 // MountSocket is an alias for MountChannels with a socket.io-style default path.
 func (app *Application) MountSocket(path string) {
 	app.MountChannels(path)
+}
+
+// MountGraphQL registers a GraphQL server with playground and docs routes.
+func (app *Application) MountGraphQL(path string, cfg graphql.Config) error {
+	srv, err := buildGraphQLServer(app, path, cfg)
+	if err != nil {
+		return err
+	}
+	app.GraphQL = srv
+	srv.Mount(app.Router, cfg.Path)
+	return nil
+}
+
+// MountGraphQLApplication mounts a pre-built GraphQL application (CreateApplication).
+func (app *Application) MountGraphQLApplication(path string, gqlApp *graphql.Application) {
+	if path == "" {
+		path = "/graphql"
+	}
+	app.GraphQL = gqlApp.Server()
+	gqlApp.Mount(app.Router, path)
+}
+
+func buildGraphQLServer(app *Application, path string, cfg graphql.Config) (*graphql.Server, error) {
+	if cfg.OnRequest == nil {
+		cfg.OnRequest = graphql.DefaultOnRequest
+	}
+	if app.Config.IsProduction() && cfg.Security == (graphql.SecurityConfig{}) {
+		cfg.Security = graphql.ProductionSecurity()
+	} else if cfg.Security == (graphql.SecurityConfig{}) {
+		cfg.Security = graphql.DefaultSecurity()
+	}
+	if cfg.Path == "" {
+		cfg.Path = path
+	}
+	if cfg.Path == "" {
+		cfg.Path = "/graphql"
+	}
+	if !app.Config.IsProduction() && !cfg.Playground {
+		cfg.Playground = true
+	}
+	return graphql.NewServer(cfg)
 }
 
 // LoadAssetManifest loads Vite/webpack manifest for production assets.
