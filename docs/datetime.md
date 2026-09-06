@@ -1,6 +1,6 @@
 # Date & time (`support/datetime`)
 
-Gofreight includes a thin wrapper around [Carbon](https://github.com/dromara/carbon) for fluent date manipulation — similar to Laravel Carbon or Rails ActiveSupport time helpers.
+Gofreight includes a thin wrapper around [Carbon](https://github.com/dromara/carbon) for fluent date manipulation in Go.
 
 ```go
 import "github.com/lsgser/gofreight/support/datetime"

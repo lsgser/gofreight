@@ -48,7 +48,7 @@ type joinClause struct {
 	on       string
 }
 
-// Query is a chainable query builder like ActiveRecord::Relation / Eloquent Builder.
+// Query is a chainable query builder for a repository.
 type Query[T any] struct {
 	table         string
 	ctx           context.Context
@@ -172,7 +172,7 @@ func (q *Query[T]) OrderDesc(column string) *Query[T] {
 	return q.Order(column, "DESC")
 }
 
-// Latest orders by created_at DESC (Rails default scope style).
+// Latest orders by created_at DESC.
 func (q *Query[T]) Latest(column ...string) *Query[T] {
 	col := "created_at"
 	if len(column) > 0 {
@@ -217,7 +217,7 @@ func (q *Query[T]) Having(column string, operator WhereOperator, value any) *Que
 	return q
 }
 
-// With eager-loads associations (like Rails includes / Eloquent with).
+// With eager-loads associations to prevent N+1 queries.
 func (q *Query[T]) With(associations ...string) *Query[T] {
 	q.preloads = append(q.preloads, associations...)
 	for _, a := range associations {

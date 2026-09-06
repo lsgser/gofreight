@@ -2,8 +2,8 @@ package integrations
 
 import "strings"
 
-// Category groups third-party adapters by service type — like Laravel's mail, cache,
-// filesystem, and queue config keys. Each category can be backed by any registered driver.
+// Category groups third-party adapters by service type (mail, cache, queue, storage, etc.).
+// Each category can be backed by any registered driver.
 type Category string
 
 const (

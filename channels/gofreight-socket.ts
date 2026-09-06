@@ -137,7 +137,7 @@ export class GofreightSocket {
     return this
   }
 
-  /** Subscribe to a channel (legacy Action Cable-style). */
+  /** Subscribe to a channel (legacy JSON subscribe message). */
   subscribe(channel: string): this {
     this.send({ action: 'subscribe', channel })
     return this

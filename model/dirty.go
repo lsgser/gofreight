@@ -4,7 +4,7 @@ import (
 	"reflect"
 )
 
-// Dirty tracks attribute changes on a model (like ActiveRecord dirty tracking).
+// Dirty tracks attribute changes on a model between reads and saves.
 type Dirty struct {
 	original map[string]any
 	current  any

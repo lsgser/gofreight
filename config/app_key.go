@@ -8,7 +8,7 @@ import (
 
 const defaultAppKey = "change-me-in-production"
 
-// GenerateAppKey returns a new Laravel-style application key (base64-encoded 32 bytes).
+// GenerateAppKey returns a new application key (base64-encoded 32 bytes).
 func GenerateAppKey() (string, error) {
 	raw := make([]byte, 32)
 	if _, err := rand.Read(raw); err != nil {
@@ -32,7 +32,7 @@ func ResolveAppKey(files *FileConfig) string {
 }
 
 // appKeyMaterial returns key bytes as a string for signing and encryption.
-// Laravel stores keys as base64:... in .env; legacy hex/plain strings still work.
+// Keys are stored as base64:... in .env; legacy hex/plain strings still work.
 func appKeyMaterial(raw string) string {
 	raw = strings.TrimSpace(raw)
 	if strings.HasPrefix(raw, "base64:") {

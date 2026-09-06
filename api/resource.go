@@ -5,7 +5,7 @@ import (
 	"net/http"
 )
 
-// Resource transforms a model into a JSON-serializable map (Laravel API Resource).
+// Resource transforms a model into a JSON-serializable map for API responses.
 type Resource interface {
 	ToMap() map[string]any
 }

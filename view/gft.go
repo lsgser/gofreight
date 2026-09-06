@@ -6,8 +6,7 @@ import (
 	"strings"
 )
 
-// GFT (Gofreight Template) is Gofreight's view language — inspired by Laravel and
-// Rails conventions but with its own syntax and file extension (.gft).
+// GFT (Gofreight Template) is Gofreight's view language with its own syntax and .gft extension.
 
 // CompiledGFT holds the result of compiling a .gft template.
 type CompiledGFT struct {

@@ -9,7 +9,7 @@ import (
 	"github.com/lsgser/gofreight/database"
 )
 
-// AssocType defines association types (Rails-style).
+// AssocType defines association relationship kinds.
 type AssocType string
 
 const (

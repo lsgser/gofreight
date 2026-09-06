@@ -7,7 +7,7 @@ import (
 	"github.com/lsgser/gofreight/model"
 )
 
-// Factory creates test model instances, like Laravel factories / FactoryBot.
+// Factory creates test model instances with default attributes.
 type Factory[T any] struct {
 	repo     *model.Repository[T]
 	defaults map[string]any

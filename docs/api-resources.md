@@ -1,6 +1,6 @@
 # API Resources
 
-API resources transform models into consistent JSON responses — similar to Laravel API Resources or Rails serializers.
+API resources transform models into consistent JSON responses for your API.
 
 ## Basic usage
 

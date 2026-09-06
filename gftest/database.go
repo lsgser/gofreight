@@ -47,7 +47,7 @@ func (d *DatabaseAssertions) count(table string) (int64, error) {
 	return count, err
 }
 
-// RefreshDatabase resets and re-runs migrations (like Laravel RefreshDatabase trait).
+// RefreshDatabase resets and re-runs migrations between tests.
 func RefreshDatabase(t *testing.T, databaseURL string, migrations ...string) {
 	t.Helper()
 	database.Reset()

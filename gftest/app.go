@@ -238,7 +238,7 @@ func (r *Response) AssertRedirect() *Response {
 	return r
 }
 
-// AssertSee asserts body contains text (like Laravel assertSee).
+// AssertSee asserts the response body contains text.
 func (r *Response) AssertSee(text string) *Response {
 	r.T.Helper()
 	Expect(r.Recorder.Body.String()).Bind(r.T).ToContain(text)

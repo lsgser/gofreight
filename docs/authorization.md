@@ -4,7 +4,7 @@ Authentication confirms who the user is; authorization decides what they can do.
 
 ## Policies
 
-Policies are named authorization rules, similar to Laravel Gates:
+Policies are named authorization rules:
 
 ```go
 policy := auth.NewPolicy()

@@ -1,6 +1,6 @@
 # Controllers
 
-Controllers handle HTTP requests and return responses — HTML views, JSON, redirects, or errors. Gofreight follows a Rails-style pattern: one struct per resource with action methods bound via `controller.Handler`.
+Controllers handle HTTP requests and return responses — HTML views, JSON, redirects, or errors. Each resource gets a struct with action methods bound via `controller.Handler`.
 
 ## Anatomy of a controller
 

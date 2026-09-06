@@ -42,7 +42,7 @@ func LoadDatabaseConfig(files *FileConfig) DatabaseConfig {
 //
 // Resolution order:
 //  1. DATABASE_URL — full URL (backward compatible)
-//  2. DB_URL — Laravel-style single URL override
+//  2. DB_URL — single URL override
 //  3. DB_CONNECTION + DB_HOST, DB_PORT, DB_DATABASE, DB_USERNAME, DB_PASSWORD
 func ResolveDatabaseURL(files *FileConfig) string {
 	if v := osGet("DATABASE_URL"); v != "" {

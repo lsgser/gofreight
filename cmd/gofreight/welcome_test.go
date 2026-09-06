@@ -15,6 +15,20 @@ func TestPrintCLIBanner(t *testing.T) {
 	}
 }
 
+func TestPrintUsageDoesNotDuplicateBanner(t *testing.T) {
+	initCommands()
+	var buf bytes.Buffer
+	printCLIBanner(&buf)
+	printCommandListTo(&buf, "", false)
+	out := buf.String()
+	if strings.Count(out, "Batteries-included web framework for Go") != 1 {
+		t.Fatalf("expected banner once, got:\n%s", out)
+	}
+	if !strings.Contains(out, "Available commands") {
+		t.Fatalf("expected command list in output:\n%s", out)
+	}
+}
+
 func TestPrintServeWelcome(t *testing.T) {
 	var buf bytes.Buffer
 	printServeWelcomeTo(&buf, 5000, "development")

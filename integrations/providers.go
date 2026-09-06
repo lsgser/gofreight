@@ -2,7 +2,7 @@ package integrations
 
 import "sync"
 
-// Provider registers and boots third-party integrations — similar to a Laravel service provider.
+// Provider registers and boots third-party integrations at application startup.
 type Provider interface {
 	// Name identifies the provider (for logging and debugging).
 	Name() string

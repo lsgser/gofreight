@@ -9,7 +9,7 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
-// RedisQueue persists jobs in Redis (like Sidekiq / Laravel Redis queue).
+// RedisQueue persists jobs in Redis for multi-process workers.
 type RedisQueue struct {
 	client *redis.Client
 	key    string

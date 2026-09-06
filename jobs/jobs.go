@@ -17,7 +17,7 @@ func (f JobFunc) Handle(ctx context.Context) error {
 	return f(ctx)
 }
 
-// Queue dispatches jobs for background processing (like Laravel Queue / ActiveJob).
+// Queue dispatches jobs for background processing.
 type Queue struct {
 	mu      sync.Mutex
 	pending []Job

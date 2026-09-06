@@ -9,7 +9,7 @@ import (
 	"github.com/lsgser/gofreight/mail"
 )
 
-// Fakes holds test doubles for framework services (like Laravel fakes).
+// Fakes holds test doubles for framework services (mail, cache, queue).
 type Fakes struct {
 	Mail  *mail.LogMailer
 	Cache *cache.Store

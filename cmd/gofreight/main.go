@@ -9,7 +9,6 @@ func main() {
 	initCommands()
 
 	if len(os.Args) < 2 {
-		printCLIBanner(os.Stdout)
 		printUsage()
 		os.Exit(0)
 	}

@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 )
 
-// Mailable is an email with a template view (Laravel Mailable).
+// Mailable is an email with an HTML template view.
 type Mailable struct {
 	To       []string
 	From     string

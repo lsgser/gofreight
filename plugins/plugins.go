@@ -5,7 +5,7 @@ import "sync"
 // Hook is a lifecycle callback registered by plugins.
 type Hook func(args ...any) error
 
-// Registry manages plugin hooks (like Rails engines).
+// Registry manages plugin lifecycle hooks.
 type Registry struct {
 	mu    sync.RWMutex
 	hooks map[string][]Hook

@@ -269,7 +269,7 @@ func (c *Connection) handleMessage(raw []byte) {
 		return
 	}
 
-	// Legacy Action Cable-style subscribe.
+	// Legacy channel subscribe via JSON message.
 	if env.Action == "subscribe" {
 		room := env.Channel
 		if room != "" {

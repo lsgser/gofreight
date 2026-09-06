@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-// Store is an in-memory cache (like Laravel Cache / Rails.cache).
+// Store is an in-memory cache with optional TTL.
 type Store struct {
 	mu    sync.RWMutex
 	items map[string]entry

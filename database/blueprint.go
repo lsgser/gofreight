@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-// Blueprint builds migration SQL programmatically (Laravel-style).
+// Blueprint builds migration SQL programmatically.
 type Blueprint struct {
 	table   string
 	creates []ColumnDef
