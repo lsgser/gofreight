@@ -5,6 +5,7 @@ import (
 	"io"
 	"os"
 	"strings"
+	"unicode/utf8"
 
 	"github.com/lsgser/gofreight/version"
 )
@@ -97,14 +98,17 @@ func line(c consoleStyle, text string) string {
 
 func visibleLen(s string) int {
 	n := 0
-	for i := 0; i < len(s); i++ {
+	for i := 0; i < len(s); {
 		if s[i] == '\033' {
 			for i < len(s) && s[i] != 'm' {
 				i++
 			}
+			i++
 			continue
 		}
+		_, size := utf8.DecodeRuneInString(s[i:])
 		n++
+		i += size
 	}
 	return n
 }
@@ -131,10 +135,12 @@ func (s consoleStyle) wrap(code, text string) string {
 	return code + text + "\033[0m"
 }
 
-func (s consoleStyle) bold(text string) string  { return s.wrap("\033[1m", text) }
-func (s consoleStyle) dim(text string) string   { return s.wrap("\033[2m", text) }
-func (s consoleStyle) cyan(text string) string  { return s.wrap("\033[36m", text) }
-func (s consoleStyle) green(text string) string { return s.wrap("\033[32m", text) }
+func (s consoleStyle) bold(text string) string   { return s.wrap("\033[1m", text) }
+func (s consoleStyle) dim(text string) string    { return s.wrap("\033[2m", text) }
+func (s consoleStyle) cyan(text string) string   { return s.wrap("\033[36m", text) }
+func (s consoleStyle) green(text string) string  { return s.wrap("\033[32m", text) }
+func (s consoleStyle) yellow(text string) string { return s.wrap("\033[33m", text) }
+func (s consoleStyle) red(text string) string    { return s.wrap("\033[31m", text) }
 
 func isTerminal(f *os.File) bool {
 	fi, err := f.Stat()

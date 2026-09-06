@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"os"
 	"sort"
 	"strings"
@@ -204,12 +205,12 @@ func registerMakeCommands() {
 func dispatch(name string, args []string) bool {
 	for _, c := range allCommands {
 		if c.Name == name {
-			c.Run(args)
+			runCommand(c.Name, args, c.Run)
 			return true
 		}
 		for _, a := range c.Aliases {
 			if a == name {
-				c.Run(args)
+				runCommand(c.Name, args, c.Run)
 				return true
 			}
 		}
@@ -219,7 +220,7 @@ func dispatch(name string, args []string) bool {
 		makeName := "make:" + args[0]
 		for _, c := range allCommands {
 			if c.Name == makeName {
-				c.Run(args[1:])
+				runCommand(makeName, args[1:], c.Run)
 				return true
 			}
 		}
@@ -227,7 +228,19 @@ func dispatch(name string, args []string) bool {
 	return false
 }
 
+func runCommand(name string, args []string, run func([]string)) {
+	if needsProductionGuard(name) && !guardProduction(name, args) {
+		fmt.Println("Aborted.")
+		os.Exit(0)
+	}
+	run(args)
+}
+
 func printCommandList(filter string) {
+	printCommandListTo(os.Stdout, filter, isTerminal(os.Stdout))
+}
+
+func printCommandListTo(w io.Writer, filter string, useColor bool) {
 	byCategory := map[string][]command{}
 	var categories []string
 	for _, c := range allCommands {
@@ -244,16 +257,17 @@ func printCommandList(filter string) {
 	}
 	sort.Strings(categories)
 
-	fmt.Println("Gofreight — Available commands:")
-	fmt.Println()
+	style := newConsoleStyle(useColor)
+
+	fmt.Fprintf(w, "%s\n\n", style.bold("  Available commands"))
 	for _, cat := range categories {
-		fmt.Println(" ", cat)
+		fmt.Fprintf(w, "  %s\n", style.cyan(cat))
 		cmds := byCategory[cat]
 		sort.Slice(cmds, func(i, j int) bool { return cmds[i].Name < cmds[j].Name })
 		for _, c := range cmds {
-			fmt.Printf("  %-28s %s\n", c.Name, c.Description)
+			fmt.Fprintf(w, "    %-26s %s\n", style.bold(c.Name), style.dim(c.Description))
 		}
-		fmt.Println()
+		fmt.Fprintln(w)
 	}
 }
 
@@ -308,5 +322,7 @@ func contains(list []string, s string) bool {
 func printUsage() {
 	printCLIBanner(os.Stdout)
 	printCommandList("")
-	fmt.Println("Run 'gofreight help <command>' for more information on a command.")
+	useColor := isTerminal(os.Stdout)
+	style := newConsoleStyle(useColor)
+	fmt.Fprintf(os.Stdout, "%s\n", style.dim("  Run 'gofreight help <command>' for more information on a command."))
 }
