@@ -85,3 +85,4 @@ Step-by-step guides on the docs site:
 - [HTML CRUD with GFT](tutorial-html-crud.md) — browser forms
 - [JWT Authentication](tutorial-auth-jwt.md) — protected API routes
 - [Real-time WebSockets](tutorial-realtime.md) — live chat
+- [GraphQL API](tutorial-graphql.md) — SDL schemas, resolvers, DataLoader

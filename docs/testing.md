@@ -46,7 +46,7 @@ app.Post("/posts", body).AssertRedirect("/posts/1")
 
 ## Factories and fakes
 
-Factories use **`gftest/faker`** for random defaults (like Laravel Faker). Values are generated fresh on each `Create` via lazy attributes:
+Factories use **`gftest/faker`** for random defaults. Values are generated fresh on each `Create` via lazy attributes:
 
 ```go
 import (

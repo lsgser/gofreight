@@ -246,7 +246,7 @@ func appendRouteRegistration(appPath string, data ResourceData) error {
 	return os.WriteFile(path, []byte(s), 0644)
 }
 
-// Scaffold is an alias for Resource (Laravel make:scaffold style).
+// Scaffold is an alias for Resource.
 func Scaffold(appPath, name string, fields map[string]string) error {
 	return Resource(appPath, name, fields)
 }

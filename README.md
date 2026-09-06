@@ -774,7 +774,7 @@ Integration variables (`SESSION_DRIVER`, `QUEUE_CONNECTION`, `CACHE_STORE`, `FIL
 | [docs/forms-validation.md](docs/forms-validation.md) | Vine schemas, GFT forms, flash errors |
 | [docs/orm.md](docs/orm.md) | Models, queries, associations |
 | [docs/testing.md](docs/testing.md) | gftest & faker guide |
-| [docs/datetime.md](docs/datetime.md) | Carbon-style date helpers |
+| [docs/datetime.md](docs/datetime.md) | Fluent date helpers |
 | [docs/integrations.md](docs/integrations.md) | Pluggable services |
 | [docs/admin.md](docs/admin.md) | Database admin |
 | [docs/deployment.md](docs/deployment.md) | Docker & production |

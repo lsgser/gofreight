@@ -8,7 +8,7 @@ Gofreight provides a **generic integration registry** for connecting third-party
 |---------|-------------|
 | **Category** | Service type: mail, storage, cache, payment, analytics, webhook, or your own |
 | **Driver** | A registered implementation for that category |
-| **Env selection** | Laravel-style keys: `MAIL_MAILER`, `FILESYSTEM_DISK`, `CACHE_STORE`, `QUEUE_CONNECTION`, `REDIS_HOST`, … |
+| **Env selection** | Standard keys: `MAIL_MAILER`, `FILESYSTEM_DISK`, `CACHE_STORE`, `QUEUE_CONNECTION`, `REDIS_HOST`, … |
 | **Registry** | `integrations.Register()` adds drivers at boot |
 
 Built-in **category connectors** (protocol-level, not vendor-branded):

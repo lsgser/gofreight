@@ -1,4 +1,4 @@
-// Package datetime provides Carbon-style date helpers for Gofreight apps.
+// Package datetime provides fluent date helpers for Gofreight apps via github.com/dromara/carbon/v2.
 package datetime
 
 import (

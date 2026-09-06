@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-// Seeder defines a database seeder (like Laravel DatabaseSeeder).
+// Seeder defines a database seeder run via the CLI or tests.
 type Seeder interface {
 	Run(ctx context.Context) error
 }

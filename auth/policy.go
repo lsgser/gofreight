@@ -2,7 +2,7 @@ package auth
 
 import "net/http"
 
-// Policy defines authorization rules (like Laravel Gates).
+// Policy defines named authorization rules.
 type Policy struct {
 	rules map[string]func(r *http.Request) bool
 }

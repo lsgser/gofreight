@@ -8,7 +8,7 @@ import (
 	"github.com/lsgser/gofreight/validation"
 )
 
-// FormRequest validates incoming HTTP requests (Laravel FormRequest).
+// FormRequest validates incoming HTTP requests with chainable rules.
 type FormRequest struct {
 	rules    []Rule
 	data     map[string]string

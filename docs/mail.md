@@ -18,7 +18,7 @@ err := app.Mailer.Send(mail.Message{
 
 ## Mailables
 
-Mailables render HTML from template files — similar to Laravel Mailables:
+Mailables render HTML from template files:
 
 ```go
 m := mail.NewMailable(

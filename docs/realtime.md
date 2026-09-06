@@ -109,7 +109,7 @@ All messages are JSON text frames.
 
 ### Legacy channel subscribe
 
-Action Cable / Laravel Echo-style subscribe still works:
+Channel subscribe via JSON message still works:
 
 ```json
 { "action": "subscribe", "channel": "posts" }

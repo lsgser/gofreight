@@ -20,7 +20,7 @@ func Views() *view.Engine {
 	return defaultViews
 }
 
-// Base is the foundation for all controllers, similar to ActionController::Base.
+// Base is the foundation for all controllers in a Gofreight application.
 type Base struct {
 	Request  *http.Request
 	Response http.ResponseWriter

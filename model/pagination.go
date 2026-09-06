@@ -7,7 +7,7 @@ import (
 	"github.com/lsgser/gofreight/database"
 )
 
-// Page holds paginated query results (like Laravel LengthAwarePaginator).
+// Page holds paginated query results with metadata.
 type Page[T any] struct {
 	Data        []T   `json:"data"`
 	CurrentPage int   `json:"current_page"`
@@ -79,7 +79,7 @@ func (q *Query[T]) SimplePaginate(page, perPage int) ([]T, error) {
 	return q.Get()
 }
 
-// FindEach iterates records in batches (like Rails find_each).
+// FindEach iterates records in batches to limit memory use.
 func (q *Query[T]) FindEach(batchSize int, fn func(T) error) error {
 	if batchSize < 1 {
 		batchSize = 1000

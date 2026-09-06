@@ -4,7 +4,7 @@ import (
 	"sync"
 )
 
-// Container is a simple service container (Laravel-style IoC).
+// Container is Gofreight's service container for dependency injection.
 type Container struct {
 	mu          sync.RWMutex
 	bindings    map[string]func() any

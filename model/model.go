@@ -9,7 +9,7 @@ import (
 	"github.com/lsgser/gofreight/database"
 )
 
-// Record is the base struct for all models, similar to ActiveRecord::Base.
+// Record is the base struct for all models with id and timestamps.
 type Record struct {
 	ID        int64   `db:"id" json:"id"`
 	CreatedAt string  `db:"created_at" json:"created_at"`
@@ -22,7 +22,7 @@ func (r *Record) IsSoftDeleted() bool {
 	return r.DeletedAt != nil && *r.DeletedAt != ""
 }
 
-// Repository is the main ORM entry point for a model, like ActiveRecord::Base or Eloquent Model.
+// Repository is the ORM entry point for a model table.
 type Repository[T any] struct {
 	TableName     string
 	associations  map[string]Association
@@ -57,7 +57,7 @@ func (r *Repository[T]) Association(assoc Association) *Repository[T] {
 	return r
 }
 
-// Scope registers a named scope (like Rails scope :published).
+// Scope registers a named, reusable query fragment on the repository.
 func (r *Repository[T]) Scope(name string, fn ScopeFunc[T]) *Repository[T] {
 	r.scopes[name] = fn
 	return r

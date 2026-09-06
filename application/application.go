@@ -31,7 +31,7 @@ import (
 	"github.com/joho/godotenv"
 )
 
-// Application is the central hub of a Gofreight app, like Rails.application.
+// Application is the central hub of a Gofreight app — wiring, config, and subsystems.
 type Application struct {
 	Config     *config.Config
 	FileConfig *config.FileConfig
@@ -306,7 +306,7 @@ func (app *Application) StartJobs(concurrency int) {
 	}
 }
 
-// Routes is a callback where apps define their routes (like config/routes.rb).
+// Routes is a callback where apps define their HTTP routes.
 type RoutesFunc func(*router.Router)
 
 // Draw registers routes using the provided callback.

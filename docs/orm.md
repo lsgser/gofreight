@@ -1,6 +1,6 @@
 # ORM
 
-Gofreight includes a type-safe, ActiveRecord-style ORM for Go structs. It provides chainable queries, associations, validations, lifecycle callbacks, soft deletes, and transactions — all driven by `context.Context`.
+Gofreight includes a type-safe ORM for Go structs. It provides chainable queries, associations, validations, lifecycle callbacks, soft deletes, and transactions — all driven by `context.Context`.
 
 For a complete working example, see the [blog app](../examples/blog/).
 
