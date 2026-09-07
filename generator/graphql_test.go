@@ -24,7 +24,7 @@ func Application() *application.Application {
 	if err := os.WriteFile(filepath.Join(dir, "bootstrap", "app.go"), []byte(bootstrap), 0644); err != nil {
 		t.Fatal(err)
 	}
-	if err := os.WriteFile(filepath.Join(dir, "go.mod"), []byte("module testapp\n\ngo 1.26.0\n\nrequire github.com/lsgser/gofreight v0.3.0\n"), 0644); err != nil {
+	if err := os.WriteFile(filepath.Join(dir, "go.mod"), []byte("module testapp\n\ngo 1.26.0\n\nrequire github.com/lsgser/gofreight v0.3.1\n"), 0644); err != nil {
 		t.Fatal(err)
 	}
 	if err := GraphQL(dir); err != nil {
@@ -66,7 +66,7 @@ func Application() *application.Application {
 	if err := os.WriteFile(filepath.Join(dir, "bootstrap", "app.go"), []byte(bootstrap), 0644); err != nil {
 		t.Fatal(err)
 	}
-	if err := os.WriteFile(filepath.Join(dir, "go.mod"), []byte("module testapp\n\ngo 1.26.0\n\nrequire github.com/lsgser/gofreight v0.3.0\n"), 0644); err != nil {
+	if err := os.WriteFile(filepath.Join(dir, "go.mod"), []byte("module testapp\n\ngo 1.26.0\n\nrequire github.com/lsgser/gofreight v0.3.1\n"), 0644); err != nil {
 		t.Fatal(err)
 	}
 	if err := GraphQLModule(dir, "Post", map[string]string{

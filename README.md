@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-  <strong>v0.3.0</strong> · <a href="https://github.com/lsgser/gofreight">github.com/lsgser/gofreight</a>
+  <strong>v0.3.1</strong> · <a href="https://github.com/lsgser/gofreight">github.com/lsgser/gofreight</a>
 </p>
 
 <p align="center">

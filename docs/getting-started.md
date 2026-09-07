@@ -14,7 +14,7 @@ The binary installs to `$(go env GOPATH)/bin` (usually `~/go/bin`). Add it to yo
 
 ```bash
 export PATH="$PATH:$(go env GOPATH)/bin"
-gofreight version   # gofreight v0.3.0
+gofreight version   # gofreight v0.3.1
 ```
 
 **macOS (zsh)** — persist in `~/.zshrc`:

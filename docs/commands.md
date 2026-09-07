@@ -128,7 +128,7 @@ Prints framework version, current environment, working directory, and masked dat
 
 ```bash
 gofreight about
-# Gofreight 0.3.0
+# Gofreight 0.3.1
 # Environment development
 # Path /Users/you/projects/blog
 # Database sqlite://***@/db/development.db

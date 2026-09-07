@@ -2,7 +2,7 @@ module blog
 
 go 1.26.0
 
-require github.com/lsgser/gofreight v0.3.0
+require github.com/lsgser/gofreight v0.3.1
 
 require (
 	filippo.io/edwards25519 v1.1.0 // indirect

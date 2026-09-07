@@ -5,12 +5,34 @@ All notable changes to Gofreight are documented here. The project follows [Seman
 Install a specific release:
 
 ```bash
-go install github.com/lsgser/gofreight/cmd/gofreight@v0.3.0
+go install github.com/lsgser/gofreight/cmd/gofreight@v0.3.1
 ```
 
 ---
 
 ## Unreleased
+
+---
+
+## 0.3.1 — September 7, 2026
+
+### Added
+
+- **GraphQL generators** — `gofreight make:graphql` and `gofreight make:graphql-module` scaffold `graphql/`, bootstrap wiring, and resource modules with queries, mutations, and dataloaders
+- **Scaffold bootstrap migration** — new apps include `db/migrate/0001_init.sql` so the first `gofreight migrate` runs visible migrations
+- **Admin panel overhaul** — phpMyAdmin-inspired UI with sidebar table list, tabbed views (Browse, Structure, SQL, Search, Insert, Export), column sort, row search, bulk delete, CSV export, truncate, and SQL query history
+
+### Changed
+
+- **Welcome page** — redesigned home view with dark mode, feature cards, docs-site links (not GitHub), and framework version badge
+- **New-app README** — links to the documentation site; includes `key:generate` in getting-started steps
+- **Migration output** — clearer messages when no files exist or the database is up to date
+- **Admin documentation** — reflects full CRUD, schema tools, and export capabilities
+
+### Fixed
+
+- **Test factories stub** — removed unused import from generated `tests/factories/factories.go`
+- **GraphQL module deps** — `make:graphql` adds `graphql-go` and `dataloader` to app `go.mod`
 
 ---
 
@@ -109,6 +131,23 @@ Initial public release — a batteries-included Go web framework you compile to 
 ---
 
 ## Upgrade notes
+
+### From 0.3.0 to 0.3.1
+
+1. Update the module version in your app's `go.mod`:
+
+   ```bash
+   go get github.com/lsgser/gofreight@v0.3.1
+   go mod tidy
+   ```
+
+2. Reinstall the CLI:
+
+   ```bash
+   go install github.com/lsgser/gofreight/cmd/gofreight@v0.3.1
+   ```
+
+3. Optional: run `gofreight make:graphql` to add GraphQL scaffolding to an existing app.
 
 ### From 0.2.0 to 0.3.0
 
