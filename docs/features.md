@@ -11,6 +11,9 @@ Overview of built-in Gofreight capabilities. Each topic has a dedicated guide �
 | Middleware pipeline | [Middleware](middleware.md) |
 | GFT templating | [Templating](templating.md) |
 | Forms & Vine validation | [Forms & Validation](forms-validation.md) |
+| Models — structs, repositories, soft deletes | [Models](models.md) |
+| ORM — queries, associations, transactions | [ORM](orm.md) |
+| Migrations & column types | [Database](database.md), [Column Types](column-types.md) |
 
 ### Routing highlights
 

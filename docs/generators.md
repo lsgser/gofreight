@@ -8,6 +8,8 @@ gofreight make:scaffold Article title:string body:text status:enum:draft,publish
 
 Use **`gofreight make:scaffold`**, **`gofreight make:model`**, or **`gofreight make:resource`** — they share the same field type vocabulary.
 
+> **Full column reference:** See **[Column Types](column-types.md)** for every supported migration type, blueprint method, and raw SQL examples (organized by category).
+
 ---
 
 ## Field type reference

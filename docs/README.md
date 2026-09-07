@@ -44,8 +44,10 @@
 | [Controllers](controllers.md) | Status codes, redirects, uploads, JSON/HTML |
 | [Middleware](middleware.md) | HTTP pipeline, CSRF, CORS, rate limiting |
 | [Error handling](error-handling.md) | Panic recovery and error pages |
-| [ORM](orm.md) | Models, queries, associations, validations |
+| [Models](models.md) | Structs, repositories, soft deletes |
+| [ORM](orm.md) | Query builder, associations, validations |
 | [Database](database.md) | Migrations, seeding, blueprint DSL |
+| [Column types](column-types.md) | Migration column reference by category |
 | [Templating (GFT)](templating.md) | Gofreight Templates syntax and Vite |
 | [Forms & validation](forms-validation.md) | Vine schemas and GFT form components |
 

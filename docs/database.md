@@ -1,6 +1,6 @@
 # Database
 
-Gofreight uses SQL file migrations, optional blueprint DSL, and seeders. The ORM layer (models, queries) is documented separately in **[ORM](orm.md)**.
+Gofreight uses SQL file migrations, optional blueprint DSL, and seeders. Models and repositories are in **[Models](models.md)**; the full column type catalog is in **[Column Types](column-types.md)**. Query building is in **[ORM](orm.md)**.
 
 ## Connecting
 
