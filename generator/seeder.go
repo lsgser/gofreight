@@ -1,6 +1,7 @@
 package generator
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -22,12 +23,21 @@ func Seeder(appPath, name string) error {
 	mod := moduleName(appPath)
 	data := struct {
 		StructName, Module, FileBase string
-	}{structName, mod, base}
+		IsDatabaseSeeder             bool
+	}{structName, mod, base, structName == "DatabaseSeeder"}
 
-	if err := writeTemplate(filepath.Join(dir, base+".go"), seederTmpl, data); err != nil {
+	tmpl := seederTmpl
+	if data.IsDatabaseSeeder {
+		tmpl = databaseSeederTmpl
+	}
+
+	if err := writeTemplate(filepath.Join(dir, base+".go"), tmpl, data); err != nil {
 		return err
 	}
-	return ensureSeedCmd(appPath, mod)
+	if err := ensureSeedCmd(appPath, mod); err != nil {
+		return err
+	}
+	return registerSeederInCmd(appPath, structName, mod)
 }
 
 // Test generates a feature test file in tests/.
@@ -67,6 +77,30 @@ func ensureSeedCmd(appPath, mod string) error {
 		return nil
 	}
 	return writeTemplate(path, seedCmdTmpl, struct{ Module string }{mod})
+}
+
+func registerSeederInCmd(appPath, structName, mod string) error {
+	path := filepath.Join(appPath, "cmd", "seed", "main.go")
+	content, err := os.ReadFile(path)
+	if err != nil {
+		return nil
+	}
+	line := fmt.Sprintf("\t\t\"%s\": seeders.New%s().Run,", structName, structName)
+	s := string(content)
+	if strings.Contains(s, structName) {
+		return nil
+	}
+	importLine := fmt.Sprintf("\t\"%s/db/seeders\"\n", mod)
+	if !strings.Contains(s, mod+"/db/seeders") {
+		s = strings.Replace(s, "\"github.com/lsgser/gofreight/database\"\n", "\"github.com/lsgser/gofreight/database\"\n"+importLine, 1)
+	}
+	s = strings.Replace(s, "registry := map[string]func(context.Context) error{\n\t}", "registry := map[string]func(context.Context) error{\n"+line+"\n\t}", 1)
+	s = strings.Replace(s, "registry := map[string]func(context.Context) error{\n\t\n\t}", "registry := map[string]func(context.Context) error{\n"+line+"\n\t}", 1)
+	// append to non-empty registry
+	if strings.Contains(s, "registry := map[string]func(context.Context) error{") && !strings.Contains(s, line) {
+		s = strings.Replace(s, "\n\t}\n\n\tif *class", "\n"+line+"\n\t}\n\n\tif *class", 1)
+	}
+	return os.WriteFile(path, []byte(s), 0644)
 }
 
 const seederTmpl = `package seeders
@@ -122,6 +156,42 @@ func (s *{{.StructName}}) Run(ctx context.Context) error {
 }
 `
 
+const databaseSeederTmpl = `package seeders
+
+import (
+	"context"
+
+	"github.com/lsgser/gofreight/model"
+)
+
+/*
+|--------------------------------------------------------------------------
+| {{.StructName}}
+|--------------------------------------------------------------------------
+|
+| Root database seeder. Call other seeders from Run (Laravel-style):
+|
+|   return s.Call(NewUserSeeder(), NewPostSeeder())
+|
+| Run with: gofreight db:seed
+|
+*/
+type {{.StructName}} struct {
+	model.Seeder
+}
+
+func New{{.StructName}}() *{{.StructName}} {
+	return &{{.StructName}}{Seeder: model.NewSeeder()}
+}
+
+func (s *{{.StructName}}) Run(ctx context.Context) error {
+	s.SetContext(ctx)
+	return s.Call(
+		// NewUserSeeder(),
+	)
+}
+`
+
 const seedCmdTmpl = `package main
 
 /*
@@ -145,6 +215,7 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/lsgser/gofreight/config"
 	"github.com/lsgser/gofreight/database"
+	"{{.Module}}/db/seeders"
 )
 
 func main() {
@@ -168,15 +239,15 @@ func main() {
 	|
 	*/
 	registry := map[string]func(context.Context) error{
+		"DatabaseSeeder": seeders.NewDatabaseSeeder().Run,
 	}
 
 	if *class == "" {
-		for name, run := range registry {
-			fmt.Printf("Seeding %s...\n", name)
-			if err := run(context.Background()); err != nil {
-				fmt.Fprintf(os.Stderr, "%s: %v\n", name, err)
-				os.Exit(1)
-			}
+		className := "DatabaseSeeder"
+		fmt.Printf("Seeding %s...\n", className)
+		if err := registry[className](context.Background()); err != nil {
+			fmt.Fprintf(os.Stderr, "%s: %v\n", className, err)
+			os.Exit(1)
 		}
 		return
 	}
@@ -237,6 +308,7 @@ const standaloneFactoryTmpl = `package factories
 | Creates {{.Name}} instances for tests. Usage:
 |
 |   post := factories.Create{{.Name}}(t, map[string]any{"title": "Hello"})
+|   posts := factories.{{.Name}}Factory.Count(3).Create(t)
 |
 */
 
@@ -248,7 +320,15 @@ import (
 	"github.com/lsgser/gofreight/gftest/faker"
 )
 
-var {{.Name}}Factory = gftest.NewFactory(models.{{.Name}}s).Define(faker.DefinitionsForModel("{{.Name}}"))
+var {{.Name}}Factory = gftest.NewFactory(models.{{.Name}}s).
+	Define(faker.DefinitionsForModel("{{.Name}}"))
+
+// Unverified{{.Name}} returns a factory state (Laravel factory states).
+func Unverified{{.Name}}() *gftest.Factory[models.{{.Name}}] {
+	return {{.Name}}Factory.State(map[string]any{
+		// override fields for this state, e.g. "verified": false,
+	})
+}
 
 func Create{{.Name}}(t *testing.T, attrs ...map[string]any) *models.{{.Name}} {
 	t.Helper()

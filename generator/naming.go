@@ -51,17 +51,24 @@ type ParsedField struct {
 	FormType       string
 	EnumValues     []string
 	ReferenceTable string
+	Unique         bool
 }
 
-// ParseField maps a CLI field spec (e.g. "title:string", "status:enum:draft,published") to Go/SQL/form types.
+// ParseField maps a CLI field spec (e.g. "title:string", "email:string:unique") to Go/SQL/form types.
 func ParseField(name, typeSpec string) ParsedField {
 	typeSpec = strings.TrimSpace(strings.ToLower(typeSpec))
+	unique := false
+	if parts := strings.Split(typeSpec, ":"); len(parts) > 1 && parts[len(parts)-1] == "unique" {
+		unique = true
+		typeSpec = strings.Join(parts[:len(parts)-1], ":")
+	}
 	base, extra := splitTypeSpec(typeSpec)
 
 	pf := ParsedField{
 		Name:    title(name),
 		DBTag:   strings.ToLower(name),
 		RawType: typeSpec,
+		Unique:  unique,
 	}
 	pf.JSONTag = pf.DBTag
 
@@ -194,14 +201,20 @@ func parseEnumValues(s string) []string {
 
 // MigrationColumnDef returns the SQL column definition for migrations.
 func (pf ParsedField) MigrationColumnDef() string {
+	var def string
 	if len(pf.EnumValues) > 0 {
 		quoted := make([]string, len(pf.EnumValues))
 		for i, v := range pf.EnumValues {
 			quoted[i] = "'" + strings.ReplaceAll(v, "'", "''") + "'"
 		}
-		return fmt.Sprintf("TEXT NOT NULL CHECK (%s IN (%s))", pf.DBTag, strings.Join(quoted, ", "))
+		def = fmt.Sprintf("TEXT NOT NULL CHECK (%s IN (%s))", pf.DBTag, strings.Join(quoted, ", "))
+	} else {
+		def = pf.SQLType
 	}
-	return pf.SQLType
+	if pf.Unique {
+		def += " UNIQUE"
+	}
+	return def
 }
 
 // HTMLInputType returns the HTML input type for scaffold forms.

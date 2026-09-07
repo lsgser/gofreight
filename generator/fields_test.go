@@ -26,6 +26,24 @@ func TestParseFieldReferences(t *testing.T) {
 	}
 }
 
+func TestParseFieldUnique(t *testing.T) {
+	pf := ParseField("email", "string:unique")
+	if !pf.Unique {
+		t.Fatal("expected unique")
+	}
+	def := pf.MigrationColumnDef()
+	if !strings.Contains(def, "UNIQUE") {
+		t.Fatalf("expected UNIQUE in %q", def)
+	}
+}
+
+func TestParseFieldEnumUnique(t *testing.T) {
+	pf := ParseField("status", "enum:draft,published:unique")
+	if !pf.Unique || len(pf.EnumValues) != 2 {
+		t.Fatalf("unexpected field: %+v", pf)
+	}
+}
+
 func TestParseFieldAliases(t *testing.T) {
 	cases := map[string]string{
 		"int":     "int",

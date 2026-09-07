@@ -3,19 +3,64 @@ package model
 import (
 	"context"
 	"fmt"
+	"strconv"
+	"strings"
 
 	"github.com/lsgser/gofreight/database"
 )
 
 // Page holds paginated query results with metadata.
 type Page[T any] struct {
-	Data        []T   `json:"data"`
-	CurrentPage int   `json:"current_page"`
-	PerPage     int   `json:"per_page"`
-	Total       int64 `json:"total"`
-	LastPage    int   `json:"last_page"`
-	From        int   `json:"from"`
-	To          int   `json:"to"`
+	Data        []T            `json:"data"`
+	CurrentPage int            `json:"current_page"`
+	PerPage     int            `json:"per_page"`
+	Total       int64          `json:"total"`
+	LastPage    int            `json:"last_page"`
+	From        int            `json:"from"`
+	To          int            `json:"to"`
+	Links       map[string]any `json:"links,omitempty"`
+}
+
+// SimplePage holds simple pagination results without a total count.
+type SimplePage[T any] struct {
+	Data         []T  `json:"data"`
+	CurrentPage  int  `json:"current_page"`
+	PerPage      int  `json:"per_page"`
+	HasMorePages bool `json:"has_more_pages"`
+}
+
+// LinksFor builds Laravel-style pagination links (first, prev, next, last).
+func (p *Page[T]) LinksFor(baseURL string) map[string]any {
+	return PaginationLinks(baseURL, p.CurrentPage, p.LastPage)
+}
+
+// SetLinks sets pagination links using the given base URL.
+func (p *Page[T]) SetLinks(baseURL string) {
+	p.Links = PaginationLinks(baseURL, p.CurrentPage, p.LastPage)
+}
+
+// PaginationLinks builds URL links for JSON API responses.
+func PaginationLinks(baseURL string, page, lastPage int) map[string]any {
+	baseURL = strings.TrimRight(baseURL, "/")
+	links := map[string]any{
+		"first": pageURL(baseURL, 1),
+		"last":  pageURL(baseURL, lastPage),
+	}
+	if page > 1 {
+		links["prev"] = pageURL(baseURL, page-1)
+	}
+	if page < lastPage {
+		links["next"] = pageURL(baseURL, page+1)
+	}
+	return links
+}
+
+func pageURL(base string, page int) string {
+	sep := "?"
+	if strings.Contains(base, "?") {
+		sep = "&"
+	}
+	return base + sep + "page=" + strconv.Itoa(page)
 }
 
 // Paginate returns a page of results with metadata.
@@ -66,17 +111,33 @@ func (q *Query[T]) Paginate(page, perPage int) (*Page[T], error) {
 	}, nil
 }
 
-// SimplePaginate returns results without total count (faster for large tables).
-func (q *Query[T]) SimplePaginate(page, perPage int) ([]T, error) {
+// SimplePaginate returns results without total count (Laravel simplePaginate).
+func (q *Query[T]) SimplePaginate(page, perPage int) (*SimplePage[T], error) {
 	if page < 1 {
 		page = 1
 	}
 	if perPage < 1 {
 		perPage = 15
 	}
-	q.limit = perPage + 1 // fetch one extra to detect has-more
+	q.limit = perPage + 1
 	q.offset = (page - 1) * perPage
-	return q.Get()
+
+	data, err := q.Get()
+	if err != nil {
+		return nil, err
+	}
+
+	hasMore := len(data) > perPage
+	if hasMore {
+		data = data[:perPage]
+	}
+
+	return &SimplePage[T]{
+		Data:         data,
+		CurrentPage:  page,
+		PerPage:      perPage,
+		HasMorePages: hasMore,
+	}, nil
 }
 
 // FindEach iterates records in batches to limit memory use.

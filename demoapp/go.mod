@@ -5,7 +5,7 @@ go 1.26.0
 require (
 	github.com/graph-gophers/dataloader/v7 v7.2.0
 	github.com/graphql-go/graphql v0.8.1
-	github.com/lsgser/gofreight v0.3.1
+	github.com/lsgser/gofreight v0.4.0
 )
 
 require (

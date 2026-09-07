@@ -95,58 +95,93 @@ func handleUp(args []string) {
 	fmt.Println("Application is now live.")
 }
 
-func handleDBMigrate() {
-	loadEnv()
-	cfg := config.Load()
-	if err := connectDB(cfg.DatabaseURL); err != nil {
-		fail(err)
+func runMigrations(command string) {
+	if database.UsesGoMigrations(".") {
+		switch command {
+		case "up":
+			fmt.Println("Running migrations...")
+		case "down":
+			fmt.Println("Rolling back last migration...")
+		case "reset":
+			fmt.Println("Rolling back all migrations...")
+		case "refresh":
+			fmt.Println("Refreshing migrations...")
+		case "fresh":
+			fmt.Println("Dropping all tables and migrating...")
+		}
+		if err := database.RunGoMigrateTool(".", command); err != nil {
+			fail(err)
+		}
+		if command != "status" {
+			fmt.Println("Done.")
+		}
+		return
 	}
-	migrator := database.NewMigrator("db/migrate")
-	fmt.Println("Running migrations...")
-	if err := migrator.Up(); err != nil {
-		fail(err)
-	}
-	fmt.Println("Done.")
-}
 
-func handleDBRollback() {
 	loadEnv()
 	cfg := config.Load()
 	if err := connectDB(cfg.DatabaseURL); err != nil {
 		fail(err)
 	}
 	migrator := database.NewMigrator("db/migrate")
-	fmt.Println("Rolling back last migration...")
-	if err := migrator.Down(); err != nil {
-		fail(err)
+	var err error
+	switch command {
+	case "up":
+		fmt.Println("Running migrations...")
+		err = migrator.Up()
+	case "down":
+		fmt.Println("Rolling back last migration...")
+		err = migrator.Down()
+	case "status":
+		var statuses []database.MigrationStatus
+		statuses, err = migrator.Status()
+		if err != nil {
+			fail(err)
+		}
+		if len(statuses) == 0 {
+			fmt.Println("No migrations found.")
+			return
+		}
+		fmt.Printf("%-40s %s\n", "Migration", "Status")
+		fmt.Println(strings.Repeat("-", 55))
+		for _, s := range statuses {
+			status := "down"
+			if s.Applied {
+				status = "up"
+			}
+			fmt.Printf("%-40s %s\n", s.File, status)
+		}
+		return
+	case "reset":
+		fmt.Println("Rolling back all migrations...")
+		err = migrator.Reset()
+	case "refresh":
+		fmt.Println("Refreshing migrations...")
+		err = migrator.Refresh()
+	case "fresh":
+		fmt.Println("Dropping all tables and migrating...")
+		err = migrator.Fresh()
+	default:
+		fail(fmt.Errorf("unknown migrate command: %s", command))
 	}
-	fmt.Println("Done.")
-}
-
-func handleDBStatus() {
-	loadEnv()
-	cfg := config.Load()
-	if err := connectDB(cfg.DatabaseURL); err != nil {
-		fail(err)
-	}
-	migrator := database.NewMigrator("db/migrate")
-	statuses, err := migrator.Status()
 	if err != nil {
 		fail(err)
 	}
-	if len(statuses) == 0 {
-		fmt.Println("No migrations found.")
-		return
+	if command != "status" {
+		fmt.Println("Done.")
 	}
-	fmt.Printf("%-40s %s\n", "Migration", "Status")
-	fmt.Println(strings.Repeat("-", 55))
-	for _, s := range statuses {
-		status := "down"
-		if s.Applied {
-			status = "up"
-		}
-		fmt.Printf("%-40s %s\n", s.File, status)
-	}
+}
+
+func handleDBMigrate() {
+	runMigrations("up")
+}
+
+func handleDBRollback() {
+	runMigrations("down")
+}
+
+func handleDBStatus() {
+	runMigrations("status")
 }
 
 func handleDBCreate() {
@@ -248,49 +283,19 @@ func handleDBShow(args []string) {
 }
 
 func handleMigrateReset(args []string) {
-	loadEnv()
-	cfg := config.Load()
-	if err := connectDB(cfg.DatabaseURL); err != nil {
-		fail(err)
-	}
-	migrator := database.NewMigrator("db/migrate")
-	fmt.Println("Rolling back all migrations...")
-	if err := migrator.Reset(); err != nil {
-		fail(err)
-	}
-	fmt.Println("Done.")
+	runMigrations("reset")
 }
 
 func handleMigrateRefresh(args []string) {
-	loadEnv()
-	cfg := config.Load()
-	if err := connectDB(cfg.DatabaseURL); err != nil {
-		fail(err)
-	}
-	migrator := database.NewMigrator("db/migrate")
-	fmt.Println("Refreshing migrations...")
-	if err := migrator.Refresh(); err != nil {
-		fail(err)
-	}
-	fmt.Println("Done.")
+	runMigrations("refresh")
 }
 
 func handleMigrateFresh(args []string) {
-	loadEnv()
-	cfg := config.Load()
-	if err := connectDB(cfg.DatabaseURL); err != nil {
-		fail(err)
-	}
-	migrator := database.NewMigrator("db/migrate")
-	fmt.Println("Dropping all tables and migrating...")
-	if err := migrator.Fresh(); err != nil {
-		fail(err)
-	}
+	runMigrations("fresh")
 	if flagValue(args, "--seed") != "" || containsArg(args, "--seed") {
 		handleDBSeed(nil)
 		return
 	}
-	fmt.Println("Done.")
 }
 
 func handleGenerate(genType, name string, fields map[string]string) {
@@ -308,11 +313,12 @@ func handleGenerate(genType, name string, fields map[string]string) {
 		fmt.Printf("Generated controller: %s\n", name)
 	case "migration":
 		dir := filepath.Join(appPath, "db", "migrate")
-		path, err := database.CreateMigration(dir, name)
+		path, err := generator.CreateBlueprintMigration(dir, name, nil)
 		if err != nil {
 			fail(err)
 		}
 		fmt.Printf("Created migration: %s\n", path)
+		fmt.Println("  Edit the file, then run: gofreight migrate")
 	case "scaffold", "resource":
 		if err := generator.Resource(appPath, name, fields); err != nil {
 			fail(err)

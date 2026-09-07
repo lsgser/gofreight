@@ -231,7 +231,7 @@ go run .
 `go.mod` contains:
 
 ```go
-require github.com/lsgser/gofreight v0.3.1
+require github.com/lsgser/gofreight v0.4.0
 ```
 
 Go downloads the framework module from the module proxy.

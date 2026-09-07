@@ -138,6 +138,38 @@ func TestPaginate(t *testing.T) {
 	if page.LastPage != 3 {
 		t.Fatalf("last page: %d", page.LastPage)
 	}
+	links := page.LinksFor("/posts")
+	if links["first"] == nil {
+		t.Fatalf("expected links: %+v", links)
+	}
+}
+
+func TestSimplePaginate(t *testing.T) {
+	setupORMTest(t)
+	ctx := context.Background()
+	for i := 0; i < 21; i++ {
+		Articles.Create(ctx, &Article{Title: "P", Body: "b", Published: true})
+	}
+	page, err := Articles.Query(ctx).SimplePaginate(1, 20)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !page.HasMorePages || len(page.Data) != 20 {
+		t.Fatalf("unexpected simple page: %+v", page)
+	}
+}
+
+func TestGetCollection(t *testing.T) {
+	setupORMTest(t)
+	ctx := context.Background()
+	Articles.Create(ctx, &Article{Title: "One", Body: "b", Published: true})
+	col, err := Articles.Query(ctx).GetCollection()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if col.Count() != 1 {
+		t.Fatalf("expected 1, got %d", col.Count())
+	}
 }
 
 func TestFindOrCreate(t *testing.T) {

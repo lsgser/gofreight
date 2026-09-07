@@ -422,6 +422,15 @@ func (q *Query[T]) Get() ([]T, error) {
 	return results, nil
 }
 
+// GetCollection executes the query and returns an Eloquent-style collection.
+func (q *Query[T]) GetCollection() (Collection[T], error) {
+	items, err := q.Get()
+	if err != nil {
+		return Collection[T]{}, err
+	}
+	return NewCollection(items), nil
+}
+
 // First returns the first matching record or sql.ErrNoRows.
 func (q *Query[T]) First() (*T, error) {
 	q.limit = 1

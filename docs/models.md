@@ -195,6 +195,53 @@ Validation runs automatically on `Create` and `Save` when rules are defined.
 
 ---
 
+## Serialization
+
+Convert models to arrays or JSON for APIs (Laravel [Eloquent Serialization](https://laravel.com/docs/eloquent-serialization)):
+
+```go
+post := &Post{Record: model.Record{ID: 1}, Title: "Hello", Body: "World"}
+
+// Simple conversion (uses json/db struct tags)
+data := model.ToArray(post)
+raw, err := model.ToJSON(post)
+
+// Fluent serializer with hidden/visible/appends
+out := model.Serialize(post).
+    Hidden("internal_note").
+    Append("is_published", func(record any) any {
+        return record.(*Post).PublishedAt != ""
+    }).
+    ToArray()
+
+// Allow-list only specific fields
+model.Serialize(post).Visible("id", "title").ToArray()
+
+// Temporarily expose or hide fields
+model.Serialize(post).MakeVisible("password").ToArray()
+model.Serialize(post).MakeHidden("email").ToArray()
+
+// Skip appended attributes
+model.Serialize(post).WithoutAppends().ToArray()
+
+// Include eager-loaded associations
+model.Serialize(post).WithAssociations().ToArray()
+```
+
+Fields tagged `json:"-"` are always excluded (like Laravel hidden passwords). Use `db` tags when no `json` tag is present.
+
+Collections serialize like Laravel collections:
+
+```go
+posts, _ := models.Posts.All(ctx)
+col := model.NewCollection(posts)
+
+col.ToArray()  // []map[string]any
+col.ToJSON()   // JSON array
+```
+
+---
+
 ## Associations
 
 Register relationships on the repository:

@@ -214,7 +214,7 @@ Requires an active database connection (default in `NewApp`).
 
 ## Factories
 
-Generate test data with **`gftest/faker`**:
+Generate test data with **`gftest/faker`**. See **[Factories](factories.md)** for the full reference.
 
 ```bash
 gofreight make:factory Post
@@ -230,6 +230,10 @@ var PostFactory = gftest.NewFactory(models.Posts).Define(map[string]any{
 })
 
 post := PostFactory.Create(t, map[string]any{"title": "Fixed title"})
+posts := PostFactory.Count(3).Create(t)
+
+published := PostFactory.State(map[string]any{"published": true})
+published.Create(t)
 ```
 
 ### Faker helpers

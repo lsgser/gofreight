@@ -84,3 +84,83 @@ func TestFactoryLazyAttrs(t *testing.T) {
 		t.Fatalf("got title %q", a.Title)
 	}
 }
+
+func TestFactoryState(t *testing.T) {
+	type User struct {
+		Email    string `db:"email"`
+		Verified bool   `db:"verified"`
+	}
+
+	unverified := gftest.NewFactory[User](nil).Define(map[string]any{
+		"email":    "a@example.com",
+		"verified": true,
+	}).State(map[string]any{"verified": false})
+
+	u := unverified.Make()
+	if u.Verified {
+		t.Fatal("state should set verified false")
+	}
+}
+
+func TestFactoryStateFn(t *testing.T) {
+	type User struct {
+		Email string `db:"email"`
+	}
+
+	f := gftest.NewFactory[User](nil).Define(map[string]any{
+		"email": "base@example.com",
+	}).StateFn(func(attrs map[string]any) map[string]any {
+		attrs["email"] = "unverified@example.com"
+		return attrs
+	})
+
+	u := f.Make()
+	if u.Email != "unverified@example.com" {
+		t.Fatalf("got %q", u.Email)
+	}
+}
+
+func TestFactorySequence(t *testing.T) {
+	type Post struct {
+		Title string `db:"title"`
+	}
+
+	f := gftest.NewFactory[Post](nil).Sequence("title", func(n int) any {
+		return "Post " + string(rune('A'+n))
+	})
+
+	a := f.Make()
+	b := f.Make()
+	if a.Title != "Post A" || b.Title != "Post B" {
+		t.Fatalf("sequence got %q and %q", a.Title, b.Title)
+	}
+}
+
+func TestFactoryCount(t *testing.T) {
+	type Item struct {
+		Name string `db:"name"`
+	}
+
+	f := gftest.NewFactory[Item](nil).Define(map[string]any{"name": "x"})
+	items := f.Count(3).Make()
+	if len(items) != 3 {
+		t.Fatalf("expected 3, got %d", len(items))
+	}
+}
+
+func TestFactoryAfterMaking(t *testing.T) {
+	type Item struct {
+		Name string `db:"name"`
+	}
+
+	called := false
+	f := gftest.NewFactory[Item](nil).Define(map[string]any{"name": "x"}).AfterMaking(func(i *Item) {
+		called = true
+		i.Name = "y"
+	})
+
+	item := f.Make()
+	if !called || item.Name != "y" {
+		t.Fatalf("afterMaking: called=%v name=%q", called, item.Name)
+	}
+}

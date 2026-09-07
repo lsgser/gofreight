@@ -122,8 +122,12 @@ func writeResourceModel(appPath string, data ResourceData) error {
 func writeResourceMigration(appPath string, data ResourceData) error {
 	dir := filepath.Join(appPath, "db", "migrate")
 	os.MkdirAll(dir, 0755)
-	path := filepath.Join(dir, fmt.Sprintf("001_create_%s.sql", data.Table))
-	return writeTemplate(path, migrationSQLTmpl, data)
+	fields := make(map[string]string, len(data.Fields))
+	for _, f := range data.Fields {
+		fields[f.DBTag] = f.RawType
+	}
+	_, err := CreateBlueprintMigration(dir, "create_"+data.Table+"_table", fields)
+	return err
 }
 
 func writeResourceController(appPath string, data ResourceData) error {

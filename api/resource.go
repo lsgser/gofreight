@@ -3,6 +3,8 @@ package api
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
+	"strings"
 )
 
 // Resource transforms a model into a JSON-serializable map for API responses.
@@ -28,11 +30,54 @@ func PaginatedMeta(page, perPage, total int) map[string]any {
 	if total%perPage != 0 {
 		lastPage++
 	}
+	if lastPage == 0 {
+		lastPage = 1
+	}
 	return map[string]any{
 		"current_page": page,
 		"per_page":     perPage,
 		"total":        total,
 		"last_page":    lastPage,
+	}
+}
+
+// PaginatedLinks builds Laravel-style pagination links for JSON responses.
+func PaginatedLinks(baseURL string, page, lastPage int) map[string]any {
+	baseURL = strings.TrimRight(baseURL, "/")
+	links := map[string]any{
+		"first": paginatedPageURL(baseURL, 1),
+		"last":  paginatedPageURL(baseURL, lastPage),
+	}
+	if page > 1 {
+		links["prev"] = paginatedPageURL(baseURL, page-1)
+	}
+	if page < lastPage {
+		links["next"] = paginatedPageURL(baseURL, page+1)
+	}
+	return links
+}
+
+func paginatedPageURL(base string, page int) string {
+	sep := "?"
+	if strings.Contains(base, "?") {
+		sep = "&"
+	}
+	return base + sep + "page=" + strconv.Itoa(page)
+}
+
+// PaginatedResponse builds a full Laravel-style paginated JSON collection.
+func PaginatedResponse(baseURL string, page, perPage, total int, data []map[string]any) Collection {
+	lastPage := total / perPage
+	if total%perPage != 0 {
+		lastPage++
+	}
+	if lastPage == 0 {
+		lastPage = 1
+	}
+	return Collection{
+		Data:  data,
+		Meta:  PaginatedMeta(page, perPage, total),
+		Links: PaginatedLinks(baseURL, page, lastPage),
 	}
 }
 

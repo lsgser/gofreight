@@ -183,6 +183,7 @@ The `/api/v1` prefix is applied in `routes/register.go` via route groups. See [R
 | Rule | Example |
 |------|---------|
 | Field format | `name:type` |
+| Unique column | `email:string:unique` |
 | Enum values | `name:enum:value1,value2,value3` |
 | Foreign key | `post_id:references:posts` |
 | Unknown type | Falls back to `string` / `VARCHAR(255)` |

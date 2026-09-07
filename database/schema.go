@@ -14,6 +14,7 @@ type ColumnDef struct {
 	Nullable      bool
 	PrimaryKey    bool
 	AutoIncrement bool
+	Unique        bool
 	Default       string
 }
 
@@ -157,10 +158,18 @@ func ImportSQL(ctx context.Context, sql string) error {
 func buildCreateTableSQL(table string, columns []ColumnDef) string {
 	var parts []string
 	hasPK := false
+	hasCreatedAt := false
+	hasUpdatedAt := false
 
 	for _, col := range columns {
 		if err := validateIdent(col.Name); err != nil {
 			continue
+		}
+		switch col.Name {
+		case "created_at":
+			hasCreatedAt = true
+		case "updated_at":
+			hasUpdatedAt = true
 		}
 		colType := normalizeColumnType(col.Type)
 
@@ -181,19 +190,23 @@ func buildCreateTableSQL(table string, columns []ColumnDef) string {
 		if col.Default != "" {
 			def += " DEFAULT " + col.Default
 		}
+		if col.Unique {
+			def += " UNIQUE"
+		}
 		parts = append(parts, def)
 	}
 
-	// Default id column if none specified
 	if !hasPK {
 		parts = append([]string{fmt.Sprintf("id %s", AutoIncrement())}, parts...)
 	}
 
 	ts := TimestampType()
-	parts = append(parts,
-		fmt.Sprintf("created_at %s", ts),
-		fmt.Sprintf("updated_at %s", ts),
-	)
+	if !hasCreatedAt {
+		parts = append(parts, fmt.Sprintf("created_at %s", ts))
+	}
+	if !hasUpdatedAt {
+		parts = append(parts, fmt.Sprintf("updated_at %s", ts))
+	}
 
 	return fmt.Sprintf("CREATE TABLE IF NOT EXISTS %s (\n\t%s\n)", table, strings.Join(parts, ",\n\t"))
 }
@@ -209,10 +222,14 @@ func normalizeColumnType(t string) string {
 			return "INTEGER"
 		case t == "JSON", t == "JSONB":
 			return "TEXT"
-		case t == "UUID":
+		case t == "UUID", t == "TIMESTAMPTZ":
 			return "TEXT"
-		case t == "TIMESTAMP":
+		case t == "TIMESTAMP", t == "DATE", t == "TIME":
 			return "TEXT"
+		case t == "BIGINT":
+			return "INTEGER"
+		case strings.HasPrefix(t, "DECIMAL"):
+			return "REAL"
 		}
 	case MySQL, MariaDB:
 		if t == "JSONB" {
@@ -267,6 +284,25 @@ func DropColumn(ctx context.Context, table, column string) error {
 	sql := fmt.Sprintf("ALTER TABLE %s DROP COLUMN %s", table, column)
 	if DriverName() == MySQL || DriverName() == MariaDB {
 		sql = fmt.Sprintf("ALTER TABLE %s DROP COLUMN %s", table, column)
+	}
+	_, err := DB().ExecContext(ctx, sql)
+	return err
+}
+
+// RenameTable renames a database table.
+func RenameTable(ctx context.Context, from, to string) error {
+	if err := validateIdent(from); err != nil {
+		return err
+	}
+	if err := validateIdent(to); err != nil {
+		return err
+	}
+	var sql string
+	switch DriverName() {
+	case MySQL, MariaDB:
+		sql = fmt.Sprintf("RENAME TABLE %s TO %s", from, to)
+	default:
+		sql = fmt.Sprintf("ALTER TABLE %s RENAME TO %s", from, to)
 	}
 	_, err := DB().ExecContext(ctx, sql)
 	return err

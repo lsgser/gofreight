@@ -62,48 +62,106 @@ gofreight make:scaffold Comment body:text post_id:references:posts
 
 Creates `post_id INTEGER NOT NULL` and a Go `int64` field. Add association wiring in the model — see **[Models](models.md#foreign-keys)**.
 
+### Unique columns
+
+Append `:unique` to any field type (Laravel-style):
+
+```bash
+gofreight make:scaffold User email:email:unique username:string:unique
+gofreight make:scaffold Article slug:string:unique status:enum:draft,published:unique
+```
+
+Generates `UNIQUE` on the column in the migration:
+
+```sql
+email VARCHAR(255) NOT NULL UNIQUE,
+slug VARCHAR(255) NOT NULL UNIQUE
+```
+
 ---
 
 ## Blueprint DSL
 
 Programmatic migrations in Go (`database.Blueprint`). `CreateTableBlueprint` automatically adds `id`, `created_at`, and `updated_at`.
 
+### Fluent API (Laravel-style)
+
+Chain column modifiers like Laravel's schema builder:
+
 ```go
 import "github.com/lsgser/gofreight/database"
 
+up, down := database.CreateTableBlueprint("users", func(b *database.Blueprint) {
+    b.String("email").NotNull().Unique()
+    b.String("name").NotNull()
+    b.Boolean("active").Default("1")
+})
+database.WriteMigrationPair("db/migrate", "002_create_users", up, down)
+```
+
+Generates:
+
+```sql
+CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    email TEXT NOT NULL UNIQUE,
+    name TEXT NOT NULL,
+    active BOOLEAN DEFAULT 1,
+    created_at TEXT DEFAULT (datetime('now')),
+    updated_at TEXT DEFAULT (datetime('now'))
+);
+```
+
+### Functional options
+
+Use `StringColumn`, `IntegerColumn`, etc. with exported column options:
+
+```go
 up, down := database.CreateTableBlueprint("comments", func(b *database.Blueprint) {
-    b.IntegerColumn("post_id", colNotNull())
-    b.StringColumn("body", colNotNull())
-    b.BooleanColumn("approved", colDefault("0"))
-    b.DateTimeColumn("reviewed_at", colNullable())
+    b.IntegerColumn("post_id", database.ColNotNull())
+    b.StringColumn("body", database.ColNotNull())
+    b.StringColumn("slug", database.ColNotNull(), database.ColUnique())
+    b.BooleanColumn("approved", database.ColDefault("0"))
+    b.DateTimeColumn("reviewed_at", database.ColNullable())
     b.Index("post_id")
+    b.UniqueIndex("slug") // composite unique index on multiple columns
 })
 database.WriteMigrationPair("db/migrate", "004_create_comments", up, down)
 ```
 
 | Blueprint method | SQL type | Notes |
 |------------------|----------|-------|
-| `StringColumn(name, opts...)` | `TEXT` | Strings, text, enums (store as text) |
-| `IntegerColumn(name, opts...)` | `INTEGER` | Integers, foreign keys, booleans (0/1) |
-| `BooleanColumn(name, opts...)` | `BOOLEAN` | Normalized per driver (INTEGER on SQLite) |
-| `DateTimeColumn(name, opts...)` | `TEXT` / `TIMESTAMP` | Datetimes stored as text on SQLite |
+| `String(name)` / `StringColumn(name, opts...)` | `TEXT` | Chain `.NotNull()`, `.Unique()`, `.Default()` |
+| `Text(name)` | `TEXT` | Long text |
+| `Integer(name)` / `IntegerColumn(name, opts...)` | `INTEGER` | Integers, foreign keys |
+| `Boolean(name)` / `BooleanColumn(name, opts...)` | `BOOLEAN` | Normalized per driver |
+| `DateTime(name)` / `DateTimeColumn(name, opts...)` | `TEXT` / `TIMESTAMP` | Datetimes stored as text on SQLite |
+| `Id()` | `INTEGER PRIMARY KEY` | Auto-increment id |
+| `Timestamps()` | `created_at`, `updated_at` | Laravel `$table->timestamps()` |
+| `SoftDeletes()` | `deleted_at` | Nullable timestamp — Laravel `$table->softDeletes()` |
+| `SoftDeletesTz()` | `deleted_at` | Nullable timestamptz on Postgres — Laravel `$table->softDeletesTz()` |
 | `DropColumn(name)` | — | Alter-table rollback helper |
 | `Index(columns...)` | — | Creates `CREATE INDEX IF NOT EXISTS ...` |
+| `UniqueIndex(columns...)` | — | Creates `CREATE UNIQUE INDEX IF NOT EXISTS ...` |
 
 ### Column options
 
-```go
-b.StringColumn("slug", colNotNull())           // NOT NULL
-b.StringColumn("bio", colNullable())           // nullable (default for blueprint columns)
-b.IntegerColumn("views", colDefault("0"))      // DEFAULT 0
-```
+| Option | Effect |
+|--------|--------|
+| `.NotNull()` / `database.ColNotNull()` | `NOT NULL` |
+| `.Nullable()` / `database.ColNullable()` | nullable (default for blueprint columns) |
+| `.Default(v)` / `database.ColDefault(v)` | `DEFAULT v` |
+| `.Unique()` / `database.ColUnique()` | `UNIQUE` on the column |
+| `b.Timestamps()` | `created_at`, `updated_at` |
+| `b.SoftDeletes()` | nullable `deleted_at` (Laravel `$table->softDeletes()`) |
+| `b.SoftDeletesTz()` | nullable timezone-aware `deleted_at` (Laravel `$table->softDeletesTz()`) |
 
 ### Alter table
 
 ```go
 up, down := database.AlterTableBlueprint("posts", func(b *database.Blueprint) {
-    b.StringColumn("slug")
-    b.IntegerColumn("view_count", colDefault("0"))
+    b.String("slug").NotNull().Unique()
+    b.IntegerColumn("view_count", database.ColDefault("0"))
 })
 ```
 
@@ -220,18 +278,24 @@ CREATE TABLE invoices (
 | `time` | Supported | `opens_at:time` | `opens_at TEXT` / `TIME` |
 | `datetime` | Supported | `published_at:datetime` | `published_at TEXT` / `TIMESTAMP` |
 | `timestamp` | Supported | Alias for `datetime` | Same as datetime |
-| `timestamps` | Auto | `CreateTableBlueprint` adds both | `created_at`, `updated_at` |
-| `softDeletes` | Supported | Manual column + `EnableSoftDelete()` | `deleted_at TEXT` |
+| `timestamps` | Auto | `b.Timestamps()` | `created_at`, `updated_at` |
+| `softDeletes` | Supported | `b.SoftDeletes()` | `deleted_at TEXT` (SQLite) / `TIMESTAMP` (Postgres/MySQL) |
+| `softDeletesTz` | Supported | `b.SoftDeletesTz()` | `deleted_at TIMESTAMPTZ` (Postgres) |
 | `year` | SQL only | — | `birth_year INTEGER CHECK (birth_year >= 1900)` |
 
 ```bash
 gofreight make:scaffold Event name:string starts_on:date opens_at:time published_at:datetime
 ```
 
-**Soft deletes** — add column in migration, enable on repository:
+**Soft deletes** — add the column in a migration, then enable on the repository:
 
-```sql
-ALTER TABLE posts ADD COLUMN deleted_at TEXT;
+```go
+database.SchemaCreate(ctx, "posts", func(b *database.Blueprint) {
+    b.Id()
+    b.String("title").NotNull()
+    b.SoftDeletes()    // or b.SoftDeletesTz() for timezone-aware deleted_at
+    b.Timestamps()
+})
 ```
 
 ```go

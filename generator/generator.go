@@ -1,7 +1,6 @@
 package generator
 
 import (
-	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -51,6 +50,9 @@ func NewApp(name string) error {
 			return err
 		}
 	}
+	if err := os.MkdirAll(filepath.Join(root, "tools", "migrate"), 0755); err != nil {
+		return err
+	}
 
 	// Keep empty app directories in git (storage uses .gitkeep only)
 	gitkeepDirs := []string{
@@ -90,9 +92,9 @@ func NewApp(name string) error {
 		filepath.Join(root, "app", "middleware", "doc.go"):               middlewareDocTmpl,
 		filepath.Join(root, "app", "policies", "doc.go"):                 policiesDocTmpl,
 		filepath.Join(root, "app", "requests", "doc.go"):                 requestsDocTmpl,
-		filepath.Join(root, "db", "migrate", "0001_init.sql"):           initialMigrationTmpl,
-		filepath.Join(root, "db", "migrate", "0001_init_down.sql"):      initialMigrationDownTmpl,
+		filepath.Join(root, "db", "migrate", "0001_init.go"):            initialGoMigrationTmpl,
 		filepath.Join(root, "db", "migrate", "README.md"):               migrateReadmeTmpl,
+		filepath.Join(root, "tools", "migrate", "main.go"):              migrateToolMainTmpl,
 		filepath.Join(root, "db", "seeders", "doc.go"):                    seedersDocTmpl,
 		filepath.Join(root, "public", "app.css"):                           cssTmpl,
 		filepath.Join(root, "tests", "example_test.go"):                    testExampleTmpl,
@@ -112,7 +114,7 @@ func NewApp(name string) error {
 		}
 	}
 
-	return nil
+	return Seeder(root, "DatabaseSeeder")
 }
 
 // Model generates a model file and migration.
@@ -157,8 +159,12 @@ func Model(appPath, name string, fields map[string]string) error {
 		return err
 	}
 
-	migrationPath := filepath.Join(migrateDir, fmt.Sprintf("001_create_%s.sql", table))
-	return writeTemplate(migrationPath, migrationSQLTmpl, data)
+	migrationPath, err := CreateBlueprintMigration(migrateDir, "create_"+table+"_table", fields)
+	if err != nil {
+		return err
+	}
+	_ = migrationPath
+	return nil
 }
 
 // Controller generates a controller with RESTful actions.

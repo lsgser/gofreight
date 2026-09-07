@@ -5,12 +5,27 @@ All notable changes to Gofreight are documented here. The project follows [Seman
 Install a specific release:
 
 ```bash
-go install github.com/lsgser/gofreight/cmd/gofreight@v0.3.1
+go install github.com/lsgser/gofreight/cmd/gofreight@v0.4.0
 ```
 
 ---
 
 ## Unreleased
+
+---
+
+## 0.4.0 — September 7, 2026
+
+### Added
+
+- **Laravel-style ORM collections** — `model.Collection[T]` with `Find`, `Filter`, `Map`, `Pluck`, `ModelKeys`, `Only`, `Except`; `Query.GetCollection()`
+- **Model serialization** — `model.Serialize()`, `ToArray()`, `ToJSON()`, `Hidden`/`Visible`, `Append`, `MakeVisible`/`MakeHidden`, `Collection.ToArray()`/`ToJSON()` (Laravel [Eloquent Serialization](https://laravel.com/docs/eloquent-serialization))
+- **Factory states and callbacks** — `State()`, `StateFn()`, `Count()`, `AfterMaking`/`AfterCreating`, per-call `Sequence()` (Laravel [Eloquent Factories](https://laravel.com/docs/eloquent-factories)); `docs/factories.md`
+- **Pagination links** — `Page.LinksFor()`, `model.PaginationLinks()`, `api.PaginatedLinks()` / `PaginatedResponse()` (Laravel length-aware paginator links)
+- **Simple pagination** — `SimplePaginate()` returns `HasMorePages` (Laravel `simplePaginate()`)
+- **Seeder orchestration** — `model.Seeder.Call()` like Laravel `$this->call()`; `DatabaseSeeder` scaffolded in new apps; `docs/seeding.md`
+- **Blueprint migration files** — Laravel-style Go migrations in `db/migrate/*.go` using `SchemaCreate`, `SchemaTable`, and fluent blueprint methods (`b.Id()`, `b.Timestamps()`, `b.SoftDeletes()`, `b.SoftDeletesTz()`, `.Unique()`, etc.)
+- **Unique columns** — Laravel-style `UNIQUE` support: blueprint `.Unique()`, `database.ColUnique()`, `UniqueIndex()`, and CLI `:unique` modifier (`email:string:unique`)
 
 ---
 
@@ -131,6 +146,25 @@ Initial public release — a batteries-included Go web framework you compile to 
 ---
 
 ## Upgrade notes
+
+### From 0.3.1 to 0.4.0
+
+1. Update the module version in your app's `go.mod`:
+
+   ```bash
+   go get github.com/lsgser/gofreight@v0.4.0
+   go mod tidy
+   ```
+
+2. Reinstall the CLI:
+
+   ```bash
+   go install github.com/lsgser/gofreight/cmd/gofreight@v0.4.0
+   ```
+
+3. **Migrations** — new apps use Go blueprint migrations in `db/migrate/*.go` with `tools/migrate/`. Existing SQL migrations in `db/migrate/` continue to work; convert to Go migrations when convenient.
+
+4. **Factories & serialization** — optional: adopt `State()`/`Count()` factory helpers and `model.Serialize()` for API responses. See [Factories](factories.md) and [Models — Serialization](models.md#serialization).
 
 ### From 0.3.0 to 0.3.1
 

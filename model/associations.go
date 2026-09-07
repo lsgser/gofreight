@@ -308,6 +308,19 @@ func GetAssociation(record any, name string) (any, bool) {
 	return nil, false
 }
 
+// AssociationData returns all eager-loaded associations for serialization.
+func AssociationData(record any) map[string]any {
+	ptr := reflect.ValueOf(record).Pointer()
+	if m, ok := assocCache.data[ptr]; ok {
+		out := make(map[string]any, len(m))
+		for k, v := range m {
+			out[k] = v
+		}
+		return out
+	}
+	return nil
+}
+
 func placeholders(n int) string {
 	parts := make([]string, n)
 	for i := 0; i < n; i++ {

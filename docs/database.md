@@ -1,6 +1,6 @@
 # Database
 
-Gofreight uses SQL file migrations, optional blueprint DSL, and seeders. Models and repositories are in **[Models](models.md)**; the full column type catalog is in **[Column Types](column-types.md)**. Query building is in **[ORM](orm.md)**.
+Gofreight uses **Laravel-style blueprint migrations** (Go files in `db/migrate/`), seeders, and an optional raw SQL path for legacy apps. Models and repositories are in **[Models](models.md)**; the full column type catalog is in **[Column Types](column-types.md)**. Query building is in **[ORM](orm.md)**.
 
 ## Connecting
 
@@ -18,25 +18,36 @@ Supported drivers: **SQLite** (default), **PostgreSQL**, **MySQL**, **MariaDB**.
 
 ## Migrations
 
-Migration files are plain SQL in `db/migrate/`:
+Migration files are **Go blueprint files** in `db/migrate/` (like Laravel's `Schema::create` migrations):
 
-```sql
--- db/migrate/001_create_posts.sql
-CREATE TABLE posts (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    title TEXT NOT NULL,
-    body TEXT NOT NULL,
-    created_at TEXT DEFAULT (datetime('now')),
-    updated_at TEXT DEFAULT (datetime('now'))
-);
+```bash
+gofreight make:migration create_users_table
+# → db/migrate/20260102150405_create_users_table.go
 ```
 
-Optional rollback file:
+```go
+package migrate
 
-```sql
--- db/migrate/001_create_posts_down.sql
-DROP TABLE IF EXISTS posts;
+func init() {
+    database.RegisterMigration("20260102150405_create_users_table", up..., down...)
+}
+
+func up20260102150405CreateUsersTable(ctx context.Context) error {
+    return database.SchemaCreate(ctx, "users", func(b *database.Blueprint) {
+        b.Id()
+        b.String("email").NotNull().Unique()
+        b.Timestamps()
+    })
+}
+
+func down20260102150405CreateUsersTable(ctx context.Context) error {
+    return database.SchemaDropIfExists(ctx, "users")
+}
 ```
+
+Scaffolds (`make:model`, `make:scaffold`) generate the same blueprint migration files automatically.
+
+New apps include `tools/migrate/main.go`, which imports `db/migrate` and runs registered migrations when you call `gofreight migrate`.
 
 ### CLI commands
 
@@ -47,40 +58,63 @@ gofreight migrate:rollback       # rollback last batch
 gofreight migrate:status         # show migration status
 gofreight migrate:fresh          # drop all tables and re-migrate
 gofreight migrate:fresh --seed   # fresh + run seeders
-gofreight migrate:reset          # rollback all, then migrate up
+gofreight migrate:reset          # rollback all migrations
+gofreight migrate:refresh        # rollback all, then migrate up
 ```
 
 Generate a migration:
 
 ```bash
-gofreight generate migration create_posts
-gofreight make:migration create_posts
+gofreight make:migration create_posts_table
+gofreight make:migration add_slug_to_posts_table
 ```
 
 Migrations are tracked in a `schema_migrations` table.
 
+### Legacy SQL migrations
+
+Older apps without `tools/migrate/` can still use plain SQL in `db/migrate/*.sql` with optional `*_down.sql` rollback files.
+
 ## Blueprint DSL
 
-Programmatic migrations with auto-generated rollback:
+The blueprint DSL powers generated migration files. You can also use it directly:
 
 ```go
 import "github.com/lsgser/gofreight/database"
 
-up, down := database.CreateTableBlueprint("comments", func(b *database.Blueprint) {
-    b.IntegerColumn("post_id", colNotNull())
-    b.StringColumn("body")
-    b.Index("post_id")
+// Runtime (inside a migration Up function)
+database.SchemaCreate(ctx, "users", func(b *database.Blueprint) {
+    b.Id()
+    b.String("email").NotNull().Unique()
+    b.String("name").NotNull()
+    b.Index("name")
+    b.Timestamps()
 })
-database.WriteMigrationPair("db/migrate", "004_create_comments", up, down)
+
+// Or generate SQL strings programmatically
+up, down := database.CreateTableBlueprint("users", func(b *database.Blueprint) {
+    b.String("email").NotNull().Unique()
+})
+database.WriteMigrationPair("db/migrate", "004_create_users", up, down)
 ```
 
-Column helpers: `StringColumn`, `IntegerColumn`, `BooleanColumn`, `DateTimeColumn`, `DropColumn`, `Index`.
+Column helpers: fluent `String`, `Text`, `Integer`, `Boolean`, `DateTime`, `BigInteger`, `ForeignId`, `Json`, `Uuid`, `Float`, `Decimal`, `Date`, `Time`, `Timestamp` (chain `.NotNull()`, `.Unique()`, `.Default()`), plus Laravel helpers `Id()`, `Timestamps()`, `TimestampsTz()`, `SoftDeletes()`, `SoftDeletesTz()`, `RememberToken()`, `DropSoftDeletes()`, `DropTimestamps()`, `Index`, and `Unique`/`UniqueIndex`. Use `SchemaRename`, `HasTable`, and `HasColumn` like Laravel's Schema facade.
+
+Named migrations follow [Laravel conventions](https://laravel.com/docs/migrations):
+
+```bash
+gofreight make:migration create_users_table
+gofreight make:migration add_email_to_users_table
+gofreight make:migration add_soft_deletes_to_posts_table
+gofreight make:migration add_timestamps_to_posts_table
+gofreight make:migration add_remember_token_to_users_table
+```
 
 Alter existing tables:
 
 ```go
 up, down := database.AlterTableBlueprint("posts", func(b *database.Blueprint) {
-    b.StringColumn("slug")
+    b.String("slug").NotNull().Unique()
 })
 database.WriteMigrationPair("db/migrate", "005_add_slug_to_posts", up, down)
 ```
@@ -112,7 +146,7 @@ Generate a seeder class:
 gofreight make:seeder PostSeeder
 ```
 
-Seeders live in `db/seeders/` and run via `cmd/seed/`.
+SQL seeds in `db/seeds/` run first, then Go seeders via `cmd/seed/`. See **[Seeding](seeding.md)** for the full Laravel-style guide (`DatabaseSeeder`, `Seeder.Call()`, factories).
 
 ## Inline migrations (development)
 

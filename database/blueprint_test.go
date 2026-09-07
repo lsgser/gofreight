@@ -4,7 +4,7 @@ import "testing"
 
 func TestCreateTableBlueprint(t *testing.T) {
 	up, down := CreateTableBlueprint("articles", func(b *Blueprint) {
-		b.StringColumn("title", colNotNull())
+		b.StringColumn("title", ColNotNull())
 		b.BooleanColumn("published")
 	})
 	if up == "" || down == "" {
@@ -15,6 +15,45 @@ func TestCreateTableBlueprint(t *testing.T) {
 	}
 	if !contains(down, "DROP TABLE") {
 		t.Fatalf("unexpected down: %s", down)
+	}
+}
+
+func TestCreateTableBlueprintUniqueColumn(t *testing.T) {
+	up, _ := CreateTableBlueprint("users", func(b *Blueprint) {
+		b.String("email").NotNull().Unique()
+	})
+	if !contains(up, "email TEXT NOT NULL UNIQUE") {
+		t.Fatalf("expected unique email column, got: %s", up)
+	}
+}
+
+func TestCreateTableBlueprintUniqueIndex(t *testing.T) {
+	up, _ := CreateTableBlueprint("teams", func(b *Blueprint) {
+		b.String("name").NotNull()
+		b.UniqueIndex("name")
+	})
+	if !contains(up, "CREATE UNIQUE INDEX") {
+		t.Fatalf("expected unique index, got: %s", up)
+	}
+}
+
+func TestCreateTableBlueprintSoftDeletes(t *testing.T) {
+	up, _ := CreateTableBlueprint("posts", func(b *Blueprint) {
+		b.String("title").NotNull()
+		b.SoftDeletes()
+	})
+	if !contains(up, "deleted_at") {
+		t.Fatalf("expected deleted_at column, got: %s", up)
+	}
+}
+
+func TestCreateTableBlueprintSoftDeletesTz(t *testing.T) {
+	up, _ := CreateTableBlueprint("posts", func(b *Blueprint) {
+		b.String("title").NotNull()
+		b.SoftDeletesTz()
+	})
+	if !contains(up, "deleted_at") {
+		t.Fatalf("expected deleted_at column, got: %s", up)
 	}
 }
 

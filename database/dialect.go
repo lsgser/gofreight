@@ -129,6 +129,57 @@ func TimestampType() string {
 	}
 }
 
+// TimestampTzType returns a timezone-aware timestamp column with default (Laravel timestampsTz).
+func TimestampTzType() string {
+	switch currentDriver {
+	case SQLite:
+		return "TEXT DEFAULT (datetime('now'))"
+	case MySQL, MariaDB:
+		return "TIMESTAMP DEFAULT CURRENT_TIMESTAMP"
+	default:
+		return "TIMESTAMPTZ DEFAULT NOW()"
+	}
+}
+
+// TimestampColumnType returns the base timestamp type without default.
+func TimestampColumnType(tz bool) string {
+	switch currentDriver {
+	case SQLite:
+		return "TEXT"
+	case MySQL, MariaDB:
+		return "TIMESTAMP"
+	default:
+		if tz {
+			return "TIMESTAMPTZ"
+		}
+		return "TIMESTAMP"
+	}
+}
+
+// NullableTimestampType returns a nullable timestamp column (Laravel softDeletes).
+func NullableTimestampType() string {
+	switch currentDriver {
+	case SQLite:
+		return "TEXT"
+	case MySQL, MariaDB:
+		return "TIMESTAMP"
+	default:
+		return "TIMESTAMP"
+	}
+}
+
+// NullableTimestampTzType returns a nullable timezone-aware timestamp (Laravel softDeletesTz).
+func NullableTimestampTzType() string {
+	switch currentDriver {
+	case SQLite:
+		return "TEXT"
+	case MySQL, MariaDB:
+		return "TIMESTAMP"
+	default:
+		return "TIMESTAMPTZ"
+	}
+}
+
 // OpenPath extracts the file path from a SQLite URL.
 func SQLitePath(databaseURL string) string {
 	if strings.HasPrefix(databaseURL, "sqlite://") {

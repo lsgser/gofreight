@@ -315,22 +315,36 @@ Operations that receive the original `ctx` instead of `txCtx` run outside the tr
 
 ## Pagination
 
-Full pagination returns metadata (total count, page count):
+Full pagination returns metadata (total count, page count) like Laravel's `paginate()`:
 
 ```go
 page, err := Posts.Query(ctx).WhereEq("published", true).Paginate(1, 20)
-// page.Data       []Post
-// page.CurrentPage int
-// page.PerPage     int
-// page.Total       int64
-// page.LastPage    int
+page.SetLinks("/api/v1/posts") // first, prev, next, last URLs
+// page.Data, page.CurrentPage, page.PerPage, page.Total, page.LastPage, page.Links
 ```
 
-Simple pagination skips the count query (useful for infinite scroll):
+Simple pagination skips the count query (Laravel `simplePaginate()`):
 
 ```go
-posts, err := Posts.Query(ctx).SimplePaginate(2, 20)
+page, err := Posts.Query(ctx).SimplePaginate(2, 20)
+// page.Data, page.HasMorePages
 ```
+
+For JSON APIs, use `api.PaginatedResponse(baseURL, page, perPage, total, data)`.
+
+## Eloquent collections
+
+Query results can be wrapped in a Laravel-style collection:
+
+```go
+col, err := Posts.Query(ctx).WhereEq("published", true).GetCollection()
+col.Find(1)
+col.Filter(func(p Post) bool { return p.Views > 10 })
+col.Pluck("title")
+col.ModelKeys()
+```
+
+See [Laravel Eloquent Collections](https://laravel.com/docs/eloquent-collections) for the conceptual model — Gofreight's `model.Collection[T]` provides `Find`, `Filter`, `Map`, `Pluck`, `ModelKeys`, `Only`, and `Except`.
 
 ## Dirty tracking
 
@@ -489,21 +503,21 @@ For ad-hoc schema changes in development, use the [Admin Dashboard](admin.md).
 Programmatic migrations with auto-generated rollback SQL:
 
 ```go
-up, down := database.CreateTableBlueprint("comments", func(b *database.Blueprint) {
-    b.IntegerColumn("post_id", colNotNull())
-    b.StringColumn("body")
-    b.Index("post_id")
+up, down := database.CreateTableBlueprint("users", func(b *database.Blueprint) {
+    b.String("email").NotNull().Unique()
+    b.String("name").NotNull()
+    b.Index("name")
 })
-database.WriteMigrationPair("db/migrate", "004_create_comments", up, down)
+database.WriteMigrationPair("db/migrate", "004_create_users", up, down)
 ```
 
-Column helpers: `StringColumn`, `IntegerColumn`, `BooleanColumn`, `DateTimeColumn`, `DropColumn`, `Index`.
+Column helpers: fluent `String`, `Text`, `Integer`, `Boolean`, `DateTime` (chain `.NotNull()`, `.Unique()`, `.Default()`), or functional `StringColumn`, `IntegerColumn`, etc. with `database.ColNotNull()`, `database.ColUnique()`. Use `Index` and `UniqueIndex` for indexes.
 
 For altering existing tables:
 
 ```go
 up, down := database.AlterTableBlueprint("posts", func(b *database.Blueprint) {
-    b.StringColumn("slug")
+    b.String("slug").NotNull().Unique()
 })
 database.WriteMigrationPair("db/migrate", "005_add_slug_to_posts", up, down)
 ```

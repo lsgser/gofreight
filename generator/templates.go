@@ -702,7 +702,7 @@ func (m *{{.Name}}) Save(ctx context.Context) error {
 const migrationSQLTmpl = `-- Migration: create_{{.Table}}
 CREATE TABLE IF NOT EXISTS {{.Table}} (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
-{{range .Fields}}	{{.DBTag}} {{.SQLType}} NOT NULL,
+{{range .Fields}}	{{.DBTag}} {{.SQLType}},
 {{end}}	created_at TEXT DEFAULT (datetime('now')),
 	updated_at TEXT DEFAULT (datetime('now'))
 );
@@ -723,7 +723,11 @@ SELECT 1;
 
 const migrateReadmeTmpl = `# Database migrations
 
-SQL migrations live in this directory. Run them with:
+Blueprint migrations live in this directory as Go files (Laravel-style). Each file registers
+` + "`database.RegisterMigration`" + ` in ` + "`init()`" + ` and uses ` + "`database.SchemaCreate`" + `,
+` + "`database.SchemaTable`" + `, or ` + "`database.SchemaDrop`" + ` with the blueprint DSL.
+
+Run migrations:
 
 ` + "```bash" + `
 gofreight migrate
@@ -733,10 +737,21 @@ gofreight migrate:status
 Create a new migration:
 
 ` + "```bash" + `
-gofreight make:migration create_posts_table
+gofreight make:migration create_users_table
+# edit db/migrate/YYYYMMDDHHMMSS_create_users_table.go
 ` + "```" + `
 
-Files ending in _down.sql are used for rollbacks.
+Example (like Laravel Schema::create):
+
+` + "```go" + `
+database.SchemaCreate(ctx, "users", func(b *database.Blueprint) {
+    b.Id()
+    b.String("email").NotNull().Unique()
+    b.Timestamps()
+})
+` + "```" + `
+
+Legacy SQL files (` + "*.sql`" + `) in this directory are still supported when ` + "`tools/migrate/`" + ` is not present.
 `
 
 const gftLayoutTmpl = `{# --------------------------------------------------------------------------
