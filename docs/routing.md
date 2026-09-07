@@ -1,6 +1,6 @@
 # Routing
 
-Gofreight provides a **Laravel/Rails-style router** — route groups, named routes, redirects, constraints, model binding, domain routing, signed URLs, file upload/download helpers, and HTTP status helpers. Routes live in `routes/web.go` and `routes/api.go`, wired from `routes/register.go`.
+Gofreight provides a **full-featured router** with route groups, named routes, redirects, constraints, model binding, domain routing, signed URLs, file upload/download helpers, and HTTP status helpers. Routes live in `routes/web.go` and `routes/api.go`, wired from `routes/register.go`.
 
 ## On this page
 
@@ -14,7 +14,7 @@ Gofreight provides a **Laravel/Rails-style router** — route groups, named rout
 - [Domain & subdomain routing](#domain-and-subdomain-routing)
 - [Route model binding](#route-model-binding)
 - [Signed URLs](#signed-urls)
-- [Feature comparison](#laravel--rails-comparison)
+- [Feature overview](#feature-overview)
 
 ---
 
@@ -155,7 +155,7 @@ gofreight route:list
 
 ## Redirect routes
 
-Register URL redirects directly on the router (like Laravel `Route::redirect`):
+Register URL redirects directly on the router:
 
 ```go
 r.PermanentRedirect("/old-blog", "/blog")           // 301
@@ -182,7 +182,7 @@ Pass a route name as the last argument when registering:
 r.Get("/posts/:id", controller.Handler(c.Show), "posts.show")
 ```
 
-Build URLs from route names (like Laravel `route()`):
+Build URLs from route names:
 
 ```go
 url, _ := app.Router.URL("posts.show", map[string]string{"id": "42"})
@@ -201,7 +201,7 @@ path, _ := controller.RouteURL("posts.show", map[string]string{"id": "42"})
 
 ### Download a file
 
-Like Laravel `response()->download()` and `response()->file()`:
+Send files as attachments or inline in the browser:
 
 ```go
 r.Get("/reports/:id/download", controller.Handler(func(base controller.Base) error {
@@ -222,7 +222,7 @@ base.StreamDownload(reader, "archive.zip", "application/zip", size)
 
 ### Upload a file
 
-Like Laravel `Request::file()` / `$request->file('avatar')->store()`:
+Handle multipart file uploads:
 
 ```go
 r.Post("/uploads", controller.Handler(func(base controller.Base) error {
@@ -260,26 +260,16 @@ r.Any("/callback", callbackHandler)   // GET, POST, PUT, PATCH, DELETE, HEAD, OP
 
 ## HTTP status codes
 
-Gofreight handles status codes the way Laravel and Rails do: set them in **controllers** for dynamic responses, or on **routes** when a path always returns the same code.
+Set status codes in **controllers** for dynamic responses, or on **routes** when a path always returns the same code.
 
 ### In controllers
 
 Set `base.Status` before rendering, or use semantic helpers:
 
 ```go
-// Laravel: return response()->json($post, 201);
-// Rails:    render json: post, status: :created
 base.Created(post)
-
-// Laravel: return response()->noContent();
-// Rails:    head :no_content
 base.NoContent()
-
-// Rails: head :ok
 base.Head(http.StatusOK)
-
-// Laravel: abort(404, 'Not found');
-// Rails:    render plain: 'Not found', status: :not_found
 base.Abort(http.StatusNotFound, "Post not found")
 base.AbortNamed("forbidden", "You cannot edit this post")
 
@@ -292,7 +282,7 @@ base.Conflict("Email already taken")  // 409
 base.TooManyRequests("Slow down")     // 429
 ```
 
-**Rails-style status names** work anywhere you need a symbolic code:
+**Symbolic status names** work anywhere you need a named code:
 
 ```go
 code, ok := controller.StatusFromName("created")     // 201
@@ -301,15 +291,15 @@ code, ok := controller.StatusFromName("no-content")  // 204
 base.RedirectNamed("/posts", "see_other")            // 303 redirect
 ```
 
-| Helper | Code | Laravel / Rails equivalent |
-|--------|------|----------------------------|
-| `OK(data)` | 200 | `response()->json()` / `render json:` |
-| `Created(data)` | 201 | `response(..., 201)` / `status: :created` |
-| `Accepted(data)` | 202 | `202 Accepted` |
-| `NoContent()` | 204 | `response()->noContent()` / `head :no_content` |
-| `Head(code)` | any | `head :ok` |
-| `Abort(code, msg)` | any | `abort(404)` |
-| `Redirect(url, code)` | 3xx | `redirect(..., 301)` |
+| Helper | Code | Typical use |
+|--------|------|-------------|
+| `OK(data)` | 200 | JSON response body |
+| `Created(data)` | 201 | Resource created |
+| `Accepted(data)` | 202 | Async acceptance |
+| `NoContent()` | 204 | Empty success body |
+| `Head(code)` | any | Status only, no body |
+| `Abort(code, msg)` | any | Error response |
+| `Redirect(url, code)` | 3xx | HTTP redirect |
 
 For HTML views, set status then render:
 
@@ -322,7 +312,7 @@ See **[Controllers](controllers.md)** for the full response API.
 
 ### On routes
 
-Force a fixed status for a route (Laravel `Route::get(...)->status(410)`):
+Force a fixed status for a route:
 
 ```go
 r.Get("/deprecated", deprecatedHandler).Status(http.StatusGone)
@@ -344,7 +334,7 @@ base.RedirectNamed("/home", "moved_permanently")       // 301
 
 ## Fallback route
 
-Handle unmatched URLs (like Laravel's `Route::fallback`):
+Handle unmatched URLs with a fallback handler:
 
 ```go
 r.Fallback(controller.Handler(func(base controller.Base) error {
@@ -357,7 +347,7 @@ r.Fallback(controller.Handler(func(base controller.Base) error {
 
 ## Route constraints
 
-Restrict parameter shapes with regex (Laravel `where()`):
+Restrict parameter shapes with regex:
 
 ```go
 r.Get("/posts/:id", controller.Handler(c.Show), "posts.show").
@@ -373,7 +363,7 @@ Non-matching paths return 404 — `/posts/abc` won't match when `id` must be num
 
 ## Wildcard and optional parameters
 
-Gofreight accepts Laravel-style braced params and colon params:
+Gofreight accepts braced `{param}` syntax and colon `:param` syntax:
 
 | Pattern | Meaning | Example match |
 |---------|---------|---------------|
@@ -419,7 +409,7 @@ Parameterized domains expose `host_<name>` path values (e.g. `host_tenant` for `
 
 ## Route model binding
 
-Resolve route params to models automatically (Laravel implicit binding):
+Resolve route params to models automatically:
 
 ```go
 import "myapp/app/models"
@@ -464,7 +454,7 @@ if !ok {
 
 ## Signed URLs
 
-Generate tamper-proof, expiring links (Laravel signed routes):
+Generate tamper-proof, expiring links:
 
 ```go
 signer := app.URLSigner()
@@ -497,7 +487,7 @@ Signed URLs append `?expires=...&signature=...` query params signed with `APP_KE
 
 ---
 
-## Laravel / Rails comparison
+## Feature overview
 
 | Feature | Gofreight |
 |---------|-----------|
@@ -510,7 +500,7 @@ Signed URLs append `?expires=...&signature=...` query params signed with `APP_KE
 | `Any`, `Match`, `Head`, `Options`, `Fallback` | Yes |
 | HTTP status helpers (`Created`, `NoContent`, `Abort`, etc.) | Yes |
 | Route-level status (`.Status()`, `.StatusName()`) | Yes |
-| Rails-style status names (`created`, `no_content`) | Yes |
+| Symbolic status names (`created`, `no_content`) | Yes |
 | Route constraints / `where()` | Yes — `Where()`, `WhereParam()` |
 | Route model binding | Yes — `BindModel`, `BindModelBy`, `Bind()` |
 | Domain / subdomain routing | Yes — `Domain()`, `Subdomain()` |

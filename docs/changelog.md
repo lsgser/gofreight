@@ -16,7 +16,7 @@ go install github.com/lsgser/gofreight/cmd/gofreight@v0.3.0
 
 ## 0.3.0 — September 7, 2026
 
-### Added — Routing (Laravel/Rails parity)
+### Added — Routing
 
 - **Declarative redirect routes** — `Redirect()`, `PermanentRedirect()`
 - **Named route URL generation** — `Router.URL()`, `controller.RouteURL()`, `RedirectRoute()`
@@ -26,7 +26,7 @@ go install github.com/lsgser/gofreight/cmd/gofreight@v0.3.0
 - **Route model binding** — `BindModel()`, `BindModelBy()`, custom `.Bind()`
 - **Signed URLs** — `URLSigner`, `.Signed()` middleware, `SignedURL()`, `TemporarySignedRoute()`
 - **File download & upload helpers** — `Download()`, `File()`, `StoreUpload()`, `UploadedFile()`
-- **HTTP status helpers** — `Created()`, `NoContent()`, `Abort()`, Rails-style `StatusFromName()`
+- **HTTP status helpers** — `Created()`, `NoContent()`, `Abort()`, symbolic `StatusFromName()`
 - **Route-level status** — `.Status()`, `.StatusName()` on route registrars
 - **Extra HTTP verbs** — `Any()`, `Match()`, `Head()`, `Options()`, `Fallback()`
 
@@ -43,7 +43,7 @@ See the expanded **[Routing](routing.md)** and **[Controllers](controllers.md)**
 - **Exception handler** — `app.UseExceptionHandler()` with HTML/JSON panic recovery
 - **Route cache** — `gofreight route:cache`, `GOFREIGHT_ROUTE_CACHE=1`
 - **REST `only` / `except`** — `router.ResourceOptions` on `Resources()` / `ApiResource()`
-- **Authorization gates** — Laravel-style `auth.Gate` with model-aware rules
+- **Authorization gates** — model-aware `auth.Gate` with `Define`, `Allows`, `RequireGate`
 - **Vite integration** — `#vite` GFT directive, dev proxy, `app.UseVite()`
 - **Redis WebSocket broadcast** — `app.UseRedisBroadcast()` for multi-instance realtime
 - **Auth starter** — `gofreight make:auth` generates login/register views, routes, and controllers

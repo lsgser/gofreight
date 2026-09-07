@@ -17,7 +17,7 @@ func (fn AuthorizeFunc) Authorize(ctx context.Context, userID int64, action stri
 	return fn(ctx, userID, action, model)
 }
 
-// Gate provides Laravel-style authorization gates.
+// Gate provides authorization gates for model-aware access control.
 type Gate struct {
 	rules map[string]AuthorizeFunc
 }

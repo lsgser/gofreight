@@ -89,7 +89,7 @@ See **[Routing](routing.md)** for `Resources`, `ApiResource`, and route groups.
 | `NoContent()` | 204 empty response |
 | `Head(code)` | Status only, no body |
 | `Abort(code, msg)` | Stop with error (JSON or HTML) |
-| `AbortNamed(name, msg)` | Abort with Rails-style name |
+| `AbortNamed(name, msg)` | Abort with symbolic status name |
 | `Forbidden(msg)` | 403 |
 | `Conflict(msg)` | 409 |
 | `TooManyRequests(msg)` | 429 |
@@ -130,7 +130,7 @@ func (c PostController) Show(base controller.Base) error {
 }
 ```
 
-Use `controller.StatusFromName("created")` for Rails-style symbolic codes. See **[Routing — HTTP status codes](routing.md#http-status-codes)**.
+Use `controller.StatusFromName("created")` for symbolic status codes. See **[Routing — HTTP status codes](routing.md#http-status-codes)**.
 
 ## Route model binding
 
@@ -169,7 +169,7 @@ Custom bindings with `.Bind("param", func(req *http.Request) (any, error) { ... 
 
 ## Named routes & signed URLs
 
-Build URLs from route names (Laravel `route()` helper):
+Build URLs from route names:
 
 ```go
 url, _ := controller.RouteURL("posts.show", map[string]string{"id": "42"})

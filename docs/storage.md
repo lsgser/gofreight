@@ -1,6 +1,6 @@
 # File storage
 
-Gofreight ships a local filesystem disk for uploads, downloads, and file management — similar to Laravel's `local` disk.
+Gofreight ships a local filesystem disk for uploads, downloads, and file management.
 
 ## Configuration
 

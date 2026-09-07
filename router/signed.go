@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-// URLSigner creates and verifies signed URLs (Laravel signed routes).
+// URLSigner creates and verifies signed URLs.
 type URLSigner struct {
 	key []byte
 }

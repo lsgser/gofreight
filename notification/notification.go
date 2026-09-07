@@ -11,7 +11,7 @@ type Notifiable interface {
 	NotificationChannels() []string
 }
 
-// Notification is a multi-channel message (Laravel Notifications).
+// Notification is a multi-channel message.
 type Notification interface {
 	Via() []string
 	ToMail(ctx context.Context) *mail.Message

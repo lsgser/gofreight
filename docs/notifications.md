@@ -1,6 +1,6 @@
 # Notifications
 
-Multi-channel notifications inspired by Laravel Notifications — send mail and database inbox messages from a single notification class.
+Multi-channel notifications — send mail and database inbox messages from a single notification class.
 
 ## Overview
 

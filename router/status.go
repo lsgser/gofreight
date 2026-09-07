@@ -2,7 +2,7 @@ package router
 
 import "net/http"
 
-// Status forces a fixed HTTP status code for this route (Laravel Route::status()).
+// Status forces a fixed HTTP status code for this route.
 func (reg *RouteRegistrar) Status(code int) *RouteRegistrar {
 	return reg.Use(func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -11,7 +11,7 @@ func (reg *RouteRegistrar) Status(code int) *RouteRegistrar {
 	})
 }
 
-// StatusName forces a fixed HTTP status using a Rails-style name (e.g. "no_content").
+// StatusName forces a fixed HTTP status using a symbolic name (e.g. "no_content").
 func (reg *RouteRegistrar) StatusName(name string) *RouteRegistrar {
 	code, ok := statusFromName(name)
 	if !ok {

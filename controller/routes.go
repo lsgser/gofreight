@@ -19,7 +19,7 @@ func Router() *router.Router {
 	return defaultRouter
 }
 
-// RouteURL builds a URL for a named route (Laravel route() helper).
+// RouteURL builds a URL for a named route.
 func RouteURL(name string, params map[string]string) (string, error) {
 	if defaultRouter == nil {
 		return "", fmt.Errorf("router not configured — call controller.SetRouter in bootstrap")
@@ -42,7 +42,7 @@ func (c *Base) RedirectBack(fallback string, code int) {
 	c.Redirect(target, code)
 }
 
-// RedirectRoute redirects to a named route (Laravel redirect()->route()).
+// RedirectRoute redirects to a named route.
 func (c *Base) RedirectRoute(name string, params map[string]string, code int) error {
 	url, err := RouteURL(name, params)
 	if err != nil {

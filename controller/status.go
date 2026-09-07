@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-// Named HTTP status codes (Rails-style symbols).
+// Named HTTP status codes (symbolic names).
 var namedStatuses = map[string]int{
 	"ok":                     http.StatusOK,
 	"created":                http.StatusCreated,
@@ -36,7 +36,7 @@ var namedStatuses = map[string]int{
 	"gateway_timeout":        http.StatusGatewayTimeout,
 }
 
-// StatusFromName resolves a Rails-style status name to an HTTP code.
+// StatusFromName resolves a symbolic status name to an HTTP code.
 //
 //	StatusFromName("created")  // 201
 //	StatusFromName("no-content") // 204
@@ -51,7 +51,7 @@ func (c *Base) SetStatus(code int) {
 	c.Status = code
 }
 
-// Head sends a response with only a status line (Rails head :no_content).
+// Head sends a response with only a status line.
 func (c *Base) Head(code int) {
 	if code == 0 {
 		code = http.StatusOK
@@ -66,7 +66,7 @@ func (c *Base) OK(data any) {
 	c.RenderJSON(data)
 }
 
-// Created sends a 201 JSON response (Rails render status: :created).
+// Created sends a 201 JSON response.
 func (c *Base) Created(data any) {
 	c.Status = http.StatusCreated
 	if data == nil {
@@ -86,7 +86,7 @@ func (c *Base) Accepted(data any) {
 	c.RenderJSON(data)
 }
 
-// NoContent sends a 204 response with no body (Rails head :no_content).
+// NoContent sends a 204 response with no body.
 func (c *Base) NoContent() {
 	c.Head(http.StatusNoContent)
 }
@@ -111,7 +111,7 @@ func (c *Base) TooManyRequests(message string) {
 	c.Abort(http.StatusTooManyRequests, message)
 }
 
-// Abort stops the request with an HTTP error (Laravel abort()).
+// Abort stops the request with an HTTP error.
 func (c *Base) Abort(code int, message string) {
 	if message == "" {
 		message = http.StatusText(code)
@@ -124,7 +124,7 @@ func (c *Base) Abort(code int, message string) {
 	http.Error(c.Response, message, code)
 }
 
-// AbortNamed aborts using a Rails-style status name.
+// AbortNamed aborts using a symbolic status name.
 func (c *Base) AbortNamed(name, message string) error {
 	code, ok := StatusFromName(name)
 	if !ok {
@@ -148,7 +148,7 @@ func (c *Base) AbortUnless(condition bool, code int, message string) {
 	}
 }
 
-// RedirectNamed redirects using a Rails-style status name.
+// RedirectNamed redirects using a symbolic status name.
 func (c *Base) RedirectNamed(url, statusName string) error {
 	code, ok := StatusFromName(statusName)
 	if !ok {

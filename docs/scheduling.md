@@ -1,6 +1,6 @@
 # Task scheduling
 
-Cron-style recurring tasks for maintenance, reports, and periodic cleanup — inspired by Laravel's task scheduler.
+Cron-style recurring tasks for maintenance, reports, and periodic cleanup.
 
 ## How it works
 
@@ -109,7 +109,7 @@ gofreight schedule:list   # prints where tasks are defined
 
 ### Cron setup
 
-Every minute (Laravel-style):
+Every minute:
 
 ```cron
 * * * * * cd /var/www/myapp && /usr/local/bin/gofreight schedule:run >> storage/logs/scheduler.log 2>&1

@@ -11,7 +11,7 @@ import (
 	"github.com/lsgser/gofreight/upload"
 )
 
-// Download sends a file as an attachment (Laravel response()->download()).
+// Download sends a file as an attachment.
 func (c *Base) Download(filePath, downloadName string) error {
 	info, err := os.Stat(filePath)
 	if err != nil {
@@ -28,7 +28,7 @@ func (c *Base) Download(filePath, downloadName string) error {
 	return nil
 }
 
-// File sends a file inline in the browser (Laravel response()->file()).
+// File sends a file inline in the browser.
 func (c *Base) File(filePath string) error {
 	info, err := os.Stat(filePath)
 	if err != nil {
@@ -56,7 +56,7 @@ func (c *Base) DownloadBytes(data []byte, downloadName, contentType string) {
 	c.Response.Write(data)
 }
 
-// UploadedFile parses a multipart upload field (Laravel Request::file()).
+// UploadedFile parses a multipart upload field.
 func (c *Base) UploadedFile(field string, maxMB int64) (multipart.File, *multipart.FileHeader, error) {
 	return upload.ParseMultipart(c.Request, field, maxMB)
 }

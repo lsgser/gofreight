@@ -14,7 +14,7 @@ type Task struct {
 	Run      func(ctx context.Context) error
 }
 
-// Scheduler manages recurring tasks (Laravel Task Scheduler).
+// Scheduler manages recurring tasks.
 type Scheduler struct {
 	mu    sync.Mutex
 	tasks []Task

@@ -4,7 +4,7 @@ import (
 	"regexp"
 )
 
-// Where attaches regex constraints to route parameters (Laravel where()).
+// Where attaches regex constraints to route parameters.
 //
 //	r.Get("/posts/:id", handler).Where(map[string]string{"id": "[0-9]+"})
 func (reg *RouteRegistrar) Where(constraints map[string]string) *RouteRegistrar {

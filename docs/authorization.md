@@ -54,7 +54,7 @@ r.Put("/posts/{id}", controller.Handler(c.Update)).
 
 ## Gates (model-aware authorization)
 
-Gates are Laravel-style authorization rules that receive the **user ID**, **action name**, and **model instance**.
+Gates are model-aware authorization rules that receive the **user ID**, **action name**, and **model instance**.
 
 ### Define gates
 

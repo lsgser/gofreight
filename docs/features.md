@@ -14,7 +14,7 @@ Overview of built-in Gofreight capabilities. Each topic has a dedicated guide â€
 
 ### Routing highlights
 
-The router supports Laravel/Rails-style patterns out of the box:
+The router supports these patterns out of the box:
 
 | Capability | API |
 |------------|-----|

@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-// Redirect registers a GET route that redirects to another URL (Laravel Route::redirect).
+// Redirect registers a GET route that redirects to another URL.
 func (r *Router) Redirect(from, to string, code int) {
 	if code == 0 {
 		code = http.StatusFound

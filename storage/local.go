@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 )
 
-// LocalDisk stores files on the local filesystem (Laravel local disk).
+// LocalDisk stores files on the local filesystem.
 type LocalDisk struct {
 	Root string
 }

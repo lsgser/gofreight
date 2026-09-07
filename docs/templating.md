@@ -192,7 +192,7 @@ GFT is designed to be readable on its own while fitting naturally into Go projec
 
 ## Vite (frontend bundler)
 
-When using [Vite](https://vitejs.dev/) with the Laravel-style `public/hot` file, enable assets in `bootstrap/app.go`:
+When using [Vite](https://vitejs.dev/) with a `public/hot` file, enable assets in `bootstrap/app.go`:
 
 ```go
 app.UseVite()

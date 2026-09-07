@@ -12,7 +12,7 @@ type pathSegment struct {
 	catchAll bool
 }
 
-// normalizeRoutePath converts Laravel-style {param}, {param?}, {param*} to :param forms.
+// normalizeRoutePath converts braced params {param}, {param?}, {param*} to :param forms.
 func normalizeRoutePath(path string) string {
 	if !strings.Contains(path, "{") {
 		return path
