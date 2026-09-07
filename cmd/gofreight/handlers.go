@@ -328,6 +328,19 @@ func handleGenerate(genType, name string, fields map[string]string) {
 			fail(err)
 		}
 		fmt.Println("Generated auth (User model, seeds, route snippets)")
+	case "graphql":
+		if err := generator.GraphQL(appPath); err != nil {
+			fail(err)
+		}
+		fmt.Println("Generated GraphQL scaffolding (graphql/, bootstrap wiring)")
+		fmt.Println("  Next: gofreight make:graphql-module Post title:string body:text")
+		fmt.Println("  Then: go mod tidy && gofreight serve — visit /graphql/playground")
+	case "graphql-module":
+		if err := generator.GraphQLModule(appPath, name, fields); err != nil {
+			fail(err)
+		}
+		fmt.Printf("Generated GraphQL module: %s\n", name)
+		fmt.Println("  Registered in graphql/modules.go — restart the server and open /graphql/playground")
 	case "service":
 		if err := generator.Service(appPath, name); err != nil {
 			fail(err)

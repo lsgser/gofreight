@@ -33,7 +33,7 @@ func setupAdmin(t *testing.T) *gftest.App {
 
 func TestAdminDashboard(t *testing.T) {
 	app := setupAdmin(t)
-	app.Get("/admin").AssertOk().AssertSee("Database Tables").AssertSee("posts")
+	app.Get("/admin").AssertOk().AssertSee("Database overview").AssertSee("posts")
 }
 
 func TestAdminTableIndex(t *testing.T) {
@@ -48,7 +48,7 @@ func TestAdminTableShow(t *testing.T) {
 
 func TestAdminTableNew(t *testing.T) {
 	app := setupAdmin(t)
-	app.Get("/admin/tables/posts/new").AssertOk().AssertSee("Create posts")
+	app.Get("/admin/tables/posts/new").AssertOk().AssertSee("Insert row")
 }
 
 func TestAdminTableCreate(t *testing.T) {
@@ -64,7 +64,7 @@ func TestAdminTableCreate(t *testing.T) {
 
 func TestAdminSQLConsole(t *testing.T) {
 	app := setupAdmin(t)
-	app.Get("/admin/sql").AssertOk().AssertSee("SQL Console")
+	app.Get("/admin/sql").AssertOk().AssertSee("Run SQL query")
 }
 
 func TestAdminNotMountedInProduction(t *testing.T) {
@@ -105,7 +105,7 @@ func TestAdminTableDelete(t *testing.T) {
 
 func TestAdminSchemaNew(t *testing.T) {
 	app := setupAdmin(t)
-	app.Get("/admin/schema/new").AssertOk().AssertSee("Create Table")
+	app.Get("/admin/schema/new").AssertOk().AssertSee("Create new table")
 }
 
 func TestAdminSchemaCreate(t *testing.T) {

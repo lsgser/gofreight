@@ -2,139 +2,320 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-  :root { --bg:#f8f9fa; --surface:#fff; --border:#dee2e6; --primary:#417690; --primary-dark:#205067; --text:#333; --muted:#666; --danger:#ba2121; }
-  * { box-sizing:border-box; margin:0; padding:0; }
-  body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; background:var(--bg); color:var(--text); line-height:1.5; }
-  .header { background:var(--primary); color:#fff; padding:0.75rem 1.5rem; display:flex; align-items:center; justify-content:space-between; }
-  .header h1 { font-size:1.25rem; font-weight:600; }
-  .header a { color:#fff; text-decoration:none; opacity:0.9; margin-left:1rem; font-size:0.9rem; }
-  .header a:hover { opacity:1; text-decoration:underline; }
-  .container { max-width:1200px; margin:0 auto; padding:1.5rem; }
-  .flash { background:#d1e7dd; border:1px solid #badbcc; color:#0f5132; padding:0.75rem 1rem; border-radius:4px; margin-bottom:1rem; }
-  .card { background:var(--surface); border:1px solid var(--border); border-radius:6px; overflow:hidden; margin-bottom:1.5rem; }
-  .card-header { background:var(--primary); color:#fff; padding:0.75rem 1rem; font-weight:600; display:flex; justify-content:space-between; align-items:center; }
-  .card-body { padding:1rem; }
-  table { width:100%; border-collapse:collapse; font-size:0.875rem; }
-  th,td { padding:0.6rem 0.75rem; text-align:left; border-bottom:1px solid var(--border); }
-  th { background:#f1f3f5; font-weight:600; color:var(--muted); text-transform:uppercase; font-size:0.75rem; }
-  tr:hover td { background:#f8f9fa; }
-  .btn { display:inline-block; padding:0.4rem 0.85rem; border-radius:4px; font-size:0.875rem; text-decoration:none; border:none; cursor:pointer; }
-  .btn-primary { background:var(--primary); color:#fff; }
-  .btn-danger { background:var(--danger); color:#fff; }
-  .btn-sm { padding:0.25rem 0.5rem; font-size:0.8rem; }
-  .breadcrumb { margin-bottom:1rem; font-size:0.875rem; color:var(--muted); }
-  .breadcrumb a { color:var(--primary); text-decoration:none; }
-  .form-group { margin-bottom:1rem; }
-  .form-group label { display:block; font-weight:600; margin-bottom:0.25rem; font-size:0.875rem; }
-  .form-group input,.form-group textarea { width:100%; padding:0.5rem 0.75rem; border:1px solid var(--border); border-radius:4px; font-size:0.875rem; }
-  .form-group textarea { min-height:100px; }
-  .form-group .hint { font-size:0.75rem; color:var(--muted); }
-  .pagination { display:flex; gap:0.5rem; margin-top:1rem; }
-  .pagination a,.pagination span { padding:0.35rem 0.65rem; border:1px solid var(--border); border-radius:4px; text-decoration:none; color:var(--text); font-size:0.875rem; }
-  .pagination .current { background:var(--primary); color:#fff; }
-  .badge { padding:0.15rem 0.5rem; border-radius:10px; font-size:0.75rem; background:#e9ecef; color:var(--muted); }
-  .table-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:1rem; }
-  .table-card { background:var(--surface); border:1px solid var(--border); border-radius:6px; padding:1rem; text-decoration:none; color:inherit; }
-  .table-card:hover { box-shadow:0 2px 8px rgba(0,0,0,0.1); }
-  .table-card h3 { color:var(--primary); }
-  .null-val { color:#adb5bd; font-style:italic; }
-  .truncate { max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-  .error { background:#f8d7da; color:#842029; padding:0.75rem; border-radius:4px; margin-bottom:1rem; }
-  .sql-editor { font-family:monospace; min-height:120px; }
+  :root {
+    --pma-bg: #f5f5f5;
+    --pma-panel: #ffffff;
+    --pma-border: #aaa;
+    --pma-border-light: #ddd;
+    --pma-header: #d3dce3;
+    --pma-header-dark: #235a81;
+    --pma-nav: #e9e9e9;
+    --pma-link: #235a81;
+    --pma-link-hover: #f50;
+    --pma-accent: #ff9900;
+    --pma-text: #000;
+    --pma-muted: #666;
+    --pma-danger: #d9534f;
+    --pma-success: #3c763d;
+    --pma-sql-bg: #fffffe;
+    --pma-sidebar-w: 240px;
+  }
+  * { box-sizing: border-box; }
+  body.pma { margin: 0; font-family: "DejaVu Sans", Arial, sans-serif; font-size: 12px; color: var(--pma-text); background: var(--pma-bg); line-height: 1.45; }
+  a { color: var(--pma-link); text-decoration: none; }
+  a:hover { color: var(--pma-link-hover); text-decoration: underline; }
+  .pma-topbar { background: linear-gradient(#fefefe, var(--pma-header)); border-bottom: 1px solid var(--pma-border); padding: 0.35rem 0.75rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+  .pma-brand { display: flex; align-items: center; gap: 0.65rem; font-weight: bold; font-size: 14px; color: var(--pma-header-dark); }
+  .pma-brand-mark { background: var(--pma-header-dark); color: #fff; font-size: 11px; padding: 0.15rem 0.4rem; border-radius: 2px; }
+  .pma-server { color: var(--pma-muted); font-size: 11px; }
+  .pma-topnav a { margin-left: 0.85rem; font-size: 12px; }
+  .pma-body { display: flex; min-height: calc(100vh - 42px); }
+  .pma-sidebar { width: var(--pma-sidebar-w); min-width: var(--pma-sidebar-w); background: var(--pma-panel); border-right: 1px solid var(--pma-border-light); display: flex; flex-direction: column; }
+  .pma-sidebar-head { background: var(--pma-nav); border-bottom: 1px solid var(--pma-border-light); padding: 0.45rem 0.6rem; font-weight: bold; color: var(--pma-header-dark); }
+  .pma-sidebar-filter { padding: 0.45rem 0.5rem; border-bottom: 1px solid var(--pma-border-light); }
+  .pma-sidebar-filter input { width: 100%; padding: 0.25rem 0.4rem; border: 1px solid var(--pma-border); font-size: 11px; }
+  .pma-table-list { list-style: none; margin: 0; padding: 0; overflow-y: auto; flex: 1; }
+  .pma-table-list li a { display: flex; justify-content: space-between; gap: 0.5rem; padding: 0.28rem 0.65rem; border-bottom: 1px solid #f0f0f0; color: var(--pma-text); font-size: 11px; }
+  .pma-table-list li a:hover, .pma-table-list li.active a { background: #ffe6cc; text-decoration: none; color: var(--pma-text); }
+  .pma-table-list .count { color: var(--pma-muted); font-size: 10px; }
+  .pma-main { flex: 1; padding: 0.65rem 0.85rem; overflow-x: auto; }
+  .pma-tabs { display: flex; flex-wrap: wrap; gap: 0; border-bottom: 1px solid var(--pma-border); margin-bottom: 0.75rem; background: var(--pma-nav); }
+  .pma-tabs a { padding: 0.45rem 0.85rem; border: 1px solid transparent; border-bottom: none; margin-bottom: -1px; font-size: 11px; color: var(--pma-link); background: transparent; }
+  .pma-tabs a.active { background: var(--pma-panel); border-color: var(--pma-border); border-bottom-color: var(--pma-panel); font-weight: bold; color: var(--pma-text); text-decoration: none; }
+  .pma-tabs a:hover:not(.active) { background: #f3f3f3; text-decoration: none; }
+  .flash { background: #dff0d8; border: 1px solid #d6e9c6; color: var(--pma-success); padding: 0.5rem 0.75rem; margin-bottom: 0.65rem; }
+  .error { background: #f2dede; border: 1px solid #ebccd1; color: #a94442; padding: 0.5rem 0.75rem; margin-bottom: 0.65rem; }
+  .pma-panel { background: var(--pma-panel); border: 1px solid var(--pma-border-light); margin-bottom: 0.75rem; }
+  .pma-panel-head { background: var(--pma-header); border-bottom: 1px solid var(--pma-border-light); padding: 0.4rem 0.65rem; font-weight: bold; display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+  .pma-panel-body { padding: 0.65rem; }
+  .pma-panel-body.flush { padding: 0; }
+  table.pma-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+  table.pma-table th, table.pma-table td { border: 1px solid var(--pma-border-light); padding: 0.35rem 0.5rem; text-align: left; vertical-align: top; }
+  table.pma-table th { background: var(--pma-header); font-weight: bold; white-space: nowrap; }
+  table.pma-table tr:nth-child(even) td { background: #f9f9f9; }
+  table.pma-table tr:hover td { background: #ffffcc; }
+  table.pma-table th.sortable a { color: inherit; }
+  .btn, button.btn { display: inline-block; padding: 0.25rem 0.55rem; border: 1px solid var(--pma-border); border-radius: 2px; background: linear-gradient(#f8f8f8, #e8e8e8); color: var(--pma-text); font-size: 11px; cursor: pointer; text-decoration: none; }
+  .btn:hover, button.btn:hover { background: linear-gradient(#fff, #f0f0f0); text-decoration: none; color: var(--pma-text); }
+  .btn-primary { background: linear-gradient(#5cb85c, #449d44); border-color: #398439; color: #fff; }
+  .btn-primary:hover { color: #fff; }
+  .btn-danger { background: linear-gradient(#d9534f, #c9302c); border-color: #ac2925; color: #fff; }
+  .btn-danger:hover { color: #fff; }
+  .btn-sm { padding: 0.15rem 0.4rem; font-size: 10px; }
+  .btn-group { display: flex; flex-wrap: wrap; gap: 0.35rem; align-items: center; }
+  .form-row { margin-bottom: 0.55rem; }
+  .form-row label { display: block; font-weight: bold; margin-bottom: 0.15rem; }
+  .form-row input, .form-row select, .form-row textarea { width: 100%; max-width: 100%; padding: 0.3rem 0.45rem; border: 1px solid var(--pma-border); font-size: 11px; font-family: inherit; }
+  .form-row textarea { min-height: 120px; font-family: Consolas, monospace; }
+  .form-inline { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: end; }
+  .form-inline .form-row { margin: 0; flex: 1; min-width: 120px; }
+  .hint { color: var(--pma-muted); font-size: 10px; }
+  .null-val { color: #999; font-style: italic; }
+  .truncate { max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .pagination { display: flex; gap: 0.35rem; margin-top: 0.65rem; align-items: center; flex-wrap: wrap; }
+  .pagination a, .pagination span { padding: 0.2rem 0.45rem; border: 1px solid var(--pma-border-light); background: #fff; font-size: 11px; }
+  .pagination .current { background: var(--pma-header-dark); color: #fff; border-color: var(--pma-header-dark); }
+  .badge { background: #eee; border: 1px solid #ccc; padding: 0.1rem 0.35rem; border-radius: 2px; font-size: 10px; }
+  .sql-editor { min-height: 140px; background: var(--pma-sql-bg); font-family: Consolas, "Courier New", monospace; }
+  .history-list { list-style: none; padding: 0; margin: 0 0 0.65rem; }
+  .history-list li { margin-bottom: 0.25rem; }
+  .history-list a { font-family: Consolas, monospace; font-size: 10px; }
+  .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.65rem; }
+  .dashboard-card { background: var(--pma-panel); border: 1px solid var(--pma-border-light); padding: 0.65rem; }
+  .dashboard-card h3 { margin: 0 0 0.25rem; font-size: 13px; color: var(--pma-header-dark); }
+  @media (max-width: 900px) {
+    .pma-body { flex-direction: column; }
+    .pma-sidebar { width: 100%; min-width: 0; max-height: 220px; }
+  }
 </style>
+<script>
+  function filterTables(input) {
+    var q = (input.value || '').toLowerCase();
+    document.querySelectorAll('[data-table-name]').forEach(function (el) {
+      el.style.display = el.getAttribute('data-table-name').indexOf(q) >= 0 ? '' : 'none';
+    });
+  }
+  function toggleAll(source) {
+    document.querySelectorAll('input[name="ids"]').forEach(function (cb) { cb.checked = source.checked; });
+  }
+</script>
 {{end}}
 
-{{define "nav"}}
-<header class="header">
-  <h1><a href="{{.Prefix}}/" style="color:#fff;text-decoration:none">{{.Title}}</a></h1>
-  <nav>
-    <a href="{{.Prefix}}/">Dashboard</a>
-    <a href="{{.Prefix}}/schema/new">Create Table</a>
-    <a href="{{.Prefix}}/import">Import SQL</a>
-    <a href="{{.Prefix}}/integrations">Integrations</a>
-    {{if .AllowSQL}}<a href="{{.Prefix}}/sql">SQL Console</a>{{end}}
+{{define "topbar"}}
+<div class="pma-topbar">
+  <div class="pma-brand">
+    <span class="pma-brand-mark">DB</span>
+    <a href="{{.Prefix}}/" style="color:inherit;text-decoration:none">{{.Title}}</a>
+    <span class="pma-server">Server: {{.Driver}}</span>
+  </div>
+  <nav class="pma-topnav">
+    <a href="{{.Prefix}}/">Databases</a>
+    <a href="{{.Prefix}}/schema/new">New table</a>
+    <a href="{{.Prefix}}/import">Import</a>
+    {{if .AllowSQL}}<a href="{{.Prefix}}/sql">SQL</a>{{end}}
+    <a href="{{.Prefix}}/integrations">Status</a>
   </nav>
-</header>
+</div>
+{{end}}
+
+{{define "sidebar"}}
+<aside class="pma-sidebar">
+  <div class="pma-sidebar-head">Tables</div>
+  <div class="pma-sidebar-filter">
+    <input type="search" placeholder="Filter tables..." oninput="filterTables(this)" aria-label="Filter tables">
+  </div>
+  <ul class="pma-table-list">
+    {{range .AllTables}}
+    <li class="{{if eq $.Table .Name}}active{{end}}" data-table-name="{{.Name}}">
+      <a href="{{$.Prefix}}/tables/{{.Name}}">
+        <span>{{.Name}}</span>
+        <span class="count">{{.Count}}</span>
+      </a>
+    </li>
+    {{else}}
+    <li><span style="padding:0.5rem;color:#999">No tables</span></li>
+    {{end}}
+  </ul>
+</aside>
+{{end}}
+
+{{define "table_tabs"}}
+<nav class="pma-tabs">
+  <a href="{{.Prefix}}/tables/{{.Table}}" class="{{if eq .Tab "browse"}}active{{end}}">Browse</a>
+  <a href="{{.Prefix}}/tables/{{.Table}}/structure" class="{{if eq .Tab "structure"}}active{{end}}">Structure</a>
+  <a href="{{.Prefix}}/sql" class="{{if eq .Tab "sql"}}active{{end}}">SQL</a>
+  <a href="{{.Prefix}}/tables/{{.Table}}/search" class="{{if eq .Tab "search"}}active{{end}}">Search</a>
+  <a href="{{.Prefix}}/tables/{{.Table}}/new" class="{{if eq .Tab "insert"}}active{{end}}">Insert</a>
+  <a href="{{.Prefix}}/export/{{.Table}}" class="{{if eq .Tab "export"}}active{{end}}">Export</a>
+</nav>
 {{end}}
 
 {{define "dashboard.html"}}
-<!DOCTYPE html><html lang="en"><head><title>{{.Title}}</title>{{template "head" .}}</head><body>
-{{template "nav" .}}
-<main class="container">
+<!DOCTYPE html><html lang="en"><head><title>{{.Title}}</title>{{template "head" .}}</head>
+<body class="pma">
+{{template "topbar" .}}
+<div class="pma-body">
+{{template "sidebar" .}}
+<main class="pma-main">
   {{if .Flash}}<div class="flash">{{.Flash}}</div>{{end}}
-  <h2 style="margin-bottom:1rem">Database Tables</h2>
-  <div style="margin-bottom:1rem;display:flex;gap:0.5rem">
-    <a href="{{.Prefix}}/schema/new" class="btn btn-primary">+ Create Table</a>
-    <a href="{{.Prefix}}/import" class="btn btn-sm" style="background:#6c757d;color:#fff">Import SQL</a>
+  <div class="pma-panel">
+    <div class="pma-panel-head">
+      <span>Database overview</span>
+      <div class="btn-group">
+        <a href="{{.Prefix}}/schema/new" class="btn btn-primary">Create table</a>
+        <a href="{{.Prefix}}/import" class="btn">Import SQL</a>
+        {{if .AllowSQL}}<a href="{{.Prefix}}/sql" class="btn">SQL console</a>{{end}}
+      </div>
+    </div>
+    <div class="pma-panel-body">
+      <p class="hint" style="margin-bottom:0.65rem">Select a table from the left panel or use the cards below. Development-only database manager inspired by phpMyAdmin.</p>
+      <div class="dashboard-grid">
+        {{range .Tables}}
+        <a href="{{$.Prefix}}/tables/{{.Name}}" class="dashboard-card" style="text-decoration:none;color:inherit">
+          <h3>{{.Name}}</h3>
+          <div class="hint">{{.Count}} rows</div>
+        </a>
+        {{else}}
+        <p>No tables found. Run <code>gofreight migrate</code> or create a table.</p>
+        {{end}}
+      </div>
+    </div>
   </div>
-  <div class="table-grid">
-    {{range .Tables}}
-    <a href="{{$.Prefix}}/tables/{{.Name}}" class="table-card">
-      <h3>{{.Name}}</h3>
-      <div>{{.Count}} rows</div>
-    </a>
-    {{else}}
-    <p>No tables found. Run migrations first.</p>
-    {{end}}
-  </div>
-</main></body></html>
+</main>
+</div></body></html>
 {{end}}
 
 {{define "table_index.html"}}
-<!DOCTYPE html><html lang="en"><head><title>{{.Table}} | {{.Title}}</title>{{template "head" .}}</head><body>
-{{template "nav" .}}
-<main class="container">
+<!DOCTYPE html><html lang="en"><head><title>{{.Table}} | {{.Title}}</title>{{template "head" .}}</head>
+<body class="pma">
+{{template "topbar" .}}
+<div class="pma-body">
+{{template "sidebar" .}}
+<main class="pma-main">
   {{if .Flash}}<div class="flash">{{.Flash}}</div>{{end}}
-  <div class="breadcrumb"><a href="{{.Prefix}}/">Dashboard</a> &rsaquo; {{.Table}}</div>
-  <div class="card">
-    <div class="card-header">
-      <span>{{.Table}} <span class="badge">{{.Total}} rows</span></span>
-      <div style="display:flex;gap:0.5rem">
-        <a href="{{.Prefix}}/tables/{{.Table}}/structure" class="btn btn-sm" style="background:#6c757d;color:#fff">Structure</a>
-        <a href="{{.Prefix}}/export/{{.Table}}" class="btn btn-sm" style="background:#6c757d;color:#fff">Export</a>
-        <a href="{{.Prefix}}/tables/{{.Table}}/new" class="btn btn-primary btn-sm">+ Add row</a>
+  {{template "table_tabs" .}}
+  <div class="pma-panel">
+    <div class="pma-panel-head">
+      <span>Table: <strong>{{.Table}}</strong> <span class="badge">{{.Total}} rows</span></span>
+      <div class="btn-group">
+        <a href="{{.Prefix}}/tables/{{.Table}}/new" class="btn btn-primary btn-sm">Insert row</a>
+        <a href="{{.Prefix}}/export/{{.Table}}" class="btn btn-sm">Export SQL</a>
+        <a href="{{.Prefix}}/export/{{.Table}}/csv" class="btn btn-sm">Export CSV</a>
+        <form method="POST" action="{{.Prefix}}/tables/{{.Table}}/truncate" style="display:inline" onsubmit="return confirm('Empty table {{.Table}}?')">
+          <button type="submit" class="btn btn-sm">Empty</button>
+        </form>
       </div>
     </div>
-    <div class="card-body" style="padding:0;overflow-x:auto">
-      <table>
-        <thead><tr>{{range .Columns}}<th>{{.Name}}</th>{{end}}<th>Actions</th></tr></thead>
-        <tbody>
-          {{range $row := .Rows}}
-          <tr>
-            {{range $.Columns}}
-            <td class="truncate">{{$v := index $row .Name}}{{if eq $v nil}}<span class="null-val">NULL</span>{{else}}{{$v}}{{end}}</td>
-            {{end}}
-            <td><a href="{{$.Prefix}}/tables/{{$.Table}}/{{index $row "id"}}" class="btn btn-primary btn-sm">Edit</a></td>
-          </tr>
-          {{else}}
-          <tr><td colspan="100" style="text-align:center;padding:2rem">No records</td></tr>
-          {{end}}
-        </tbody>
-      </table>
+    {{if or .SearchCol .SearchOp}}
+    <div class="pma-panel-body" style="border-bottom:1px solid #ddd;background:#fffff0">
+      <strong>Filter:</strong> {{.SearchCol}} {{.SearchOp}} {{.SearchVal}}
+      <a href="{{.Prefix}}/tables/{{.Table}}" class="btn btn-sm" style="margin-left:0.5rem">Clear</a>
     </div>
+    {{end}}
+    <form method="POST" action="{{.Prefix}}/tables/{{.Table}}/bulk-delete" onsubmit="return confirm('Delete selected rows?')">
+      <div class="pma-panel-body flush" style="overflow-x:auto">
+        <table class="pma-table">
+          <thead><tr>
+            <th><input type="checkbox" onclick="toggleAll(this)" title="Select all"></th>
+            {{range .Columns}}
+            <th class="sortable">
+              {{if eq $.SortCol .Name}}
+              <a href="?sort={{.Name}}&dir={{if eq $.SortDir "ASC"}}DESC{{else}}ASC{{end}}&col={{$.SearchCol}}&op={{$.SearchOp}}&val={{$.SearchVal}}">{{.Name}}{{if eq $.SortDir "DESC"}} ▼{{else}} ▲{{end}}</a>
+              {{else}}
+              <a href="?sort={{.Name}}&dir=ASC&col={{$.SearchCol}}&op={{$.SearchOp}}&val={{$.SearchVal}}">{{.Name}}</a>
+              {{end}}
+            </th>
+            {{end}}
+            <th>Action</th>
+          </tr></thead>
+          <tbody>
+            {{range $row := .Rows}}
+            <tr>
+              <td><input type="checkbox" name="ids" value="{{index $row $.PrimaryKey}}"></td>
+              {{range $.Columns}}
+              <td class="truncate">{{$v := index $row .Name}}{{if eq $v nil}}<span class="null-val">NULL</span>{{else}}{{$v}}{{end}}</td>
+              {{end}}
+              <td><a href="{{$.Prefix}}/tables/{{$.Table}}/{{index $row $.PrimaryKey}}" class="btn btn-sm">Edit</a></td>
+            </tr>
+            {{else}}
+            <tr><td colspan="100" style="text-align:center;padding:1.5rem">No rows</td></tr>
+            {{end}}
+          </tbody>
+        </table>
+      </div>
+      <div class="pma-panel-body">
+        <button type="submit" class="btn btn-danger btn-sm">Delete selected</button>
+      </div>
+    </form>
   </div>
   {{if gt .LastPage 1}}
   <div class="pagination">
-    {{if gt .Page 1}}<a href="?page={{minus .Page 1}}">&laquo; Prev</a>{{end}}
+    {{if gt .Page 1}}<a href="?page={{minus .Page 1}}&sort={{.SortCol}}&dir={{.SortDir}}&col={{.SearchCol}}&op={{.SearchOp}}&val={{.SearchVal}}">&laquo; Previous</a>{{end}}
     <span class="current">Page {{.Page}} / {{.LastPage}}</span>
-    {{if lt .Page .LastPage}}<a href="?page={{plus .Page 1}}">Next &raquo;</a>{{end}}
+    {{if lt .Page .LastPage}}<a href="?page={{plus .Page 1}}&sort={{.SortCol}}&dir={{.SortDir}}&col={{.SearchCol}}&op={{.SearchOp}}&val={{.SearchVal}}">Next &raquo;</a>{{end}}
   </div>
   {{end}}
-</main></body></html>
+</main>
+</div></body></html>
+{{end}}
+
+{{define "table_search.html"}}
+<!DOCTYPE html><html lang="en"><head><title>Search {{.Table}} | {{.Title}}</title>{{template "head" .}}</head>
+<body class="pma">
+{{template "topbar" .}}
+<div class="pma-body">
+{{template "sidebar" .}}
+<main class="pma-main">
+  {{template "table_tabs" .}}
+  <div class="pma-panel">
+    <div class="pma-panel-head"><span>Search in table <strong>{{.Table}}</strong></span></div>
+    <div class="pma-panel-body">
+      <form method="POST" action="{{.Prefix}}/tables/{{.Table}}/search" class="form-inline">
+        <div class="form-row">
+          <label>Column</label>
+          <select name="col" required>
+            {{range .Columns}}<option value="{{.Name}}">{{.Name}}</option>{{end}}
+          </select>
+        </div>
+        <div class="form-row">
+          <label>Operator</label>
+          <select name="op">
+            <option value="eq">=</option>
+            <option value="ne">!=</option>
+            <option value="like">LIKE</option>
+            <option value="gt">&gt;</option>
+            <option value="lt">&lt;</option>
+            <option value="null">IS NULL</option>
+            <option value="notnull">IS NOT NULL</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label>Value</label>
+          <input type="text" name="val" placeholder="Search value">
+        </div>
+        <button type="submit" class="btn btn-primary">Go</button>
+      </form>
+    </div>
+  </div>
+</main>
+</div></body></html>
 {{end}}
 
 {{define "table_form.html"}}
-<!DOCTYPE html><html lang="en"><head><title>{{if .Edit}}Edit{{else}}New{{end}} {{.Table}} | {{.Title}}</title>{{template "head" .}}</head><body>
-{{template "nav" .}}
-<main class="container">
-  <div class="breadcrumb"><a href="{{.Prefix}}/">Dashboard</a> &rsaquo; <a href="{{.Prefix}}/tables/{{.Table}}">{{.Table}}</a> &rsaquo; {{if .Edit}}Edit #{{.ID}}{{else}}New{{end}}</div>
-  <div class="card">
-    <div class="card-header">{{if .Edit}}Edit{{else}}Create{{end}} {{.Table}}</div>
-    <div class="card-body">
+<!DOCTYPE html><html lang="en"><head><title>{{if .Edit}}Edit{{else}}Insert{{end}} {{.Table}} | {{.Title}}</title>{{template "head" .}}</head>
+<body class="pma">
+{{template "topbar" .}}
+<div class="pma-body">
+{{template "sidebar" .}}
+<main class="pma-main">
+  {{template "table_tabs" .}}
+  <div class="pma-panel">
+    <div class="pma-panel-head">{{if .Edit}}Edit row{{else}}Insert row{{end}} — {{.Table}}</div>
+    <div class="pma-panel-body">
       <form method="POST" action="{{if .Edit}}{{.Prefix}}/tables/{{.Table}}/{{.ID}}{{else}}{{.Prefix}}/tables/{{.Table}}{{end}}">
         {{range .Schema.Columns}}
         {{if not (and $.Edit .PrimaryKey)}}
-        <div class="form-group">
+        <div class="form-row">
           <label for="{{.Name}}">{{.Name}}</label>
           {{if or (eq .Type "text") (eq .Type "TEXT") (eq .Type "blob") (eq .Type "BLOB")}}
           <textarea name="{{.Name}}" id="{{.Name}}">{{index $.Row .Name}}</textarea>
@@ -145,115 +326,101 @@
         </div>
         {{end}}
         {{end}}
-        <div style="display:flex;gap:0.5rem;margin-top:1.5rem">
-          <button type="submit" class="btn btn-primary">{{if .Edit}}Save{{else}}Create{{end}}</button>
-          <a href="{{.Prefix}}/tables/{{.Table}}" class="btn btn-sm" style="background:#6c757d;color:#fff">Cancel</a>
+        <div class="btn-group" style="margin-top:0.75rem">
+          <button type="submit" class="btn btn-primary">{{if .Edit}}Save{{else}}Insert{{end}}</button>
+          <a href="{{.Prefix}}/tables/{{.Table}}" class="btn">Cancel</a>
         </div>
       </form>
       {{if .Edit}}
-      <form method="POST" action="{{.Prefix}}/tables/{{.Table}}/{{.ID}}/delete" style="margin-top:0.5rem" onsubmit="return confirm('Delete this record?')">
-        <button type="submit" class="btn btn-danger">Delete</button>
+      <form method="POST" action="{{.Prefix}}/tables/{{.Table}}/{{.ID}}/delete" style="margin-top:0.65rem" onsubmit="return confirm('Delete this row?')">
+        <button type="submit" class="btn btn-danger">Delete row</button>
       </form>
       {{end}}
     </div>
   </div>
-</main></body></html>
+</main>
+</div></body></html>
 {{end}}
 
 {{define "sql.html"}}
-<!DOCTYPE html><html lang="en"><head><title>SQL Console | {{.Title}}</title>{{template "head" .}}</head><body>
-{{template "nav" .}}
-<main class="container">
-  <h2 style="margin-bottom:1rem">SQL Console</h2>
-  <p style="color:#666;margin-bottom:1rem">Read-only queries (SELECT, PRAGMA, EXPLAIN) for local development.</p>
-  <div class="card">
-    <div class="card-body">
+<!DOCTYPE html><html lang="en"><head><title>SQL | {{.Title}}</title>{{template "head" .}}</head>
+<body class="pma">
+{{template "topbar" .}}
+<div class="pma-body">
+{{template "sidebar" .}}
+<main class="pma-main">
+  <div class="pma-panel">
+    <div class="pma-panel-head"><span>Run SQL query</span></div>
+    <div class="pma-panel-body">
+      <p class="hint" style="margin-bottom:0.5rem">Read-only in the console (SELECT, PRAGMA, EXPLAIN). Use Import for DDL/DML writes.</p>
+      {{if .History}}
+      <ul class="history-list">
+        {{range .History}}<li><a href="#" onclick="document.getElementById('query').value=this.textContent;return false;">{{.}}</a></li>{{end}}
+      </ul>
+      {{end}}
       <form method="POST" action="{{.Prefix}}/sql">
-        <div class="form-group">
-          <label for="query">SQL Query</label>
-          <textarea name="query" id="query" class="sql-editor">{{.Query}}</textarea>
+        <div class="form-row">
+          <textarea name="query" id="query" class="sql-editor" placeholder="SELECT * FROM users LIMIT 10;">{{.Query}}</textarea>
         </div>
-        <button type="submit" class="btn btn-primary">Run Query</button>
+        <button type="submit" class="btn btn-primary">Go</button>
       </form>
     </div>
   </div>
   {{if .Error}}<div class="error">{{.Error}}</div>{{end}}
   {{if .Results}}
-  <div class="card"><div class="card-body" style="padding:0;overflow-x:auto">
-    <table>
-      <thead><tr>{{range .ResultColumns}}<th>{{.}}</th>{{end}}</tr></thead>
-      <tbody>
-        {{range $row := .Results}}
-        <tr>{{range $.ResultColumns}}<td class="truncate">{{$v := index $row .}}{{if eq $v nil}}<span class="null-val">NULL</span>{{else}}{{$v}}{{end}}</td>{{end}}</tr>
-        {{end}}
-      </tbody>
-    </table>
-  </div></div>
+  <div class="pma-panel">
+    <div class="pma-panel-head"><span>Query results ({{len .Results}} rows)</span></div>
+    <div class="pma-panel-body flush" style="overflow-x:auto">
+      <table class="pma-table">
+        <thead><tr>{{range .ResultColumns}}<th>{{.}}</th>{{end}}</tr></thead>
+        <tbody>
+          {{range $row := .Results}}
+          <tr>{{range $.ResultColumns}}<td class="truncate">{{$v := index $row .}}{{if eq $v nil}}<span class="null-val">NULL</span>{{else}}{{$v}}{{end}}</td>{{end}}</tr>
+          {{end}}
+        </tbody>
+      </table>
+    </div>
+  </div>
   {{end}}
-</main></body></html>
-{{end}}
-
-{{define "schema_new.html"}}
-<!DOCTYPE html><html lang="en"><head><title>Create Table | {{.Title}}</title>{{template "head" .}}</head><body>
-{{template "nav" .}}
-<main class="container">
-  <h2 style="margin-bottom:1rem">Create Table</h2>
-  <div class="card"><div class="card-body">
-    <form method="POST" action="{{.Prefix}}/schema/create">
-      <div class="form-group">
-        <label for="table_name">Table Name</label>
-        <input type="text" name="table_name" id="table_name" required placeholder="users">
-      </div>
-      <input type="hidden" name="column_count" value="5">
-      <h3 style="margin:1.5rem 0 1rem;font-size:1rem">Columns</h3>
-      <p class="hint" style="margin-bottom:1rem">An <code>id</code>, <code>created_at</code>, and <code>updated_at</code> column are added automatically if no primary key is set.</p>
-      {{range $i := seq 5}}
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr auto auto auto;gap:0.5rem;margin-bottom:0.5rem;align-items:end">
-        <div class="form-group" style="margin:0"><label>Name</label><input type="text" name="col_{{$i}}_name" placeholder="column_{{$i}}"></div>
-        <div class="form-group" style="margin:0"><label>Type</label>
-          <select name="col_{{$i}}_type">{{range $.ColumnTypes}}<option>{{.}}</option>{{end}}</select>
-        </div>
-        <div class="form-group" style="margin:0"><label>Default</label><input type="text" name="col_{{$i}}_default"></div>
-        <label><input type="checkbox" name="col_{{$i}}_nullable" value="1"> Null</label>
-        <label><input type="checkbox" name="col_{{$i}}_pk" value="1"> PK</label>
-        <label><input type="checkbox" name="col_{{$i}}_auto" value="1"> Auto</label>
-      </div>
-      {{end}}
-      <button type="submit" class="btn btn-primary" style="margin-top:1rem">Create Table</button>
-    </form>
-  </div></div>
-</main></body></html>
+</main>
+</div></body></html>
 {{end}}
 
 {{define "table_structure.html"}}
-<!DOCTYPE html><html lang="en"><head><title>{{.Table}} Structure | {{.Title}}</title>{{template "head" .}}</head><body>
-{{template "nav" .}}
-<main class="container">
+<!DOCTYPE html><html lang="en"><head><title>{{.Table}} structure | {{.Title}}</title>{{template "head" .}}</head>
+<body class="pma">
+{{template "topbar" .}}
+<div class="pma-body">
+{{template "sidebar" .}}
+<main class="pma-main">
   {{if .Flash}}<div class="flash">{{.Flash}}</div>{{end}}
-  <div class="breadcrumb"><a href="{{.Prefix}}/">Dashboard</a> &rsaquo; <a href="{{.Prefix}}/tables/{{.Table}}">{{.Table}}</a> &rsaquo; Structure</div>
-  <div class="card">
-    <div class="card-header">
-      <span>{{.Table}} — Structure</span>
-      <div style="display:flex;gap:0.5rem">
-        <a href="{{.Prefix}}/tables/{{.Table}}/columns/new" class="btn btn-primary btn-sm">+ Add Column</a>
-        <a href="{{.Prefix}}/export/{{.Table}}" class="btn btn-sm" style="background:#6c757d;color:#fff">Export SQL</a>
+  {{template "table_tabs" .}}
+  <div class="pma-panel">
+    <div class="pma-panel-head">
+      <span>Table structure: {{.Table}}</span>
+      <div class="btn-group">
+        <a href="{{.Prefix}}/tables/{{.Table}}/columns/new" class="btn btn-primary btn-sm">Add column</a>
+        <a href="{{.Prefix}}/export/{{.Table}}" class="btn btn-sm">Export SQL</a>
+        <a href="{{.Prefix}}/tables/{{.Table}}/migration" class="btn btn-sm">Save migration</a>
       </div>
     </div>
-    <div class="card-body" style="padding:0">
-      <table>
-        <thead><tr><th>Column</th><th>Type</th><th>Nullable</th><th>Primary Key</th><th>Default</th><th>Actions</th></tr></thead>
+    <div class="pma-panel-body flush" style="overflow-x:auto">
+      <table class="pma-table">
+        <thead><tr><th>#</th><th>Name</th><th>Type</th><th>Null</th><th>Key</th><th>Default</th><th>Extra</th><th>Action</th></tr></thead>
         <tbody>
-          {{range .Schema.Columns}}
+          {{range $i, $col := .Schema.Columns}}
           <tr>
-            <td><strong>{{.Name}}</strong></td>
-            <td>{{.Type}}</td>
-            <td>{{if .Nullable}}Yes{{else}}No{{end}}</td>
-            <td>{{if .PrimaryKey}}Yes{{else}}—{{end}}</td>
-            <td>{{if .Default.Valid}}{{.Default.String}}{{else}}—{{end}}</td>
+            <td>{{plus $i 1}}</td>
+            <td><strong>{{$col.Name}}</strong></td>
+            <td>{{$col.Type}}</td>
+            <td>{{if $col.Nullable}}YES{{else}}NO{{end}}</td>
+            <td>{{if $col.PrimaryKey}}PRIMARY{{else}}—{{end}}</td>
+            <td>{{if $col.Default.Valid}}{{$col.Default.String}}{{else}}<span class="null-val">NULL</span>{{end}}</td>
+            <td>—</td>
             <td>
-              {{if not .PrimaryKey}}
-              <a href="{{$.Prefix}}/tables/{{$.Table}}/columns/{{.Name}}/rename" class="btn btn-sm">Rename</a>
-              <form method="POST" action="{{$.Prefix}}/tables/{{$.Table}}/columns/{{.Name}}/drop" style="display:inline" onsubmit="return confirm('Drop column {{.Name}}?')">
+              {{if not $col.PrimaryKey}}
+              <a href="{{$.Prefix}}/tables/{{$.Table}}/columns/{{$col.Name}}/rename" class="btn btn-sm">Rename</a>
+              <form method="POST" action="{{$.Prefix}}/tables/{{$.Table}}/columns/{{$col.Name}}/drop" style="display:inline" onsubmit="return confirm('Drop column {{$col.Name}}?')">
                 <button type="submit" class="btn btn-danger btn-sm">Drop</button>
               </form>
               {{end}}
@@ -264,110 +431,161 @@
       </table>
     </div>
   </div>
-  <div class="card" style="margin-top:1rem"><div class="card-body">
-    <h3 style="margin-bottom:1rem;font-size:1rem">Add Index</h3>
-    <form method="POST" action="{{.Prefix}}/tables/{{.Table}}/indexes">
-      <div style="display:flex;gap:0.5rem;align-items:end">
-        <div class="form-group" style="margin:0"><label>Index name</label><input type="text" name="index_name" required></div>
-        <div class="form-group" style="margin:0"><label>Column</label><input type="text" name="column" required></div>
+  <div class="pma-panel">
+    <div class="pma-panel-head"><span>Indexes</span></div>
+    <div class="pma-panel-body">
+      <form method="POST" action="{{.Prefix}}/tables/{{.Table}}/indexes" class="form-inline">
+        <div class="form-row"><label>Index name</label><input type="text" name="index_name" required></div>
+        <div class="form-row"><label>Column</label><input type="text" name="column" required></div>
         <label><input type="checkbox" name="unique" value="1"> Unique</label>
-        <button type="submit" class="btn btn-primary btn-sm">Add Index</button>
-      </div>
-    </form>
-  </div></div>
-  <div style="margin-top:1rem;display:flex;gap:0.5rem">
-    <a href="{{.Prefix}}/tables/{{.Table}}/migration" class="btn btn-sm" style="background:#6c757d;color:#fff">Save as Migration</a>
+        <button type="submit" class="btn btn-primary btn-sm">Create index</button>
+      </form>
+    </div>
   </div>
   <form method="POST" action="{{.Prefix}}/tables/{{.Table}}/drop" onsubmit="return confirm('Drop table {{.Table}}? This cannot be undone.')">
-    <button type="submit" class="btn btn-danger">Drop Table</button>
+    <button type="submit" class="btn btn-danger">Drop table</button>
   </form>
-</main></body></html>
+</main>
+</div></body></html>
+{{end}}
+
+{{define "schema_new.html"}}
+<!DOCTYPE html><html lang="en"><head><title>Create table | {{.Title}}</title>{{template "head" .}}</head>
+<body class="pma">
+{{template "topbar" .}}
+<div class="pma-body">
+{{template "sidebar" .}}
+<main class="pma-main">
+  <div class="pma-panel">
+    <div class="pma-panel-head"><span>Create new table</span></div>
+    <div class="pma-panel-body">
+      <form method="POST" action="{{.Prefix}}/schema/create">
+        <div class="form-row"><label for="table_name">Table name</label><input type="text" name="table_name" id="table_name" required placeholder="users"></div>
+        <input type="hidden" name="column_count" value="5">
+        <p class="hint" style="margin:0.65rem 0">An <code>id</code>, <code>created_at</code>, and <code>updated_at</code> column are added automatically if no primary key is set.</p>
+        {{range $i := seq 5}}
+        <div class="form-inline" style="margin-bottom:0.35rem">
+          <div class="form-row"><label>Name</label><input type="text" name="col_{{$i}}_name" placeholder="column_{{$i}}"></div>
+          <div class="form-row"><label>Type</label><select name="col_{{$i}}_type">{{range $.ColumnTypes}}<option>{{.}}</option>{{end}}</select></div>
+          <div class="form-row"><label>Default</label><input type="text" name="col_{{$i}}_default"></div>
+          <label><input type="checkbox" name="col_{{$i}}_nullable" value="1"> Null</label>
+          <label><input type="checkbox" name="col_{{$i}}_pk" value="1"> PK</label>
+          <label><input type="checkbox" name="col_{{$i}}_auto" value="1"> Auto</label>
+        </div>
+        {{end}}
+        <button type="submit" class="btn btn-primary" style="margin-top:0.65rem">Create</button>
+      </form>
+    </div>
+  </div>
+</main>
+</div></body></html>
 {{end}}
 
 {{define "column_new.html"}}
-<!DOCTYPE html><html lang="en"><head><title>Add Column | {{.Title}}</title>{{template "head" .}}</head><body>
-{{template "nav" .}}
-<main class="container">
-  <div class="breadcrumb"><a href="{{.Prefix}}/">Dashboard</a> &rsaquo; <a href="{{.Prefix}}/tables/{{.Table}}/structure">{{.Table}}</a> &rsaquo; Add Column</div>
-  <div class="card"><div class="card-body">
-    <form method="POST" action="{{.Prefix}}/tables/{{.Table}}/columns">
-      <div class="form-group"><label>Name</label><input type="text" name="name" required></div>
-      <div class="form-group"><label>Type</label>
-        <select name="type">{{range .ColumnTypes}}<option>{{.}}</option>{{end}}</select>
-      </div>
-      <div class="form-group"><label>Default (optional)</label><input type="text" name="default"></div>
-      <label><input type="checkbox" name="nullable" value="1"> Nullable</label>
-      <div style="margin-top:1rem"><button type="submit" class="btn btn-primary">Add Column</button></div>
-    </form>
-  </div></div>
-</main></body></html>
+<!DOCTYPE html><html lang="en"><head><title>Add column | {{.Title}}</title>{{template "head" .}}</head>
+<body class="pma">
+{{template "topbar" .}}
+<div class="pma-body">
+{{template "sidebar" .}}
+<main class="pma-main">
+  {{template "table_tabs" .}}
+  <div class="pma-panel">
+    <div class="pma-panel-head"><span>Add column to {{.Table}}</span></div>
+    <div class="pma-panel-body">
+      <form method="POST" action="{{.Prefix}}/tables/{{.Table}}/columns">
+        <div class="form-row"><label>Name</label><input type="text" name="name" required></div>
+        <div class="form-row"><label>Type</label><select name="type">{{range .ColumnTypes}}<option>{{.}}</option>{{end}}</select></div>
+        <div class="form-row"><label>Default</label><input type="text" name="default"></div>
+        <label><input type="checkbox" name="nullable" value="1"> Nullable</label>
+        <div style="margin-top:0.65rem"><button type="submit" class="btn btn-primary">Add column</button></div>
+      </form>
+    </div>
+  </div>
+</main>
+</div></body></html>
 {{end}}
 
 {{define "import.html"}}
-<!DOCTYPE html><html lang="en"><head><title>Import SQL | {{.Title}}</title>{{template "head" .}}</head><body>
-{{template "nav" .}}
-<main class="container">
-  <h2 style="margin-bottom:1rem">Import SQL</h2>
-  <p style="color:#666;margin-bottom:1rem">Run CREATE, ALTER, INSERT, UPDATE, or DELETE statements. Separate multiple statements with semicolons.</p>
-  {{if .Error}}<div class="error">{{.Error}}</div>{{end}}
-  <div class="card"><div class="card-body">
-    <form method="POST" action="{{.Prefix}}/import">
-      <div class="form-group">
-        <label for="sql">SQL</label>
-        <textarea name="sql" id="sql" class="sql-editor" style="min-height:200px">{{.SQL}}</textarea>
-      </div>
-      <button type="submit" class="btn btn-primary">Import</button>
-    </form>
-  </div></div>
-</main></body></html>
+<!DOCTYPE html><html lang="en"><head><title>Import | {{.Title}}</title>{{template "head" .}}</head>
+<body class="pma">
+{{template "topbar" .}}
+<div class="pma-body">
+{{template "sidebar" .}}
+<main class="pma-main">
+  <div class="pma-panel">
+    <div class="pma-panel-head"><span>Import SQL</span></div>
+    <div class="pma-panel-body">
+      <p class="hint" style="margin-bottom:0.5rem">Run CREATE, ALTER, INSERT, UPDATE, or DELETE. Separate statements with semicolons.</p>
+      {{if .Error}}<div class="error">{{.Error}}</div>{{end}}
+      <form method="POST" action="{{.Prefix}}/import">
+        <div class="form-row"><textarea name="sql" class="sql-editor" style="min-height:220px">{{.SQL}}</textarea></div>
+        <button type="submit" class="btn btn-primary">Import</button>
+      </form>
+    </div>
+  </div>
+</main>
+</div></body></html>
 {{end}}
 
 {{define "integrations.html"}}
-<!DOCTYPE html><html lang="en"><head><title>Integrations | {{.Title}}</title>{{template "head" .}}</head><body>
-{{template "nav" .}}
-<main class="container">
-  <h2 style="margin-bottom:1rem">Integrations</h2>
-  <p style="color:#666;margin-bottom:1rem">Configure via environment variables. See <code>docs/integrations.md</code>.</p>
-  <div class="card"><div class="card-body" style="padding:0">
-    <table>
-      <thead><tr><th>Integration</th><th>Status</th></tr></thead>
-      <tbody>
-        {{range .Integrations}}
-        <tr>
-          <td><strong>{{.Name}}</strong></td>
-          <td>{{if .Enabled}}<span style="color:#198754">● Active</span>{{else}}<span style="color:#adb5bd">○ Not configured</span>{{end}}</td>
-        </tr>
-        {{end}}
-      </tbody>
-    </table>
-  </div></div>
-</main></body></html>
+<!DOCTYPE html><html lang="en"><head><title>Status | {{.Title}}</title>{{template "head" .}}</head>
+<body class="pma">
+{{template "topbar" .}}
+<div class="pma-body">
+{{template "sidebar" .}}
+<main class="pma-main">
+  <div class="pma-panel">
+    <div class="pma-panel-head"><span>Server status & integrations</span></div>
+    <div class="pma-panel-body flush">
+      <table class="pma-table">
+        <thead><tr><th>Integration</th><th>Status</th></tr></thead>
+        <tbody>
+          {{range .Integrations}}
+          <tr><td><strong>{{.Name}}</strong></td><td>{{if .Enabled}}<span style="color:#3c763d">● Active</span>{{else}}<span style="color:#999">○ Not configured</span>{{end}}</td></tr>
+          {{end}}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</main>
+</div></body></html>
 {{end}}
 
 {{define "login.html"}}
-<!DOCTYPE html><html lang="en"><head><title>Admin Login | {{.Title}}</title>{{template "head" .}}</head><body>
-<main class="container" style="max-width:400px;margin:4rem auto">
-  <h2>Admin Login</h2>
-  {{if .Error}}<div class="error">{{.Error}}</div>{{end}}
-  <div class="card"><div class="card-body">
-    <form method="POST" action="{{.Prefix}}/login">
-      <div class="form-group"><label for="password">Password</label><input type="password" name="password" id="password" required></div>
-      <button type="submit" class="btn btn-primary">Login</button>
-    </form>
-  </div></div>
+<!DOCTYPE html><html lang="en"><head><title>Login | {{.Title}}</title>{{template "head" .}}</head>
+<body class="pma">
+{{template "topbar" .}}
+<main class="pma-main" style="max-width:420px;margin:2rem auto">
+  <div class="pma-panel">
+    <div class="pma-panel-head"><span>Admin login</span></div>
+    <div class="pma-panel-body">
+      {{if .Error}}<div class="error">{{.Error}}</div>{{end}}
+      <form method="POST" action="{{.Prefix}}/login">
+        <div class="form-row"><label for="password">Password</label><input type="password" name="password" id="password" required></div>
+        <button type="submit" class="btn btn-primary">Login</button>
+      </form>
+    </div>
+  </div>
 </main></body></html>
 {{end}}
 
 {{define "column_rename.html"}}
-<!DOCTYPE html><html lang="en"><head><title>Rename Column | {{.Title}}</title>{{template "head" .}}</head><body>
-{{template "nav" .}}
-<main class="container">
-  <div class="breadcrumb"><a href="{{.Prefix}}/">Dashboard</a> &rsaquo; <a href="{{.Prefix}}/tables/{{.Table}}/structure">{{.Table}}</a> &rsaquo; Rename {{.Column}}</div>
-  <div class="card"><div class="card-body">
-    <form method="POST" action="{{.Prefix}}/tables/{{.Table}}/columns/{{.Column}}/rename">
-      <div class="form-group"><label>New name</label><input type="text" name="new_name" value="{{.Column}}" required></div>
-      <button type="submit" class="btn btn-primary">Rename</button>
-    </form>
-  </div></div>
-</main></body></html>
+<!DOCTYPE html><html lang="en"><head><title>Rename column | {{.Title}}</title>{{template "head" .}}</head>
+<body class="pma">
+{{template "topbar" .}}
+<div class="pma-body">
+{{template "sidebar" .}}
+<main class="pma-main">
+  {{template "table_tabs" .}}
+  <div class="pma-panel">
+    <div class="pma-panel-head"><span>Rename column {{.Column}}</span></div>
+    <div class="pma-panel-body">
+      <form method="POST" action="{{.Prefix}}/tables/{{.Table}}/columns/{{.Column}}/rename">
+        <div class="form-row"><label>New name</label><input type="text" name="new_name" value="{{.Column}}" required></div>
+        <button type="submit" class="btn btn-primary">Rename</button>
+      </form>
+    </div>
+  </div>
+</main>
+</div></body></html>
 {{end}}

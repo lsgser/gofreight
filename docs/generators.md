@@ -208,8 +208,24 @@ Field names are lowercased for database columns (`title` → `db:"title"`) and t
 | `gofreight make:factory Name` | Test factory in `tests/factories/` |
 | `gofreight make:test Name` | Feature test in `tests/` |
 | `gofreight make:auth` | User model, login/register views, auth controller, routes |
+| `gofreight make:graphql` | GraphQL folder, bootstrap mount, go.mod deps |
+| `gofreight make:graphql-module Name fields...` | GraphQL module with list/show/create + dataloader |
 
 Legacy: `gofreight generate …` and `gofreight make …` work the same way (`generate resource` = `make:scaffold`). Run **`gofreight list make`** for the full list. See [commands.md](commands.md).
+
+### GraphQL
+
+Install the GraphQL endpoint once, then generate modules as you add resources:
+
+```bash
+gofreight make:graphql
+gofreight make:graphql-module Post title:string body:text author_id:references:users
+go mod tidy
+gofreight serve
+# → http://localhost:5000/graphql/playground
+```
+
+This creates `graphql/register.go`, `graphql/modules.go`, wires `graphql.Mount(app)` in `bootstrap/app.go`, and adds each module under `graphql/<name>_module.go` with queries, a create mutation, and a dataloader. See [GraphQL](graphql.md) and [tutorial-graphql.md](tutorial-graphql.md).
 
 ### Services
 

@@ -173,6 +173,8 @@ func registerMakeCommands() {
 		{"scaffold", "Create a full CRUD resource"},
 		{"api", "Create a JSON API controller + resource"},
 		{"auth", "Install authentication scaffolding"},
+		{"graphql", "Install GraphQL scaffolding"},
+		{"graphql-module", "Create a GraphQL module with queries and mutations"},
 		{"service", "Create a new service class"},
 		{"mail", "Create a new email class"},
 		{"job", "Create a new job class"},
@@ -301,8 +303,8 @@ func handleGenerateCLI(args []string) {
 }
 
 func handleMake(genType string, args []string) {
-	if genType == "auth" {
-		handleGenerate("auth", "", nil)
+	if genType == "auth" || genType == "graphql" {
+		handleGenerate(genType, "", nil)
 		return
 	}
 	if len(args) < 1 {

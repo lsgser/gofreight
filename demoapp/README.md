@@ -31,4 +31,4 @@ public/            Static assets
 tests/             HTTP tests
 ```
 
-Full structure: https://github.com/lsgser/gofreight/blob/main/docs/project-structure.md
+Documentation: https://lsgser.github.io/gofreight-web/

@@ -27,6 +27,7 @@ func (p *Panel) mountSchemaRoutes(a *router.Router, wrap func(func(controller.Ba
 	a.Post("/tables/:table/indexes", wrap(p.IndexAdd))
 	a.Get("/tables/:table/migration", wrap(p.TableMigration))
 	a.Get("/export/:table", wrap(p.TableExport))
+	a.Get("/export/:table/csv", wrap(p.TableExportCSV))
 }
 
 // SchemaNew shows the create table form.
@@ -74,6 +75,7 @@ func (p *Panel) TableStructure(base controller.Base) error {
 	data := p.baseData(base)
 	data["Table"] = table
 	data["Schema"] = schema
+	data["Tab"] = "structure"
 	return p.render(base, "table_structure.html", data)
 }
 
@@ -92,6 +94,7 @@ func (p *Panel) TableDrop(base controller.Base) error {
 func (p *Panel) ColumnNew(base controller.Base) error {
 	data := p.baseData(base)
 	data["Table"] = base.Param("table")
+	data["Tab"] = "structure"
 	data["ColumnTypes"] = database.CommonColumnTypes
 	return p.render(base, "column_new.html", data)
 }
@@ -138,6 +141,19 @@ func (p *Panel) ImportRun(base controller.Base) error {
 		return p.render(base, "import.html", data)
 	}
 	base.Redirect(p.cfg.Prefix+"/?flash=SQL+imported", http.StatusSeeOther)
+	return nil
+}
+
+// TableExportCSV exports table as CSV download.
+func (p *Panel) TableExportCSV(base controller.Base) error {
+	table := base.Param("table")
+	csvText, err := database.ExportTableCSV(context.Background(), table)
+	if err != nil {
+		return err
+	}
+	base.Response.Header().Set("Content-Type", "text/csv")
+	base.Response.Header().Set("Content-Disposition", "attachment; filename="+table+".csv")
+	base.Response.Write([]byte(csvText))
 	return nil
 }
 
@@ -215,6 +231,7 @@ func (p *Panel) ColumnRenameForm(base controller.Base) error {
 	data := p.baseData(base)
 	data["Table"] = base.Param("table")
 	data["Column"] = base.Param("column")
+	data["Tab"] = "structure"
 	return p.render(base, "column_rename.html", data)
 }
 

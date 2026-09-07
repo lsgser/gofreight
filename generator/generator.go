@@ -90,17 +90,20 @@ func NewApp(name string) error {
 		filepath.Join(root, "app", "middleware", "doc.go"):               middlewareDocTmpl,
 		filepath.Join(root, "app", "policies", "doc.go"):                 policiesDocTmpl,
 		filepath.Join(root, "app", "requests", "doc.go"):                 requestsDocTmpl,
-		filepath.Join(root, "db", "seeds", "README.sql"):                 seedsReadmeTmpl,
+		filepath.Join(root, "db", "migrate", "0001_init.sql"):           initialMigrationTmpl,
+		filepath.Join(root, "db", "migrate", "0001_init_down.sql"):      initialMigrationDownTmpl,
+		filepath.Join(root, "db", "migrate", "README.md"):               migrateReadmeTmpl,
 		filepath.Join(root, "db", "seeders", "doc.go"):                    seedersDocTmpl,
 		filepath.Join(root, "public", "app.css"):                           cssTmpl,
 		filepath.Join(root, "tests", "example_test.go"):                    testExampleTmpl,
 		filepath.Join(root, "tests", "factories", "factories.go"):          testFactoriesTmpl,
 	}
 
-	data := struct{ Name, Module, FrameworkVersion string }{
+	data := struct{ Name, Module, FrameworkVersion, DocsURL string }{
 		Name:             name,
 		Module:           strings.ToLower(name),
 		FrameworkVersion: version.Module(),
+		DocsURL:          "https://lsgser.github.io/gofreight-web/",
 	}
 
 	for path, tmpl := range files {

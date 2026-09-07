@@ -22,6 +22,16 @@ type TableInfo struct {
 	Columns []ColumnInfo
 }
 
+// PrimaryKey returns the primary key column name, defaulting to "id".
+func (t *TableInfo) PrimaryKey() string {
+	for _, c := range t.Columns {
+		if c.PrimaryKey {
+			return c.Name
+		}
+	}
+	return "id"
+}
+
 // ListTables returns user tables excluding system/migration tables.
 func ListTables(ctx context.Context) ([]string, error) {
 	switch DriverName() {
@@ -52,11 +62,156 @@ func TableSchema(ctx context.Context, table string) (*TableInfo, error) {
 
 // TableRows returns paginated rows from a table.
 func TableRows(ctx context.Context, table string, limit, offset int) ([]map[string]any, error) {
+	return TableRowsQuery(ctx, table, limit, offset, "", nil, "")
+}
+
+// TableRowsQuery returns paginated, optionally filtered and sorted rows.
+func TableRowsQuery(ctx context.Context, table string, limit, offset int, whereSQL string, whereArgs []any, orderBy string) ([]map[string]any, error) {
 	if err := validateIdent(table); err != nil {
 		return nil, err
 	}
-	query := fmt.Sprintf("SELECT * FROM %s LIMIT %d OFFSET %d", table, limit, offset)
-	return queryRows(ctx, query)
+	query := "SELECT * FROM " + table
+	if whereSQL != "" {
+		query += " WHERE " + whereSQL
+	}
+	if orderBy != "" {
+		query += " ORDER BY " + orderBy
+	}
+	query += fmt.Sprintf(" LIMIT %d OFFSET %d", limit, offset)
+	return queryRows(ctx, query, whereArgs...)
+}
+
+// TableCountQuery returns row count with optional WHERE clause.
+func TableCountQuery(ctx context.Context, table, whereSQL string, whereArgs []any) (int64, error) {
+	if err := validateIdent(table); err != nil {
+		return 0, err
+	}
+	query := "SELECT COUNT(*) FROM " + table
+	if whereSQL != "" {
+		query += " WHERE " + whereSQL
+	}
+	var count int64
+	err := DB().QueryRowContext(ctx, query, whereArgs...).Scan(&count)
+	return count, err
+}
+
+// BuildSearchClause builds a safe WHERE fragment for table browsing.
+func BuildSearchClause(column, op, value string) (string, []any, error) {
+	if err := validateIdent(column); err != nil {
+		return "", nil, err
+	}
+	switch op {
+	case "eq":
+		return column + " = " + Placeholder(1), []any{value}, nil
+	case "ne":
+		return column + " != " + Placeholder(1), []any{value}, nil
+	case "like":
+		return column + " LIKE " + Placeholder(1), []any{"%" + value + "%"}, nil
+	case "gt":
+		return column + " > " + Placeholder(1), []any{value}, nil
+	case "lt":
+		return column + " < " + Placeholder(1), []any{value}, nil
+	case "null":
+		return column + " IS NULL", nil, nil
+	case "notnull":
+		return column + " IS NOT NULL", nil, nil
+	default:
+		return "", nil, fmt.Errorf("unsupported operator: %s", op)
+	}
+}
+
+// BuildOrderBy builds a safe ORDER BY clause.
+func BuildOrderBy(column, dir string) (string, error) {
+	if column == "" {
+		return "", nil
+	}
+	if err := validateIdent(column); err != nil {
+		return "", err
+	}
+	dir = strings.ToUpper(strings.TrimSpace(dir))
+	if dir != "ASC" && dir != "DESC" {
+		dir = "ASC"
+	}
+	return column + " " + dir, nil
+}
+
+// TruncateTable removes all rows from a table.
+func TruncateTable(ctx context.Context, table string) error {
+	if err := validateIdent(table); err != nil {
+		return err
+	}
+	switch DriverName() {
+	case SQLite:
+		_, err := DB().ExecContext(ctx, "DELETE FROM "+table)
+		return err
+	case MySQL, MariaDB:
+		_, err := DB().ExecContext(ctx, "TRUNCATE TABLE "+table)
+		return err
+	default:
+		_, err := DB().ExecContext(ctx, "TRUNCATE TABLE "+table+" RESTART IDENTITY CASCADE")
+		return err
+	}
+}
+
+// ExportTableCSV returns CSV content for a table.
+func ExportTableCSV(ctx context.Context, table string) (string, error) {
+	if err := validateIdent(table); err != nil {
+		return "", err
+	}
+	rows, err := queryRows(ctx, "SELECT * FROM "+table)
+	if err != nil {
+		return "", err
+	}
+	if len(rows) == 0 {
+		schema, err := TableSchema(ctx, table)
+		if err != nil {
+			return "", err
+		}
+		var cols []string
+		for _, c := range schema.Columns {
+			cols = append(cols, c.Name)
+		}
+		return strings.Join(cols, ",") + "\n", nil
+	}
+	cols := make([]string, 0, len(rows[0]))
+	for k := range rows[0] {
+		cols = append(cols, k)
+	}
+	sortStrings(cols)
+	var b strings.Builder
+	b.WriteString(strings.Join(cols, ","))
+	b.WriteByte('\n')
+	for _, row := range rows {
+		vals := make([]string, len(cols))
+		for i, col := range cols {
+			vals[i] = csvCell(row[col])
+		}
+		b.WriteString(strings.Join(vals, ","))
+		b.WriteByte('\n')
+	}
+	return b.String(), nil
+}
+
+func csvCell(v any) string {
+	if v == nil {
+		return ""
+	}
+	s := fmt.Sprint(v)
+	if strings.ContainsAny(s, ",\"\n\r") {
+		s = strings.ReplaceAll(s, "\"", "\"\"")
+		return `"` + s + `"`
+	}
+	return s
+}
+
+func sortStrings(ss []string) {
+	for i := 0; i < len(ss); i++ {
+		for j := i + 1; j < len(ss); j++ {
+			if ss[j] < ss[i] {
+				ss[i], ss[j] = ss[j], ss[i]
+			}
+		}
+	}
 }
 
 // TableCount returns row count for a table.
@@ -69,12 +224,20 @@ func TableCount(ctx context.Context, table string) (int64, error) {
 	return count, err
 }
 
-// FindRow returns a single row by primary key (assumes "id" column).
+// FindRow returns a single row by primary key.
 func FindRow(ctx context.Context, table string, id string) (map[string]any, error) {
 	if err := validateIdent(table); err != nil {
 		return nil, err
 	}
-	query := fmt.Sprintf("SELECT * FROM %s WHERE id = %s", table, Placeholder(1))
+	schema, err := TableSchema(ctx, table)
+	if err != nil {
+		return nil, err
+	}
+	pk := schema.PrimaryKey()
+	if err := validateIdent(pk); err != nil {
+		return nil, err
+	}
+	query := fmt.Sprintf("SELECT * FROM %s WHERE %s = %s", table, pk, Placeholder(1))
 	rows, err := queryRows(ctx, query, id)
 	if err != nil {
 		return nil, err
@@ -96,25 +259,56 @@ func InsertRow(ctx context.Context, table string, values map[string]any) error {
 	return err
 }
 
-// UpdateRow updates a row by id.
+// UpdateRow updates a row by primary key.
 func UpdateRow(ctx context.Context, table, id string, values map[string]any) error {
 	if err := validateIdent(table); err != nil {
 		return err
 	}
+	schema, err := TableSchema(ctx, table)
+	if err != nil {
+		return err
+	}
+	pk := schema.PrimaryKey()
 	setParts, args := buildUpdate(values)
 	args = append(args, id)
-	query := fmt.Sprintf("UPDATE %s SET %s WHERE id = %s", table, strings.Join(setParts, ", "), Placeholder(len(args)))
-	_, err := DB().ExecContext(ctx, query, args...)
+	query := fmt.Sprintf("UPDATE %s SET %s WHERE %s = %s", table, strings.Join(setParts, ", "), pk, Placeholder(len(args)))
+	_, err = DB().ExecContext(ctx, query, args...)
 	return err
 }
 
-// DeleteRow deletes a row by id.
+// DeleteRow deletes a row by primary key.
 func DeleteRow(ctx context.Context, table, id string) error {
 	if err := validateIdent(table); err != nil {
 		return err
 	}
-	query := fmt.Sprintf("DELETE FROM %s WHERE id = %s", table, Placeholder(1))
-	_, err := DB().ExecContext(ctx, query, id)
+	schema, err := TableSchema(ctx, table)
+	if err != nil {
+		return err
+	}
+	pk := schema.PrimaryKey()
+	query := fmt.Sprintf("DELETE FROM %s WHERE %s = %s", table, pk, Placeholder(1))
+	_, err = DB().ExecContext(ctx, query, id)
+	return err
+}
+
+// DeleteRows deletes multiple rows by primary key values.
+func DeleteRows(ctx context.Context, table string, ids []string) error {
+	if len(ids) == 0 {
+		return nil
+	}
+	schema, err := TableSchema(ctx, table)
+	if err != nil {
+		return err
+	}
+	pk := schema.PrimaryKey()
+	placeholders := make([]string, len(ids))
+	args := make([]any, len(ids))
+	for i, id := range ids {
+		placeholders[i] = Placeholder(i + 1)
+		args[i] = id
+	}
+	query := fmt.Sprintf("DELETE FROM %s WHERE %s IN (%s)", table, pk, strings.Join(placeholders, ", "))
+	_, err = DB().ExecContext(ctx, query, args...)
 	return err
 }
 

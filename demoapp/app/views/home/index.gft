@@ -7,22 +7,42 @@
 
 #slot "content"
 <section class="hero">
-  <p class="eyebrow">Powered by Gofreight</p>
+  <div class="hero-badge-row">
+    <span class="eyebrow">Gofreight {= .FrameworkVersion }</span>
+    <span class="hero-pill">Single binary</span>
+    <span class="hero-pill">SQLite ready</span>
+  </div>
   <h1>Welcome to {= .Name }</h1>
-  <p class="lead">Your Go web application is ready. Start building routes, models, and views — then ship it as a single binary.</p>
+  <p class="lead">Your application is running. Generate resources, wire routes, and ship production-ready Go — with sessions, migrations, views, and a full CLI built in.</p>
   <div class="hero-actions">
-    <a class="btn btn-primary" href="https://github.com/lsgser/gofreight/tree/main/docs">Read the docs</a>
-    <a class="btn btn-secondary" href="/admin">Open admin</a>
+    <a class="btn btn-primary" href="{= .DocsURL }docs/getting-started" target="_blank" rel="noreferrer">Read the docs</a>
+    <a class="btn btn-secondary" href="{= .DocsURL }docs/tutorial-first-app" target="_blank" rel="noreferrer">Start a tutorial</a>
+    <a class="btn btn-ghost" href="/admin">Open admin</a>
   </div>
 </section>
 
+<section class="feature-grid">
+  <article class="feature-card">
+    <h3>Routing & APIs</h3>
+    <p>Groups, named routes, model binding, signed URLs, and JSON resources.</p>
+  </article>
+  <article class="feature-card">
+    <h3>GFT templates</h3>
+    <p>Native <code>.gft</code> views with layouts, forms, CSRF, and validation helpers.</p>
+  </article>
+  <article class="feature-card">
+    <h3>CLI generators</h3>
+    <p>Scaffold models, controllers, migrations, tests, and auth with <code>gofreight make:*</code>.</p>
+  </article>
+</section>
+
 <section class="steps">
-  <h2>Get started</h2>
+  <h2>Next steps</h2>
   <div class="step-grid">
     <article class="step-card">
       <span class="step-num">1</span>
-      <h3>Generate a resource</h3>
-      <p><code>gofreight make:scaffold Post title:string body:text</code></p>
+      <h3>Set your app key</h3>
+      <p><code>gofreight key:generate</code></p>
     </article>
     <article class="step-card">
       <span class="step-num">2</span>
@@ -31,6 +51,11 @@
     </article>
     <article class="step-card">
       <span class="step-num">3</span>
+      <h3>Scaffold a resource</h3>
+      <p><code>gofreight make:scaffold Post title:string body:text</code></p>
+    </article>
+    <article class="step-card">
+      <span class="step-num">4</span>
       <h3>Customize this page</h3>
       <p>Edit <code>app/views/home/index.gft</code> and <code>public/app.css</code></p>
     </article>

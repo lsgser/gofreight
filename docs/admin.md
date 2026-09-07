@@ -1,6 +1,6 @@
 # Admin dashboard
 
-Browser-based database administration for **development and test environments only** — inspect tables, run queries, and browse records without leaving the browser.
+Browser-based database administration for **development and test environments only**. The UI is inspired by phpMyAdmin — sidebar table list, tabbed table views, SQL console, and schema tools.
 
 > **Warning:** The admin panel is **disabled in production** (`GOFREIGHT_ENV=production`). Never expose it publicly.
 
@@ -8,19 +8,22 @@ Browser-based database administration for **development and test environments on
 
 ## Access
 
-Start the dev server:
-
 ```bash
 gofreight serve
+# → http://localhost:5000/admin
 ```
 
-Open:
+Optional password protection: set `ADMIN_PASSWORD` in `.env`.
 
-```
-http://localhost:5000/admin
-```
+---
 
-The URL is printed in the development server banner.
+## Interface
+
+| Area | Description |
+|------|-------------|
+| **Top bar** | Server driver, quick links (Databases, New table, Import, SQL, Status) |
+| **Left sidebar** | Filterable table list with row counts |
+| **Table tabs** | Browse · Structure · SQL · Search · Insert · Export (per table) |
 
 ---
 
@@ -28,12 +31,20 @@ The URL is printed in the development server banner.
 
 | Feature | Description |
 |---------|-------------|
-| Table browser | List all tables in the connected database |
-| Row viewer | Paginated record browsing |
-| Schema inspection | Column names and types |
-| SQL runner | Execute read queries (development safety limits apply) |
+| Table browser | Dashboard + sidebar with row counts |
+| Browse rows | Paginated grid, column sort, bulk select/delete |
+| Search | Filter rows by column (=, !=, LIKE, >, <, IS NULL) |
+| Insert / edit | Full row CRUD with type hints |
+| Structure | Columns, indexes, add/rename/drop columns |
+| Create table | Visual table builder |
+| SQL console | SELECT / PRAGMA / EXPLAIN with query history |
+| Import SQL | Multi-statement DDL/DML import |
+| Export | Download table as `.sql` or `.csv` |
+| Empty table | Truncate all rows |
+| Migrations | Save table schema as migration file |
+| Integrations | Status page for configured drivers |
 
-Works with SQLite, PostgreSQL, and MySQL — whatever database your app connects to.
+Works with SQLite, PostgreSQL, and MySQL.
 
 ---
 
@@ -42,21 +53,13 @@ Works with SQLite, PostgreSQL, and MySQL — whatever database your app connects
 Admin mounts automatically in development via `app.Run()`:
 
 ```go
-if app.Config.IsDevelopment() {
-    app.MountAdmin()
-}
-```
-
-Manual mount:
-
-```go
 app.MountAdmin() // no-op in production
 ```
 
 Custom config:
 
 ```go
-cfg := admin.DefaultConfig(true) // debug mode
+cfg := admin.DefaultConfig(true)
 panel, err := admin.New(cfg)
 panel.Mount(app.Router)
 ```
@@ -65,32 +68,24 @@ panel.Mount(app.Router)
 
 ## Security
 
-- **Production guard:** `MountAdmin()` returns immediately when `GOFREIGHT_ENV=production`
-- **Local only:** Intended for localhost development
-- **No authentication:** Do not expose on public networks
-- **Read-focused:** Destructive operations are limited in development
-
-For production database management, use dedicated tools (pgAdmin, TablePlus, cloud consoles).
+- **Production guard:** disabled when `GOFREIGHT_ENV=production`
+- **Localhost tooling:** not a replacement for pgAdmin in production
+- **Optional auth:** `ADMIN_PASSWORD` session login
+- **SQL console:** read-only; use Import for writes
+- **Destructive actions:** drop/truncate/bulk delete require confirmation
 
 ---
 
 ## Troubleshooting
 
-**Admin not loading:**
+**Admin not loading:** confirm `GOFREIGHT_ENV=development` and database connectivity.
 
-- Confirm `GOFREIGHT_ENV=development`
-- Check database connection (`gofreight tinker` → `SELECT 1`)
-- Look for warnings in server logs: `admin panel failed to load`
-
-**Empty table list:**
-
-- Run migrations: `gofreight migrate`
-- Verify `DATABASE_URL` points to the correct database
+**Empty table list:** run `gofreight migrate`.
 
 ---
 
 ## Related
 
 - [Database](database.md) — migrations and schema
-- [CLI Commands](commands.md) — `gofreight tinker` for SQL console
+- [CLI Commands](commands.md) — `gofreight tinker`
 - [Deployment](deployment.md) — production (admin disabled)

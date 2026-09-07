@@ -8,12 +8,10 @@ package factories
 | Factories create test model instances with sensible defaults. Use in
 | tests to avoid repeating setup boilerplate.
 |
-| Generate a factory:
+| Generate a factory (uses gftest/faker for random defaults):
 |   gofreight make:factory Post
 |
 */
-
-import "github.com/lsgser/gofreight/gftest"
 
 /*
 |--------------------------------------------------------------------------

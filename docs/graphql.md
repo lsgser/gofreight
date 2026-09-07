@@ -4,7 +4,20 @@ Gofreight includes a modular GraphQL server with reusable schema modules, SDL st
 
 ## Quick start
 
-### Option A — SDL strings (recommended)
+### Option A — CLI generators (fastest)
+
+```bash
+gofreight make:graphql
+gofreight make:graphql-module Post title:string body:text
+gofreight make:graphql-module User name:string email:email
+go mod tidy
+gofreight serve
+# → http://localhost:5000/graphql/playground
+```
+
+This scaffolds `graphql/register.go`, `graphql/modules.go`, and per-resource module files with list/show queries, create mutations, and dataloaders. See [Generators](generators.md#graphql).
+
+### Option B — SDL strings (manual)
 
 Define your schema in GraphQL SDL and bind Go resolvers:
 

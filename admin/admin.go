@@ -4,10 +4,12 @@ import (
 	"context"
 	"crypto/subtle"
 	"embed"
+	"fmt"
 	"html/template"
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
 
 	"github.com/lsgser/gofreight/controller"
 	"github.com/lsgser/gofreight/database"
@@ -59,6 +61,7 @@ func New(cfg Config) (*Panel, error) {
 			}
 			return s
 		},
+		"eq": func(a, b any) bool { return fmt.Sprint(a) == fmt.Sprint(b) },
 	}
 	tmpl, err := template.New("admin").Funcs(funcMap).ParseFS(templateFS, "templates/*.html")
 	if err != nil {
@@ -97,6 +100,10 @@ func (p *Panel) Mount(r *router.Router) {
 		a.Post("/sql", wrap(p.SQLRun))
 		p.mountSchemaRoutes(a, wrap)
 		a.Get("/tables/:table", wrap(p.TableIndex))
+		a.Get("/tables/:table/search", wrap(p.TableSearch))
+		a.Post("/tables/:table/search", wrap(p.TableSearch))
+		a.Post("/tables/:table/truncate", wrap(p.TableTruncate))
+		a.Post("/tables/:table/bulk-delete", wrap(p.TableBulkDelete))
 		a.Get("/tables/:table/new", wrap(p.TableNew))
 		a.Post("/tables/:table", wrap(p.TableCreate))
 		a.Get("/tables/:table/:id", wrap(p.TableShow))
@@ -105,9 +112,48 @@ func (p *Panel) Mount(r *router.Router) {
 	}).Prefix(p.cfg.Prefix).Apply()
 }
 
-func (p *Panel) render(base controller.Base, name string, data any) error {
+func (p *Panel) render(base controller.Base, name string, data map[string]any) error {
+	if data == nil {
+		data = map[string]any{}
+	}
+	if err := p.enrichData(base, data); err != nil {
+		return err
+	}
 	base.Response.Header().Set("Content-Type", "text/html; charset=utf-8")
 	return p.tmpl.ExecuteTemplate(base.Response, name, data)
+}
+
+func (p *Panel) enrichData(base controller.Base, data map[string]any) error {
+	ctx := context.Background()
+	tables, err := database.ListTables(ctx)
+	if err != nil {
+		return err
+	}
+	type tableRow struct {
+		Name  string
+		Count int64
+	}
+	var rows []tableRow
+	for _, t := range tables {
+		count, _ := database.TableCount(ctx, t)
+		rows = append(rows, tableRow{Name: t, Count: count})
+	}
+	if _, ok := data["Title"]; !ok {
+		data["Title"] = p.cfg.Title
+	}
+	if _, ok := data["Prefix"]; !ok {
+		data["Prefix"] = p.cfg.Prefix
+	}
+	if _, ok := data["AllowSQL"]; !ok {
+		data["AllowSQL"] = p.cfg.AllowSQL
+	}
+	if _, ok := data["Flash"]; !ok {
+		data["Flash"] = base.Query("flash")
+	}
+	data["AllTables"] = rows
+	data["Driver"] = string(database.DriverName())
+	data["Tab"] = data["Tab"]
+	return nil
 }
 
 func (p *Panel) baseData(base controller.Base) map[string]any {
@@ -117,6 +163,69 @@ func (p *Panel) baseData(base controller.Base) map[string]any {
 		"AllowSQL": p.cfg.AllowSQL,
 		"Flash":    base.Query("flash"),
 	}
+}
+
+func (p *Panel) tableBrowseData(base controller.Base, table string, tab string) (map[string]any, *database.TableInfo, error) {
+	ctx := context.Background()
+	page, _ := strconv.Atoi(base.Query("page"))
+	if page < 1 {
+		page = 1
+	}
+	offset := (page - 1) * p.cfg.PerPage
+
+	schema, err := database.TableSchema(ctx, table)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	searchCol := base.Query("col")
+	searchOp := base.Query("op")
+	searchVal := base.Query("val")
+	sortCol := base.Query("sort")
+	sortDir := base.Query("dir")
+
+	var whereSQL string
+	var whereArgs []any
+	if searchCol != "" && searchOp != "" {
+		whereSQL, whereArgs, err = database.BuildSearchClause(searchCol, searchOp, searchVal)
+		if err != nil {
+			return nil, nil, err
+		}
+	}
+	orderBy, err := database.BuildOrderBy(sortCol, sortDir)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	rows, err := database.TableRowsQuery(ctx, table, p.cfg.PerPage, offset, whereSQL, whereArgs, orderBy)
+	if err != nil {
+		return nil, nil, err
+	}
+	total, _ := database.TableCountQuery(ctx, table, whereSQL, whereArgs)
+	lastPage := int(total) / p.cfg.PerPage
+	if int(total)%p.cfg.PerPage > 0 {
+		lastPage++
+	}
+	if lastPage == 0 {
+		lastPage = 1
+	}
+
+	data := p.baseData(base)
+	data["Table"] = table
+	data["Schema"] = schema
+	data["Rows"] = rows
+	data["Columns"] = schema.Columns
+	data["Page"] = page
+	data["LastPage"] = lastPage
+	data["Total"] = total
+	data["PrimaryKey"] = schema.PrimaryKey()
+	data["SearchCol"] = searchCol
+	data["SearchOp"] = searchOp
+	data["SearchVal"] = searchVal
+	data["SortCol"] = sortCol
+	data["SortDir"] = sortDir
+	data["Tab"] = tab
+	return data, schema, nil
 }
 
 // Dashboard lists all tables.
@@ -144,41 +253,73 @@ func (p *Panel) Dashboard(base controller.Base) error {
 
 // TableIndex lists records in a table.
 func (p *Panel) TableIndex(base controller.Base) error {
-	ctx := context.Background()
 	table := base.Param("table")
-	page, _ := strconv.Atoi(base.Query("page"))
-	if page < 1 {
-		page = 1
-	}
-	offset := (page - 1) * p.cfg.PerPage
-
-	schema, err := database.TableSchema(ctx, table)
+	data, _, err := p.tableBrowseData(base, table, "browse")
 	if err != nil {
 		return err
 	}
-
-	rows, err := database.TableRows(ctx, table, p.cfg.PerPage, offset)
-	if err != nil {
-		return err
-	}
-	total, _ := database.TableCount(ctx, table)
-	lastPage := int(total) / p.cfg.PerPage
-	if int(total)%p.cfg.PerPage > 0 {
-		lastPage++
-	}
-	if lastPage == 0 {
-		lastPage = 1
-	}
-
-	data := p.baseData(base)
-	data["Table"] = table
-	data["Schema"] = schema
-	data["Rows"] = rows
-	data["Columns"] = schema.Columns
-	data["Page"] = page
-	data["LastPage"] = lastPage
-	data["Total"] = total
 	return p.render(base, "table_index.html", data)
+}
+
+// TableSearch shows the search interface (GET) or results (POST redirect).
+func (p *Panel) TableSearch(base controller.Base) error {
+	table := base.Param("table")
+	if base.Request.Method == http.MethodPost {
+		if err := base.Request.ParseForm(); err != nil {
+			return err
+		}
+		col := base.Request.FormValue("col")
+		op := base.Request.FormValue("op")
+		val := base.Request.FormValue("val")
+		base.Redirect(p.cfg.Prefix+"/tables/"+table+"?col="+col+"&op="+op+"&val="+val, http.StatusSeeOther)
+		return nil
+	}
+	if base.Query("col") == "" {
+		ctx := context.Background()
+		schema, err := database.TableSchema(ctx, table)
+		if err != nil {
+			return err
+		}
+		data := p.baseData(base)
+		data["Table"] = table
+		data["Schema"] = schema
+		data["Columns"] = schema.Columns
+		data["Tab"] = "search"
+		return p.render(base, "table_search.html", data)
+	}
+	data, _, err := p.tableBrowseData(base, table, "search")
+	if err != nil {
+		return err
+	}
+	return p.render(base, "table_index.html", data)
+}
+
+// TableTruncate empties a table.
+func (p *Panel) TableTruncate(base controller.Base) error {
+	table := base.Param("table")
+	if err := database.TruncateTable(context.Background(), table); err != nil {
+		return err
+	}
+	base.Redirect(p.cfg.Prefix+"/tables/"+table+"?flash=Table+truncated", http.StatusSeeOther)
+	return nil
+}
+
+// TableBulkDelete deletes selected rows.
+func (p *Panel) TableBulkDelete(base controller.Base) error {
+	table := base.Param("table")
+	if err := base.Request.ParseForm(); err != nil {
+		return err
+	}
+	ids := base.Request.Form["ids"]
+	if len(ids) == 0 {
+		base.Redirect(p.cfg.Prefix+"/tables/"+table, http.StatusSeeOther)
+		return nil
+	}
+	if err := database.DeleteRows(context.Background(), table, ids); err != nil {
+		return err
+	}
+	base.Redirect(p.cfg.Prefix+"/tables/"+table+"?flash=Deleted+"+strconv.Itoa(len(ids))+"+rows", http.StatusSeeOther)
+	return nil
 }
 
 // TableShow shows edit form for a record.
@@ -202,7 +343,9 @@ func (p *Panel) TableShow(base controller.Base) error {
 	data["Schema"] = schema
 	data["Row"] = row
 	data["ID"] = id
+	data["PrimaryKey"] = schema.PrimaryKey()
 	data["Edit"] = true
+	data["Tab"] = "insert"
 	return p.render(base, "table_form.html", data)
 }
 
@@ -221,6 +364,7 @@ func (p *Panel) TableNew(base controller.Base) error {
 	data["Schema"] = schema
 	data["Row"] = map[string]any{}
 	data["Edit"] = false
+	data["Tab"] = "insert"
 	return p.render(base, "table_form.html", data)
 }
 
@@ -279,6 +423,8 @@ func (p *Panel) SQLConsole(base controller.Base) error {
 		return nil
 	}
 	data := p.baseData(base)
+	data["Tab"] = "sql"
+	data["History"] = p.sqlHistory(base.Request)
 	return p.render(base, "sql.html", data)
 }
 
@@ -291,11 +437,13 @@ func (p *Panel) SQLRun(base controller.Base) error {
 	if err := base.Request.ParseForm(); err != nil {
 		return err
 	}
-	sql := base.Request.FormValue("query")
+	sql := strings.TrimSpace(base.Request.FormValue("query"))
 	rows, err := database.ExecQuery(context.Background(), sql)
 
 	data := p.baseData(base)
+	data["Tab"] = "sql"
 	data["Query"] = sql
+	data["History"] = p.pushSQLHistory(base.Request, sql)
 	if err != nil {
 		data["Error"] = err.Error()
 	} else {
@@ -309,6 +457,37 @@ func (p *Panel) SQLRun(base controller.Base) error {
 		}
 	}
 	return p.render(base, "sql.html", data)
+}
+
+func (p *Panel) sqlHistory(r *http.Request) []string {
+	session := middleware.SessionFromContext(r.Context())
+	if session == nil {
+		return nil
+	}
+	raw, _ := session.Get("_admin_sql_history").([]string)
+	return raw
+}
+
+func (p *Panel) pushSQLHistory(r *http.Request, query string) []string {
+	if query == "" {
+		return p.sqlHistory(r)
+	}
+	session := middleware.SessionFromContext(r.Context())
+	if session == nil {
+		return []string{query}
+	}
+	history := p.sqlHistory(r)
+	out := []string{query}
+	for _, q := range history {
+		if q != query {
+			out = append(out, q)
+		}
+		if len(out) >= 10 {
+			break
+		}
+	}
+	session.Set("_admin_sql_history", out)
+	return out
 }
 
 func formToMap(r *http.Request) map[string]any {

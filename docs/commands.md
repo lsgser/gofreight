@@ -436,6 +436,36 @@ gofreight serve
 
 ---
 
+### `gofreight make:graphql`
+
+Installs GraphQL scaffolding:
+
+- `graphql/register.go` — mounts `/graphql` with playground
+- `graphql/modules.go` — module registry and loader wiring
+- `bootstrap/app.go` — calls `graphql.Mount(app)`
+- Adds `graphql-go` and `dataloader` to `go.mod`
+
+```bash
+gofreight make:graphql
+gofreight make:graphql-module Post title:string body:text
+go mod tidy
+gofreight serve
+# visit /graphql/playground
+```
+
+---
+
+### `gofreight make:graphql-module <Name> [field:type ...]`
+
+Generates a GraphQL module file (`graphql/<name>_module.go`) with list/show queries, a `create` mutation, and a dataloader. Registers the module in `graphql/modules.go`. Runs `make:graphql` first if the folder does not exist yet.
+
+```bash
+gofreight make:graphql-module User name:string email:email
+gofreight make:graphql-module Post title:string body:text author_id:references:users
+```
+
+---
+
 ### `gofreight make:service <Name>`
 
 Business logic class in `app/services/`.

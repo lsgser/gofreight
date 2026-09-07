@@ -219,8 +219,12 @@ import (
 */
 func Web(r *router.Router) {
 	r.Get("/", controller.Handler(func(base controller.Base) error {
-		return base.RenderView("home/index", map[string]any{"Name": "{{.Name}}"})
-	}))
+		return base.RenderView("home/index", base.ViewData(map[string]any{
+			"Name":             "{{.Name}}",
+			"DocsURL":            "{{.DocsURL}}",
+			"FrameworkVersion":   "{{.FrameworkVersion}}",
+		}))
+	}), "home")
 
 	/*
 	|--------------------------------------------------------------------------
@@ -292,6 +296,7 @@ A Gofreight web application (SQLite by default).
 
 ` + "```bash" + `
 go mod tidy
+gofreight key:generate
 gofreight db:create
 gofreight migrate
 gofreight serve          # http://localhost:5000
@@ -312,7 +317,7 @@ public/            Static assets
 tests/             HTTP tests
 ` + "```" + `
 
-Full structure: https://github.com/lsgser/gofreight/blob/main/docs/project-structure.md
+Documentation: {{.DocsURL}}
 `
 
 const envExampleTmpl = `APP_NAME={{.Name}}
@@ -703,32 +708,103 @@ CREATE TABLE IF NOT EXISTS {{.Table}} (
 );
 `
 
+const initialMigrationTmpl = `-- Migration: init
+-- Bootstrap migration — confirms the migration runner is wired correctly.
+-- Add tables with: gofreight make:migration create_posts_table
+-- Or scaffold:     gofreight make:scaffold Post title:string body:text
+
+SELECT 1;
+`
+
+const initialMigrationDownTmpl = `-- Rollback: init
+-- No schema changes to revert.
+SELECT 1;
+`
+
+const migrateReadmeTmpl = `# Database migrations
+
+SQL migrations live in this directory. Run them with:
+
+` + "```bash" + `
+gofreight migrate
+gofreight migrate:status
+` + "```" + `
+
+Create a new migration:
+
+` + "```bash" + `
+gofreight make:migration create_posts_table
+` + "```" + `
+
+Files ending in _down.sql are used for rollbacks.
+`
+
 const gftLayoutTmpl = `{# --------------------------------------------------------------------------
    Layout: Application Shell
    -------------------------------------------------------------------------- #}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
   <title>#place "title" "{{.Name}}"</title>
   <link rel="stylesheet" href="/assets/app.css">
+  <script>
+    (function () {
+      var key = "gofreight-theme";
+      var saved = localStorage.getItem(key);
+      var theme = saved || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+      document.documentElement.setAttribute("data-theme", theme);
+    })();
+  </script>
 </head>
 <body>
   <header class="site-header">
     <div class="container header-inner">
-      <a class="brand" href="/">{{.Name}}</a>
-      <span class="framework-badge">Gofreight</span>
+      <a class="brand" href="/">
+        <span class="brand-mark" aria-hidden="true">◆</span>
+        <span>{{.Name}}</span>
+      </a>
+      <nav class="header-nav" aria-label="Primary">
+        <a href="{{.DocsURL}}docs/getting-started" target="_blank" rel="noreferrer">Docs</a>
+        <a href="{{.DocsURL}}docs/tutorial-first-app" target="_blank" rel="noreferrer">Tutorials</a>
+        <a href="/admin">Admin</a>
+      </nav>
+      <div class="header-actions">
+        <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode">
+          <span class="theme-icon theme-icon-light" aria-hidden="true">☀</span>
+          <span class="theme-icon theme-icon-dark" aria-hidden="true">☾</span>
+        </button>
+        <span class="framework-badge">Gofreight</span>
+      </div>
     </div>
   </header>
   <main class="container">
+    #partial "partials/flash"
     #place "content"
   </main>
   <footer class="site-footer">
-    <div class="container">
-      <small>Built with <strong>Gofreight</strong> — batteries-included Go web framework</small>
+    <div class="container footer-inner">
+      <p>Built with <strong>Gofreight</strong> — batteries-included Go web framework</p>
+      <p class="footer-links">
+        <a href="{{.DocsURL}}" target="_blank" rel="noreferrer">Documentation</a>
+        <a href="{{.DocsURL}}docs/commands" target="_blank" rel="noreferrer">CLI reference</a>
+      </p>
     </div>
   </footer>
+  <script>
+    (function () {
+      var btn = document.getElementById("theme-toggle");
+      if (!btn) return;
+      btn.addEventListener("click", function () {
+        var root = document.documentElement;
+        var next = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
+        root.setAttribute("data-theme", next);
+        localStorage.setItem("gofreight-theme", next);
+      });
+    })();
+  </script>
 </body>
 </html>
 `
@@ -748,22 +824,42 @@ const gftHomeTmpl = `{# View: home/index — rendered by the / route in routes/w
 
 #slot "content"
 <section class="hero">
-  <p class="eyebrow">Powered by Gofreight</p>
+  <div class="hero-badge-row">
+    <span class="eyebrow">Gofreight {= .FrameworkVersion }</span>
+    <span class="hero-pill">Single binary</span>
+    <span class="hero-pill">SQLite ready</span>
+  </div>
   <h1>Welcome to {= .Name }</h1>
-  <p class="lead">Your Go web application is ready. Start building routes, models, and views — then ship it as a single binary.</p>
+  <p class="lead">Your application is running. Generate resources, wire routes, and ship production-ready Go — with sessions, migrations, views, and a full CLI built in.</p>
   <div class="hero-actions">
-    <a class="btn btn-primary" href="https://github.com/lsgser/gofreight/tree/main/docs">Read the docs</a>
-    <a class="btn btn-secondary" href="/admin">Open admin</a>
+    <a class="btn btn-primary" href="{= .DocsURL }docs/getting-started" target="_blank" rel="noreferrer">Read the docs</a>
+    <a class="btn btn-secondary" href="{= .DocsURL }docs/tutorial-first-app" target="_blank" rel="noreferrer">Start a tutorial</a>
+    <a class="btn btn-ghost" href="/admin">Open admin</a>
   </div>
 </section>
 
+<section class="feature-grid">
+  <article class="feature-card">
+    <h3>Routing & APIs</h3>
+    <p>Groups, named routes, model binding, signed URLs, and JSON resources.</p>
+  </article>
+  <article class="feature-card">
+    <h3>GFT templates</h3>
+    <p>Native <code>.gft</code> views with layouts, forms, CSRF, and validation helpers.</p>
+  </article>
+  <article class="feature-card">
+    <h3>CLI generators</h3>
+    <p>Scaffold models, controllers, migrations, tests, and auth with <code>gofreight make:*</code>.</p>
+  </article>
+</section>
+
 <section class="steps">
-  <h2>Get started</h2>
+  <h2>Next steps</h2>
   <div class="step-grid">
     <article class="step-card">
       <span class="step-num">1</span>
-      <h3>Generate a resource</h3>
-      <p><code>gofreight make:scaffold Post title:string body:text</code></p>
+      <h3>Set your app key</h3>
+      <p><code>gofreight key:generate</code></p>
     </article>
     <article class="step-card">
       <span class="step-num">2</span>
@@ -772,6 +868,11 @@ const gftHomeTmpl = `{# View: home/index — rendered by the / route in routes/w
     </article>
     <article class="step-card">
       <span class="step-num">3</span>
+      <h3>Scaffold a resource</h3>
+      <p><code>gofreight make:scaffold Post title:string body:text</code></p>
+    </article>
+    <article class="step-card">
+      <span class="step-num">4</span>
       <h3>Customize this page</h3>
       <p>Edit <code>app/views/home/index.gft</code> and <code>public/app.css</code></p>
     </article>
@@ -797,79 +898,173 @@ const layoutTmpl = `<!DOCTYPE html>
 const cssTmpl = `/*
  * Public assets — served from public/ at /assets/*
  */
-:root {
-  --gf-cyan: #00add8;
-  --gf-navy: #0f172a;
-  --gf-orange: #f59e0b;
+:root,
+[data-theme="light"] {
+  color-scheme: light;
+  --gf-cyan: #0891b2;
+  --gf-cyan-soft: rgba(8, 145, 178, 0.12);
+  --gf-accent: #f59e0b;
+  --gf-text: #0f172a;
   --gf-muted: #64748b;
   --gf-border: #e2e8f0;
   --gf-bg: #f8fafc;
+  --gf-surface: #ffffff;
+  --gf-header: rgba(255, 255, 255, 0.88);
+  --gf-hero-gradient: radial-gradient(circle at top left, rgba(8, 145, 178, 0.14), transparent 42%), linear-gradient(180deg, #ecfeff 0%, #f8fafc 320px, #ffffff 100%);
+  --gf-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+  --gf-cyan: #22d3ee;
+  --gf-cyan-soft: rgba(34, 211, 238, 0.14);
+  --gf-accent: #fbbf24;
+  --gf-text: #e2e8f0;
+  --gf-muted: #94a3b8;
+  --gf-border: #334155;
+  --gf-bg: #0b1220;
+  --gf-surface: #111827;
+  --gf-header: rgba(15, 23, 42, 0.92);
+  --gf-hero-gradient: radial-gradient(circle at top left, rgba(34, 211, 238, 0.12), transparent 40%), linear-gradient(180deg, #0f172a 0%, #0b1220 100%);
+  --gf-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
 }
 
 * { box-sizing: border-box; }
 
 body {
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   margin: 0;
-  color: var(--gf-navy);
-  background: linear-gradient(180deg, #f0f9ff 0%, #fff 320px);
+  color: var(--gf-text);
+  background: var(--gf-hero-gradient);
   line-height: 1.6;
+  min-height: 100vh;
 }
 
-.container { max-width: 960px; margin: 0 auto; padding: 0 1.5rem; }
+a { color: var(--gf-cyan); }
+a:hover { opacity: 0.92; }
+
+.container { max-width: 1080px; margin: 0 auto; padding: 0 1.5rem; }
 
 .site-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
   border-bottom: 1px solid var(--gf-border);
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(8px);
+  background: var(--gf-header);
+  backdrop-filter: blur(10px);
 }
 
 .header-inner {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 1rem;
   min-height: 4rem;
+  flex-wrap: wrap;
 }
 
 .brand {
-  font-size: 1.25rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: 1.15rem;
   font-weight: 700;
-  color: var(--gf-navy);
+  color: var(--gf-text);
   text-decoration: none;
 }
 
+.brand-mark {
+  color: var(--gf-cyan);
+  font-size: 0.95rem;
+}
+
+.header-nav {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.header-nav a {
+  color: var(--gf-muted);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+.header-nav a:hover { color: var(--gf-text); }
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 999px;
+  border: 1px solid var(--gf-border);
+  background: var(--gf-surface);
+  color: var(--gf-text);
+  cursor: pointer;
+}
+
+.theme-icon-dark { display: none; }
+[data-theme="dark"] .theme-icon-light { display: none; }
+[data-theme="dark"] .theme-icon-dark { display: inline; }
+
 .framework-badge {
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--gf-cyan);
-  border: 1px solid rgba(0, 173, 216, 0.35);
-  background: rgba(0, 173, 216, 0.08);
+  border: 1px solid var(--gf-cyan-soft);
+  background: var(--gf-cyan-soft);
   padding: 0.35rem 0.65rem;
   border-radius: 999px;
 }
 
 main { padding: 2.5rem 0 4rem; }
 
-.hero {
-  padding: 2rem 0 2.5rem;
+.hero { padding: 2rem 0 2rem; max-width: 48rem; }
+
+.hero-badge-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
 }
 
 .eyebrow {
   display: inline-block;
-  margin: 0 0 1rem;
-  font-size: 0.85rem;
-  font-weight: 600;
+  font-size: 0.82rem;
+  font-weight: 700;
   color: var(--gf-cyan);
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
 
+.hero-pill {
+  display: inline-block;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--gf-muted);
+  border: 1px solid var(--gf-border);
+  background: var(--gf-surface);
+  padding: 0.25rem 0.55rem;
+  border-radius: 999px;
+}
+
 .hero h1 {
-  font-size: clamp(2rem, 5vw, 3rem);
-  line-height: 1.15;
+  font-size: clamp(2.2rem, 5vw, 3.4rem);
+  line-height: 1.08;
   margin: 0 0 1rem;
+  letter-spacing: -0.03em;
 }
 
 .lead {
@@ -882,26 +1077,54 @@ main { padding: 2.5rem 0 4rem; }
 .hero-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; }
 
 .btn {
-  display: inline-block;
-  padding: 0.7rem 1.1rem;
-  border-radius: 0.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.72rem 1.15rem;
+  border-radius: 0.65rem;
   font-weight: 600;
   text-decoration: none;
   border: 1px solid transparent;
+  transition: transform 0.15s ease, filter 0.15s ease;
 }
+
+.btn:hover { transform: translateY(-1px); }
 
 .btn-primary {
   background: var(--gf-cyan);
   color: #fff;
+  box-shadow: 0 8px 24px rgba(8, 145, 178, 0.22);
 }
-
-.btn-primary:hover { filter: brightness(0.95); }
 
 .btn-secondary {
-  background: #fff;
-  color: var(--gf-navy);
+  background: var(--gf-surface);
+  color: var(--gf-text);
   border-color: var(--gf-border);
 }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--gf-muted);
+  border-color: var(--gf-border);
+}
+
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  margin: 0 0 2.5rem;
+}
+
+.feature-card {
+  background: var(--gf-surface);
+  border: 1px solid var(--gf-border);
+  border-radius: 0.85rem;
+  padding: 1.25rem;
+  box-shadow: var(--gf-shadow);
+}
+
+.feature-card h3 { margin: 0 0 0.5rem; font-size: 1rem; }
+.feature-card p { margin: 0; color: var(--gf-muted); font-size: 0.95rem; }
 
 .steps h2 { margin: 0 0 1.25rem; font-size: 1.35rem; }
 
@@ -912,11 +1135,11 @@ main { padding: 2.5rem 0 4rem; }
 }
 
 .step-card {
-  background: #fff;
+  background: var(--gf-surface);
   border: 1px solid var(--gf-border);
-  border-radius: 0.75rem;
+  border-radius: 0.85rem;
   padding: 1.25rem;
-  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+  box-shadow: var(--gf-shadow);
 }
 
 .step-num {
@@ -926,7 +1149,7 @@ main { padding: 2.5rem 0 4rem; }
   width: 1.75rem;
   height: 1.75rem;
   border-radius: 999px;
-  background: rgba(0, 173, 216, 0.12);
+  background: var(--gf-cyan-soft);
   color: var(--gf-cyan);
   font-weight: 700;
   font-size: 0.85rem;
@@ -935,30 +1158,42 @@ main { padding: 2.5rem 0 4rem; }
 
 .step-card h3 { margin: 0 0 0.5rem; font-size: 1rem; }
 .step-card p { margin: 0; color: var(--gf-muted); font-size: 0.95rem; }
-.step-card code {
-  font-size: 0.82rem;
-  word-break: break-word;
-}
+.step-card code { font-size: 0.82rem; word-break: break-word; }
 
 code {
   background: var(--gf-bg);
   padding: 0.15rem 0.35rem;
   border-radius: 0.25rem;
+  border: 1px solid var(--gf-border);
 }
 
 .site-footer {
   border-top: 1px solid var(--gf-border);
-  padding: 1.25rem 0 2rem;
+  padding: 1.5rem 0 2rem;
   color: var(--gf-muted);
 }
 
+.footer-inner p { margin: 0 0 0.5rem; }
+.footer-links { display: flex; gap: 1rem; flex-wrap: wrap; }
+.footer-links a { color: var(--gf-muted); text-decoration: none; }
+.footer-links a:hover { color: var(--gf-cyan); }
+
 .flash {
-  background: #ecfdf5;
-  border: 1px solid #a7f3d0;
-  color: #065f46;
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  color: #047857;
   padding: 0.75rem 1rem;
   border-radius: 0.5rem;
   margin-bottom: 1rem;
+}
+
+[data-theme="dark"] .flash {
+  color: #6ee7b7;
+}
+
+@media (max-width: 720px) {
+  .header-nav { width: 100%; order: 3; }
+  .header-actions { margin-left: auto; }
 }
 `
 
@@ -1016,8 +1251,6 @@ const testFactoriesTmpl = `package factories
 |   gofreight make:factory Post
 |
 */
-
-import "github.com/lsgser/gofreight/gftest/faker"
 
 /*
 |--------------------------------------------------------------------------

@@ -74,7 +74,8 @@ func printNewAppWelcomeTo(w io.Writer, appName string) {
 	write("%s\n\n", c.bold("  Learn more"))
 	write("    gofreight list              %s\n", c.dim("all CLI commands"))
 	write("    gofreight make:scaffold     %s\n", c.dim("generate models, views, routes"))
-	write("    docs/getting-started.md     %s\n", c.dim("project guide"))
+	write("    %s\n", c.cyan("https://lsgser.github.io/gofreight-web/"))
+	write("                              %s\n", c.dim("documentation & tutorials"))
 	write("\n")
 	write("  %s\n\n", c.dim("Happy shipping with Gofreight."))
 }

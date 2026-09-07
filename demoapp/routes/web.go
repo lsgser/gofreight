@@ -31,8 +31,12 @@ import (
 */
 func Web(r *router.Router) {
 	r.Get("/", controller.Handler(func(base controller.Base) error {
-		return base.RenderView("home/index", map[string]any{"Name": "demoapp"})
-	}))
+		return base.RenderView("home/index", base.ViewData(map[string]any{
+			"Name":             "demoapp",
+			"DocsURL":          "https://lsgser.github.io/gofreight-web/",
+			"FrameworkVersion": "v0.3.0",
+		}))
+	}), "home")
 
 	/*
 	|--------------------------------------------------------------------------

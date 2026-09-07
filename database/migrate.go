@@ -42,6 +42,12 @@ func (m *Migrator) Up() error {
 		return err
 	}
 
+	if len(files) == 0 {
+		fmt.Println("  No migration files in db/migrate/ — create one with gofreight make:migration")
+		return nil
+	}
+
+	var ran int
 	for _, file := range files {
 		version := migrationVersion(file)
 		if applied[version] {
@@ -76,6 +82,11 @@ func (m *Migrator) Up() error {
 		}
 
 		fmt.Printf("  migrated: %s\n", file)
+		ran++
+	}
+
+	if ran == 0 {
+		fmt.Println("  Nothing to migrate — database is up to date.")
 	}
 
 	return nil
