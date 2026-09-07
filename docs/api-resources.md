@@ -124,4 +124,4 @@ Creates model, controller, migration, and JSON routes under `/api/v1`.
 - [Controllers](controllers.md) — returning JSON from actions
 - [Routing](routing.md) — `ApiResource` routes
 - [ORM](orm.md) — querying models
-- [Tutorial: REST API](../examples/blog/) — end-to-end API (web: `tutorial-rest-api.md`)
+- [Tutorial: REST API](tutorial-rest-api.md) — end-to-end API (web: `tutorial-rest-api.md`)

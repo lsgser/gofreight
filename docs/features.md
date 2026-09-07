@@ -6,11 +6,29 @@ Overview of built-in Gofreight capabilities. Each topic has a dedicated guide â€
 
 | Feature | Guide |
 |---------|-------|
-| HTTP routing & REST resources | [Routing](routing.md) |
-| Controllers & request handling | [Controllers](controllers.md) |
+| HTTP routing â€” groups, constraints, model binding, signed URLs | [Routing](routing.md) |
+| Controllers â€” status codes, files, redirects, JSON/HTML | [Controllers](controllers.md) |
 | Middleware pipeline | [Middleware](middleware.md) |
 | GFT templating | [Templating](templating.md) |
 | Forms & Vine validation | [Forms & Validation](forms-validation.md) |
+
+### Routing highlights
+
+The router supports Laravel/Rails-style patterns out of the box:
+
+| Capability | API |
+|------------|-----|
+| Route groups & middleware | `Group().Prefix().Use().Apply()` |
+| Named routes & URL generation | `Router.URL()`, `RouteURL()` |
+| Redirect routes | `Redirect()`, `PermanentRedirect()` |
+| Parameter constraints | `.Where()`, `.WhereParam()` |
+| Optional & catch-all params | `{id?}`, `{path*}` |
+| Domain / subdomain routing | `.Domain()`, `.Subdomain()` |
+| Route model binding | `BindModel()`, `BindModelBy()`, `.Bind()` |
+| Signed URLs | `URLSigner`, `.Signed()`, `SignedURL()` |
+| File download / upload | `Download()`, `File()`, `StoreUpload()` |
+| HTTP status helpers | `Created()`, `NoContent()`, `Abort()` |
+| Fallback & extra verbs | `Fallback()`, `Any()`, `Match()` |
 
 ## Data layer
 
@@ -34,8 +52,15 @@ Overview of built-in Gofreight capabilities. Each topic has a dedicated guide â€
 | Feature | Guide |
 |---------|-------|
 | Background jobs & queues | [Jobs & Queues](jobs.md) |
+| Task scheduler | [Scheduling](scheduling.md) |
 | Email & mailables | [Mail](mail.md) |
-| Caching (memory, Redis, HTTP) | [Cache](cache.md) |
+| Notifications (mail + database) | [Notifications](notifications.md) |
+| Caching (memory, file, Redis, HTTP) | [Cache](cache.md) |
+| Local file storage | [Storage](storage.md) |
+| Exception / panic handling | [Error handling](error-handling.md) |
+| Localization (i18n) | [Localization](localization.md) |
+| Plugin lifecycle hooks | [Plugins](plugins.md) |
+| Bootstrap wiring reference | [Application wiring](application-wiring.md) |
 | Service container & business logic | [Services & Container](services.md) |
 | Configuration & environment | [Configuration](configuration.md) |
 | Mail, storage, cache drivers | [Integrations](integrations.md) |
@@ -45,6 +70,7 @@ Overview of built-in Gofreight capabilities. Each topic has a dedicated guide â€
 | Feature | Guide |
 |---------|-------|
 | WebSockets & channels | [Real-time WebSockets](realtime.md) |
+| Vite dev assets | [Templating](templating.md) â€” `#vite` directive |
 | Modular GraphQL | [GraphQL](graphql.md) |
 
 ## Developer tools

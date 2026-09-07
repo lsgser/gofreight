@@ -183,8 +183,25 @@ GFT is Gofreight's own view language — not a port of another template engine. 
 | Loops | `#each` / `#endeach` |
 | Empty fallback | `#eachor` / `#otherwise` |
 | CSRF | `#token` / `#form` |
+| Vite assets | `#vite "resources/js/app.js"` |
 | Forms | `#form` / `#field` / `#error` |
 | Validation helpers | `old`, `fieldErrors`, `hasError` |
 | Output | `{= }` / `{! !}` |
 
 GFT is designed to be readable on its own while fitting naturally into Go projects that already use `html/template` under the hood.
+
+## Vite (frontend bundler)
+
+When using [Vite](https://vitejs.dev/) with the Laravel-style `public/hot` file, enable assets in `bootstrap/app.go`:
+
+```go
+app.UseVite()
+```
+
+In layouts, load an entry point:
+
+```html
+#vite "resources/js/app.js"
+```
+
+In development (with `public/hot` present), Gofreight proxies `/@vite` paths to `VITE_DEV_SERVER_URL` and injects the Vite client scripts. In production, use a built manifest via `app.LoadAssetManifest("public/manifest.json")`.

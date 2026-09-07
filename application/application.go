@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 	"time"
 
@@ -27,6 +28,7 @@ import (
 	"github.com/lsgser/gofreight/middleware"
 	"github.com/lsgser/gofreight/plugins"
 	"github.com/lsgser/gofreight/router"
+	"github.com/lsgser/gofreight/storage"
 	"github.com/lsgser/gofreight/view"
 	"github.com/joho/godotenv"
 )
@@ -50,6 +52,7 @@ type Application struct {
 	Channels   *channels.Hub
 	GraphQL    *graphql.Server
 	Container  *container.Container
+	Storage    *storage.LocalDisk
 }
 
 // New creates and configures a new Application instance.
@@ -59,6 +62,16 @@ func New() *Application {
 	cfg := config.Load()
 	fileCfg := config.LoadFiles(cfg.Environment)
 	r := router.New()
+	controller.SetRouter(r)
+	if cfg.AppURL != "" {
+		if host := router.DomainFromURL(cfg.AppURL); host != "" {
+			parts := strings.Split(host, ".")
+			if len(parts) >= 2 {
+				r.SetDefaultDomain(strings.Join(parts[len(parts)-2:], "."))
+			}
+		}
+	}
+	controller.SetURLSigner(router.NewURLSigner(cfg.AppKey))
 	if cfg.IsProduction() {
 		r.Use(middleware.StructuredLogger, middleware.Recovery, middleware.SecurityHeaders)
 	} else {
@@ -114,6 +127,16 @@ func (app *Application) ConnectDatabase() error {
 	return err
 }
 
+// UseFileSessions switches session storage to disk files.
+func (app *Application) UseFileSessions(dir string) error {
+	store, err := middleware.NewFileSessionStore(dir)
+	if err != nil {
+		return err
+	}
+	app.Sessions.UseStore(store)
+	return nil
+}
+
 // UseRedisSessions switches session storage to Redis.
 func (app *Application) UseRedisSessions(redisURL string) error {
 	store, err := middleware.NewRedisSessionStore(redisURL, "gofreight:session:")
@@ -147,6 +170,11 @@ func (app *Application) LoadLocales(dir string) error {
 		dir = "config/locales"
 	}
 	return app.I18n.LoadDir(dir)
+}
+
+// URLSigner returns a signer for temporary signed URLs using the app key.
+func (app *Application) URLSigner() *router.URLSigner {
+	return router.NewURLSigner(app.Config.AppKey)
 }
 
 // MountChannels registers WebSocket channel endpoint.
@@ -316,6 +344,9 @@ func (app *Application) Draw(routes RoutesFunc) {
 
 // Run starts the HTTP server with graceful shutdown.
 func (app *Application) Run() {
+	if app.CacheRoutesIfRequested() {
+		return
+	}
 	_ = plugins.Run("boot", app)
 
 	if err := app.LoadViews(); err != nil {

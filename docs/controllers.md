@@ -74,14 +74,134 @@ See **[Routing](routing.md)** for `Resources`, `ApiResource`, and route groups.
 | `RenderJSON(data)` | JSON response |
 | `RenderText(text)` | Plain text response |
 | `Redirect(url, code)` | HTTP redirect |
+| `RedirectBack(fallback, code)` | Redirect to Referer or fallback |
+| `RedirectRoute(name, params, code)` | Redirect to a named route |
+| `Download(path, name)` | Send file as attachment |
+| `File(path)` | Send file inline |
+| `DownloadBytes(data, name, type)` | Download in-memory content |
+| `StreamDownload(r, name, type, size)` | Stream a download |
+| `UploadedFile(field, maxMB)` | Parse multipart upload field |
+| `StoreUpload(field, destDir, maxMB)` | Save uploaded file to disk |
+| `SetStatus(code)` | Set status before `RenderView` / `RenderJSON` |
+| `OK(data)` | 200 JSON response |
+| `Created(data)` | 201 JSON (or empty 201) |
+| `Accepted(data)` | 202 JSON |
+| `NoContent()` | 204 empty response |
+| `Head(code)` | Status only, no body |
+| `Abort(code, msg)` | Stop with error (JSON or HTML) |
+| `AbortNamed(name, msg)` | Abort with Rails-style name |
+| `Forbidden(msg)` | 403 |
+| `Conflict(msg)` | 409 |
+| `TooManyRequests(msg)` | 429 |
 | `ViewData(extra)` | Merge CSRF, flash errors, old input into view data |
 | `WantsJSON()` | True when client expects JSON |
 | `ValidateUsing(schema)` | Validate with Vine; auto-handles HTML vs JSON |
 | `NotFound(msg)` | 404 JSON response |
 | `Unauthorized(msg)` | 401 JSON response |
 | `Unprocessable(errors)` | 422 JSON validation errors |
+| `Bound(name)` | Route-model binding from context |
+| `BoundAs[T](base, name)` | Typed route-model binding |
+| `RouteURL(name, params)` | Build URL for a named route |
+| `SignedURL(path, ttl)` | Temporary signed relative URL |
+| `TemporarySignedRoute(name, ttl, params)` | Signed named route URL |
+| `HasValidSignature()` | Verify current request signature |
 
-Set `base.Status` before rendering to control the HTTP status code (e.g. `http.StatusCreated`).
+Set `base.Status` before rendering, or prefer semantic helpers like `Created()`, `NoContent()`, and `Abort()`.
+
+### Status code examples
+
+```go
+func (c PostController) Store(base controller.Base) error {
+    // ... validate and save ...
+    base.Created(post)          // 201 + JSON
+    return nil
+}
+
+func (c PostController) Destroy(base controller.Base) error {
+    // ... delete ...
+    base.NoContent()            // 204
+    return nil
+}
+
+func (c PostController) Show(base controller.Base) error {
+    post, err := models.Posts.Find(ctx, id)
+    base.AbortIf(err != nil, http.StatusNotFound, "Post not found")
+    return base.RenderView("posts/show", base.ViewData(map[string]any{"Post": post}))
+}
+```
+
+Use `controller.StatusFromName("created")` for Rails-style symbolic codes. See **[Routing — HTTP status codes](routing.md#http-status-codes)**.
+
+## Route model binding
+
+When a route resolves a parameter to a database record, use **implicit binding** instead of manual lookups:
+
+```go
+// routes/web.go
+router.BindModel(
+    r.Get("/posts/:id", controller.Handler(c.Show), "posts.show"),
+    &models.Posts,
+    "id",
+)
+
+router.BindModelBy(
+    r.Get("/posts/:slug", controller.Handler(c.ShowBySlug), "posts.by_slug"),
+    &models.Posts,
+    "slug",
+    "slug",
+)
+```
+
+In the controller:
+
+```go
+func (c PostController) Show(base controller.Base) error {
+    post, ok := controller.BoundAs[models.Post](&base, "id")
+    if !ok {
+        base.NotFound("Post not found")
+        return nil
+    }
+    return base.RenderView("posts/show", base.ViewData(map[string]any{"Post": post}))
+}
+```
+
+Custom bindings with `.Bind("param", func(req *http.Request) (any, error) { ... })`. See **[Routing — Route model binding](routing.md#route-model-binding)**.
+
+## Named routes & signed URLs
+
+Build URLs from route names (Laravel `route()` helper):
+
+```go
+url, _ := controller.RouteURL("posts.show", map[string]string{"id": "42"})
+base.RedirectRoute("posts.show", map[string]string{"id": id}, http.StatusSeeOther)
+```
+
+Temporary signed links for password resets, email verification, or secure downloads:
+
+```go
+link := base.SignedURL("/invites/accept?token="+token, time.Hour)
+signed, _ := base.TemporarySignedRoute("invites.accept", time.Hour, map[string]string{"token": token})
+
+if !base.HasValidSignature() {
+    base.Forbidden("Invalid or expired link")
+    return nil
+}
+```
+
+Protect routes with `.Signed(app.URLSigner())`. See **[Routing — Signed URLs](routing.md#signed-urls)** and **[Security](security.md)**.
+
+## File responses
+
+Send downloads and handle uploads from controllers:
+
+```go
+return base.Download("storage/reports/monthly.pdf", "report.pdf")
+return base.File("public/images/logo.png")
+
+path, err := base.StoreUpload("avatar", "storage/uploads", 10) // 10 MB max
+```
+
+See **[Routing — File downloads & uploads](routing.md#file-downloads--uploads)**.
 
 ## Handler wrapper
 
@@ -121,9 +241,10 @@ func (c PostController) Index(base controller.Base) error {
 Use Vine schemas for request validation:
 
 ```go
-var postSchema = vine.Object().
-    Field("title", vine.String().Required().Min(3).Max(255)).
-    Field("body", vine.String().Required())
+var postSchema = vine.Object(map[string]vine.Rule{
+    "title": vine.String().Required().MinLength(3).MaxLength(255),
+    "body":  vine.String().Required(),
+})
 
 func (c PostController) Store(base controller.Base) error {
     data, err := base.ValidateUsing(postSchema)

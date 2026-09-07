@@ -1,157 +1,252 @@
 # Jobs & Queues
 
-Background jobs defer slow work — sending email, processing uploads, generating reports — so HTTP responses stay fast.
+Background job processing for emails, exports, webhooks, and any work that should not block HTTP requests.
 
-## Defining a job
+## Overview
 
-Jobs implement the `jobs.Job` interface:
+| Backend | Env | Use case |
+|---------|-----|----------|
+| In-process queue | default / `QUEUE_CONNECTION=sync` | Development, single process |
+| Redis queue | `QUEUE_CONNECTION=redis` | Production, multiple workers |
+
+```go
+// bootstrap/app.go
+if config.ResolveQueueConnection() == "redis" {
+    _ = app.UseRedisQueue(config.ResolveRedisURL())
+}
+```
+
+---
+
+## Defining jobs
+
+### Struct jobs
 
 ```go
 // app/jobs/send_welcome_email.go
 package jobs
 
-import (
-    "context"
-
-    "github.com/lsgser/gofreight/jobs"
-    "github.com/lsgser/gofreight/mail"
-)
+import "context"
 
 type SendWelcomeEmail struct {
-    Email string
-    Name  string
+    UserID int64
+    Email  string
 }
 
 func (j SendWelcomeEmail) Handle(ctx context.Context) error {
-    m := mail.NewMailable("app/views/mail", "welcome.html", "Welcome", j.Email)
-    m.With("Name", j.Name)
-    return m.Send(appMailer)
+    // send email...
+    return nil
 }
 ```
 
-Or use a function:
+### Function jobs
 
 ```go
-jobs.JobFunc(func(ctx context.Context) error {
-    return processOrder(ctx, orderID)
+app.Jobs.DispatchFunc(func(ctx context.Context) error {
+    log.Println("cleanup complete")
+    return nil
 })
 ```
 
-Generate a job stub:
+---
+
+## Dispatching
+
+```go
+// In-process (runs immediately in sync mode)
+app.Jobs.Dispatch(jobs.SendWelcomeEmail{UserID: 1, Email: "a@b.com"})
+
+// Via queued mailer
+queued := app.QueuedMailer()
+_ = queued.Send(mail.Message{ /* ... */ })
+```
+
+---
+
+## Redis queue & named jobs
+
+Redis workers run in **separate processes**. Job structs cannot be serialized directly — use **named jobs**:
+
+### Register handlers
+
+```go
+import "github.com/lsgser/gofreight/jobs"
+
+func init() {
+    jobs.RegisterJob("send-welcome", func(ctx context.Context) error {
+        // load user, send email...
+        return nil
+    })
+
+    jobs.RegisterJob("prune-logs", func(ctx context.Context) error {
+        return pruneOldLogs(ctx)
+    })
+}
+```
+
+Import the package from bootstrap so `init()` runs:
+
+```go
+import _ "myapp/app/jobs/handlers"
+```
+
+### Dispatch named jobs
+
+```go
+app.Jobs.Dispatch(jobs.NamedJobFunc{
+    Name: "send-welcome",
+    Fn:   func(ctx context.Context) error { /* runs in worker */ },
+})
+
+// Or implement NamedJob on a struct:
+type WelcomeJob struct{}
+func (WelcomeJob) JobName() string { return "send-welcome" }
+func (WelcomeJob) Handle(ctx context.Context) error { /* ... */ }
+
+app.Jobs.Dispatch(WelcomeJob{})
+```
+
+### Start workers
 
 ```bash
-gofreight make:job SendWelcomeEmail
+# Terminal 1
+gofreight serve
+
+# Terminal 2
+gofreight queue:work
 ```
 
-## Dispatching jobs
-
-The application exposes an in-memory queue by default:
-
-```go
-app.Queue.Dispatch(jobs.SendWelcomeEmail{Email: user.Email, Name: user.Name})
-
-// Or inline:
-app.Queue.DispatchFunc(func(ctx context.Context) error {
-    return heavyWork(ctx)
-})
-```
-
-## Running workers
-
-Start background workers with the application:
+Or programmatically:
 
 ```go
 app.StartJobs(2) // 2 concurrent workers
-app.Run()
 ```
 
-Or run a dedicated worker process:
+---
 
-```bash
-gofreight queue:work
-gofreight queue:work --concurrency=4
-```
+## CLI commands
 
-## Redis queue (production)
+| Command | Purpose |
+|---------|---------|
+| `gofreight queue:work` | Process jobs until stopped |
+| `gofreight queue:listen` | Alias for `queue:work` |
+| `gofreight queue:failed` | List failed jobs |
+| `gofreight queue:retry` | Retry failed jobs |
+| `gofreight queue:flush` | Clear the queue |
+| `gofreight queue:clear` | Clear pending jobs |
 
-For multi-process deployments, use Redis:
+Production safety: mutating queue commands require confirmation when `GOFREIGHT_ENV=production`.
+
+---
+
+## Retries & failed jobs
+
+Redis queue jobs retry with exponential backoff (default **3 attempts**):
 
 ```go
-app.UseRedisQueue(os.Getenv("REDIS_URL"))
-app.StartJobs(4)
-```
-
-```env
-QUEUE_DRIVER=redis
-REDIS_URL=redis://localhost:6379
-```
-
-Jobs persist in Redis and survive process restarts.
-
-### Failed jobs
-
-```bash
-gofreight queue:failed
-gofreight queue:retry <job-id>
-gofreight queue:flush    # clear all failed jobs
-gofreight queue:clear    # delete all pending jobs
-```
-
-Failed jobs are recorded after max attempts (default 3) with exponential backoff:
-
-```go
-failed, _ := redisQueue.Failed(ctx)
-redisQueue.RetryFailed(ctx, jobID)
-```
-
-## Queued mail
-
-Send email asynchronously via the queued mailer:
-
-```go
-app.QueuedMailer().Send(mail.Message{
-    To:      []string{"user@example.com"},
-    Subject: "Welcome",
-    HTML:    "<p>Hello!</p>",
+app.Jobs.Dispatch(jobs.DispatchFuncJob{
+    Name: "risky-task",
+    Fn:   riskyFunc,
 })
 ```
 
-Or queue a mailable:
+Failed jobs are stored in Redis at `{queue_key}:failed`. Inspect with:
 
-```go
-m := mail.NewMailable("app/views/mail", "welcome.html", "Welcome", "user@example.com")
-mail.QueueMailable(app.QueuedMailer(), m)
+```bash
+gofreight queue:failed
+gofreight queue:retry all
 ```
 
-See **[Mail](mail.md)**.
+---
+
+## Generating jobs
+
+```bash
+gofreight make:job SendNewsletter
+```
+
+Creates `app/jobs/send_newsletter.go` with a `Handle(ctx)` method stub.
+
+---
+
+## Queued mail
+
+```go
+queuedMailer := app.QueuedMailer()
+_ = queuedMailer.Send(mail.Message{
+    To:      []string{"user@example.com"},
+    Subject: "Welcome",
+    Body:    "Hello!",
+})
+```
+
+Mail is dispatched as a background job instead of blocking the request.
+
+---
 
 ## Testing
 
-Process all pending jobs synchronously in tests:
-
 ```go
-errs := app.Queue.Process(ctx)
-if len(errs) > 0 {
-    t.Fatal(errs[0])
+func TestJobDispatched(t *testing.T) {
+    gftest.UseFakes()
+    app := gftest.NewApp(t)
+
+    app.Jobs.Dispatch(jobs.SendWelcomeEmail{UserID: 1})
+    // assert with fakes or run worker synchronously in test
 }
 ```
 
-Check pending count:
+For Redis queue tests, use a test Redis instance or test the job handler function directly.
 
-```go
-if app.Queue.Pending() != 0 {
-    t.Fatal("expected no pending jobs")
-}
+---
+
+## Architecture
+
+```
+HTTP Request
+     │
+     ▼
+Controller dispatches job
+     │
+     ├── sync queue → Handle() runs immediately
+     │
+     └── redis queue → JSON payload pushed to Redis
+                              │
+                              ▼
+                     queue:work worker
+                              │
+                              ▼
+                     RegisterJob handler by name
 ```
 
-Flush between tests:
+---
 
-```go
-app.Queue.Flush()
-```
+## Best practices
+
+- Keep jobs **idempotent** — they may retry
+- Use **named jobs** for anything dispatched to Redis
+- Register all job handlers in an `init()` package imported by bootstrap
+- Log errors inside `Handle` — failures go to the failed queue
+- Use `context.Context` for cancellation and timeouts
+
+---
+
+## Limitations
+
+| Feature | Status |
+|---------|--------|
+| In-process queue | Supported |
+| Redis queue + retries | Supported |
+| Delayed/scheduled jobs | Use [Scheduling](scheduling.md) or manual `RunAt` |
+| Job batches / chains | Not built-in |
+| Horizon-style dashboard | Not built-in |
+
+---
 
 ## Related
 
-- [Mail](mail.md) — mailables and queued delivery
-- [Configuration](configuration.md) — `QUEUE_DRIVER`, `REDIS_URL`
-- [Integrations](integrations.md) — queue driver configuration
+- [Scheduling](scheduling.md) — cron-style recurring tasks
+- [Mail](mail.md) — queued mailables
+- [Notifications](notifications.md) — async notification delivery
+- [CLI Commands](commands.md) — queue commands
+- [Application wiring](application-wiring.md) — `UseRedisQueue`, `StartJobs`

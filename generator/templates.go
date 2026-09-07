@@ -19,6 +19,7 @@ const appMainTmpl = `package main
 
 import (
 	"log"
+	"os"
 
 	"{{.Module}}/bootstrap"
 	"{{.Module}}/routes"
@@ -29,6 +30,13 @@ func main() {
 
 	if err := app.ConnectDatabase(); err != nil {
 		log.Printf("warning: database not connected: %v", err)
+	}
+
+	if os.Getenv("GOFREIGHT_SCHEDULE_RUN") == "1" {
+		for _, err := range bootstrap.RunSchedule() {
+			log.Printf("schedule: %v", err)
+		}
+		return
 	}
 
 	app.Draw(routes.Register)
@@ -74,11 +82,22 @@ func Application() *application.Application {
 
 	if config.ResolveSessionDriver() == "redis" {
 		_ = app.UseRedisSessions(config.ResolveRedisURL())
+	} else if config.ResolveSessionDriver() == "file" {
+		_ = app.UseFileSessions("")
 	}
 
 	if config.ResolveQueueConnection() == "redis" {
 		_ = app.UseRedisQueue(config.ResolveRedisURL())
 	}
+
+	if config.ResolveRedisURL() != "" {
+		_ = app.UseRedisBroadcast(config.ResolveRedisURL())
+	}
+
+	_ = app.ConfigureStorage()
+	_ = app.ConfigureIntegrations()
+	app.UseExceptionHandler()
+	app.UseVite()
 
 	_ = app.LoadLocales("config/locales")
 	app.UseLocale()
@@ -97,6 +116,41 @@ func Application() *application.Application {
 	})
 
 	return app
+}
+`
+
+const bootstrapScheduleTmpl = `package bootstrap
+
+import (
+	"context"
+
+	"github.com/lsgser/gofreight/application"
+)
+
+var scheduler = application.NewScheduler()
+
+/*
+|--------------------------------------------------------------------------
+| Scheduled Tasks
+|--------------------------------------------------------------------------
+|
+| Register recurring tasks here. Run due tasks with:
+|   gofreight schedule:run
+|
+| Example crontab (every minute):
+|   * * * * * cd /path/to/app && gofreight schedule:run
+|
+*/
+func init() {
+	// scheduler.Every(time.Minute, "heartbeat", func(ctx context.Context) error {
+	// 	log.Println("scheduler tick")
+	// 	return nil
+	// })
+}
+
+// RunSchedule executes tasks that are due now (used by schedule:run CLI).
+func RunSchedule() []error {
+	return scheduler.RunDue(context.Background())
 }
 `
 

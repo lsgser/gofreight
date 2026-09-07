@@ -207,7 +207,7 @@ Field names are lowercased for database columns (`title` → `db:"title"`) and t
 | `gofreight make:seeder Name` | Go seeder in `db/seeders/` |
 | `gofreight make:factory Name` | Test factory in `tests/factories/` |
 | `gofreight make:test Name` | Feature test in `tests/` |
-| `gofreight make:auth` | User model + auth scaffolding |
+| `gofreight make:auth` | User model, login/register views, auth controller, routes |
 
 Legacy: `gofreight generate …` and `gofreight make …` work the same way (`generate resource` = `make:scaffold`). Run **`gofreight list make`** for the full list. See [commands.md](commands.md).
 

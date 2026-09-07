@@ -32,13 +32,17 @@ func ResolveRedisURL() string {
 	return fmt.Sprintf("redis://%s:%s", host, port)
 }
 
-// ResolveSessionDriver normalizes SESSION_DRIVER (file/database fall back to memory).
+// ResolveSessionDriver normalizes SESSION_DRIVER.
 func ResolveSessionDriver() string {
 	switch strings.ToLower(cleanEnv(os.Getenv("SESSION_DRIVER"))) {
 	case "redis":
 		return "redis"
-	case "file", "database", "":
-		return "memory"
+	case "file":
+		return "file"
+	case "database":
+		return "database"
+	case "":
+		return "file"
 	default:
 		return strings.ToLower(cleanEnv(os.Getenv("SESSION_DRIVER")))
 	}
@@ -69,8 +73,14 @@ func ResolveCacheStore() string {
 	switch raw {
 	case "redis":
 		return "redis"
-	case "file", "database", "memory", "":
+	case "file":
+		return "file"
+	case "database":
+		return "database"
+	case "memory":
 		return "memory"
+	case "":
+		return "file"
 	default:
 		return raw
 	}

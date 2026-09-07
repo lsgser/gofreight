@@ -39,6 +39,7 @@ var (
 	reGFTField      = regexp.MustCompile(`(?m)^#field\s+(.+)$`)
 	reGFTError      = regexp.MustCompile(`#error\s+["']([^"']+)["']`)
 	reGFTPlace      = regexp.MustCompile(`#place\s+["']([^"']+)["'](?:\s+["']([^"']*)["'])?`)
+	reGFTVite       = regexp.MustCompile(`#vite\s+["']([^"']+)["']`)
 )
 
 // CompileGFT transforms Gofreight Template syntax into Go html/template.
@@ -146,6 +147,8 @@ func compileGFTBody(input string) (string, error) {
 		return fmt.Sprintf(`{{with index .Sections "%s"}}{{.}}{{else}}%s{{end}}`, parts[1], def)
 	})
 
+	s = reGFTVite.ReplaceAllString(s, `{{vite "$1"}}`)
+
 	return s, nil
 }
 
@@ -189,7 +192,7 @@ func gftPathToName(path string) string {
 func IsGFTSource(s string) bool {
 	markers := []string{
 		"#layout", "#slot", "#endslot", "#partial", "#each", "#endeach",
-		"#eachor", "#when", "#endwhen", "#place", "#token", "#form", "#endform",
+		"#eachor", "#when", "#endwhen", "#place", "#token", "#vite", "#form", "#endform",
 		"#field", "#error", "{=", "{!",
 	}
 	for _, m := range markers {

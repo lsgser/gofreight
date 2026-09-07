@@ -1,96 +1,209 @@
 # Cache
 
-Gofreight provides in-memory and Redis cache stores, HTTP response caching, and fragment caching for expensive view partials.
+Gofreight provides multiple cache backends and HTTP caching middleware for faster applications.
 
-## In-memory cache
+## Drivers
 
-```go
-import "github.com/lsgser/gofreight/cache"
+| Driver | Env | Storage | Best for |
+|--------|-----|---------|----------|
+| In-memory | default | Process RAM | Development, single process |
+| File | `CACHE_STORE=file` | `storage/framework/cache/data/` | Single-server production |
+| Redis | `CACHE_STORE=redis` | Redis | Multi-process / distributed |
 
-store := cache.New()
+Configure in `.env`:
 
-store.Put("user:1", user, time.Hour)
-value, ok := store.Get("user:1")
-store.Has("user:1")
-store.Forget("user:1")
-store.Flush()
+```env
+CACHE_STORE=file
+REDIS_URL=redis://127.0.0.1:6379
 ```
 
-The application exposes a default cache via `app.Cache`.
-
-## Remember pattern
-
-Compute and store on cache miss:
+Bootstrap:
 
 ```go
-result := app.Cache.Remember("sidebar:nav", time.Minute, func() any {
-    return buildNavigation()
+_ = app.ConfigureIntegrations() // wires cache from env
+```
+
+Or manually:
+
+```go
+store, _ := cache.NewFileStore("")
+app.Cache = store
+```
+
+---
+
+## Basic operations
+
+All stores implement the `cache.Cacher` interface:
+
+```go
+// Set (optional TTL)
+app.Cache.Put("posts:featured", posts, time.Hour)
+
+// Get
+if val, ok := app.Cache.Get("posts:featured"); ok {
+    posts := val.([]models.Post)
+}
+
+// Check existence
+if app.Cache.Has("posts:featured") { /* ... */ }
+
+// Delete
+app.Cache.Forget("posts:featured")
+
+// Clear all
+app.Cache.Flush()
+
+// Compute-if-missing
+posts := app.Cache.Remember("posts:all", time.Minute, func() any {
+    return loadAllPosts()
 })
 ```
 
-`Forever` stores without expiration:
+---
+
+## File store
+
+Persists cache entries as JSON files:
 
 ```go
-app.Cache.Forever("config:features", features)
+store, err := cache.NewFileStore("") // default: storage/framework/cache/data/
+app.Cache = store
 ```
 
-## Redis cache
+Features:
 
-Configure via integrations:
+- TTL via expiration timestamp in file metadata
+- Automatic cleanup on expired reads
+- Safe for single-server deployments
+- Survives process restarts
 
-```env
-CACHE_DRIVER=redis
-REDIS_URL=redis://localhost:6379
+---
+
+## Redis store
+
+```go
+store, err := cache.NewRedis("redis://127.0.0.1:6379", "gofreight:")
+app.Cache = store
 ```
 
-Redis cache persists across process restarts and works in multi-server deployments.
+Requires `REDIS_URL` and `CACHE_STORE=redis` in production multi-process setups.
 
-## HTTP caching
+---
+
+## HTTP cache middleware
 
 Add cache headers to responses:
 
 ```go
-app.UseHTTPCache(time.Hour)
+app.UseHTTPCache(5 * time.Minute)
 ```
 
-Or per-route via `cache.HTTPCache` middleware.
+Sets `Cache-Control: public, max-age=300` on responses passing through the middleware.
 
-## Fragment caching
+Use for static-ish API responses or public pages — not for personalized content.
 
-Cache expensive rendered partials:
+---
+
+## Route-level caching pattern
 
 ```go
-fc := cache.NewFragmentCache(app.Cache)
-html := fc.Remember("sidebar", time.Minute, func() string {
-    return renderSidebar()
-})
+func (c PostsController) Index(base controller.Base) error {
+    if cached, ok := base.App.Cache.Get("posts:index"); ok {
+        return base.JSON(cached)
+    }
+
+    posts, _ := models.Posts.All(base.Request.Context())
+    base.App.Cache.Put("posts:index", posts, 30*time.Second)
+    return base.JSON(posts)
+}
 ```
 
-Useful for navigation, category trees, or other slow-to-render fragments.
+Invalidate on writes:
 
-## CLI
+```go
+func (c PostsController) Store(base controller.Base) error {
+    // ... create post ...
+    base.App.Cache.Forget("posts:index")
+    return base.Created(post)
+}
+```
+
+---
+
+## Fragment caching in views
+
+Pass cached HTML from controllers:
+
+```go
+sidebar := app.Cache.Remember("sidebar:nav", time.Hour, func() any {
+    html, _ := app.Views.RenderString("partials/sidebar", data)
+    return html
+})
+return base.RenderView("home/index", base.ViewData(map[string]any{
+    "Sidebar": sidebar,
+}))
+```
+
+---
+
+## CLI commands
 
 ```bash
-gofreight cache:clear
+gofreight cache:clear    # flush application cache
 ```
+
+Requires confirmation in production unless `--force`.
+
+---
+
+## Configuration reference
+
+| Variable | Default | Purpose |
+|----------|---------|---------|
+| `CACHE_STORE` | `file` (new apps) | `file`, `redis`, or memory |
+| `REDIS_URL` | — | Required for Redis cache |
+| `CACHE_PREFIX` | `gofreight:` | Redis key prefix |
+
+---
 
 ## Testing
 
-Use a fresh in-memory store per test:
-
 ```go
-app.Cache.Flush()
+func TestCachedResponse(t *testing.T) {
+    gftest.UseFakes()
+    app := gftest.NewApp(t)
+    app.Draw(routes.Register)
+
+    app.Get("/posts").AssertOk()
+    app.Get("/posts").AssertOk() // second hit uses cache
+}
 ```
 
-With `gftest` fakes:
+Or test cache store directly:
 
 ```go
-gftest.UseFakes()
-// cache operations use in-memory fake
+store, _ := cache.NewFileStore(t.TempDir())
+store.Put("key", "value", time.Minute)
+val, ok := store.Get("key")
 ```
+
+---
+
+## Driver selection guide
+
+| Deployment | Recommended |
+|------------|-------------|
+| Local development | In-memory or file |
+| Single VPS | File |
+| Multiple app instances | Redis |
+| Serverless / ephemeral | Redis |
+
+---
 
 ## Related
 
-- [Integrations](integrations.md) — Redis cache driver
-- [Configuration](configuration.md) — `CACHE_DRIVER`, `REDIS_URL`
-- [CLI Commands](commands.md) — `cache:clear`
+- [Configuration](configuration.md) — `CACHE_STORE`
+- [Integrations](integrations.md) — wiring cache drivers
+- [Application wiring](application-wiring.md) — `ConfigureIntegrations`
+- [Storage](storage.md) — file paths for file cache

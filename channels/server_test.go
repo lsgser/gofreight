@@ -112,6 +112,7 @@ func TestLegacySubscribeBroadcast(t *testing.T) {
 
 	sub, _ := json.Marshal(map[string]string{"action": "subscribe", "channel": "posts"})
 	_ = conn.WriteMessage(websocket.TextMessage, sub)
+	time.Sleep(50 * time.Millisecond)
 
 	hub.Broadcast("posts", "created", map[string]int{"id": 1})
 

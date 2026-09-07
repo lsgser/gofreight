@@ -66,6 +66,7 @@ func NewApp(name string) error {
 	files := map[string]string{
 		filepath.Join(root, "main.go"):               appMainTmpl,
 		filepath.Join(root, "bootstrap", "app.go"):  bootstrapAppTmpl,
+		filepath.Join(root, "bootstrap", "schedule.go"): bootstrapScheduleTmpl,
 		filepath.Join(root, "routes", "register.go"): routesRegisterTmpl,
 		filepath.Join(root, "routes", "web.go"):     routesWebTmpl,
 		filepath.Join(root, "routes", "api.go"):     routesAPITmpl,

@@ -1,7 +1,7 @@
 package version
 
 // Version is the current Gofreight release (SemVer, without "v" prefix).
-const Version = "0.2.0"
+const Version = "0.3.0"
 
 // Module returns the Go module version tag (with "v" prefix).
 func Module() string {

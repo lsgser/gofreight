@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-  <strong>v0.2.0</strong> · <a href="https://github.com/lsgser/gofreight">github.com/lsgser/gofreight</a>
+  <strong>v0.3.0</strong> · <a href="https://github.com/lsgser/gofreight">github.com/lsgser/gofreight</a>
 </p>
 
 <p align="center">
@@ -411,7 +411,7 @@ func Register(r *router.Router) {
 }
 ```
 
-See **[docs/routing.md](docs/routing.md)** for nested groups, API resources, and middleware.
+See **[docs/routing.md](docs/routing.md)** for named routes, redirects, constraints, model binding, signed URLs, domain routing, file upload/download, and HTTP status helpers.
 
 ### RESTful routes (web)
 
@@ -767,10 +767,11 @@ Integration variables (`SESSION_DRIVER`, `QUEUE_CONNECTION`, `CACHE_STORE`, `FIL
 | [docs/README.md](docs/README.md) | Documentation index |
 | [docs/changelog.md](docs/changelog.md) | Release history |
 | [docs/getting-started.md](docs/getting-started.md) | Detailed setup |
-| [docs/commands.md](docs/commands.md) | Full CLI reference |
+| [docs/routing.md](docs/routing.md) | Full router reference — groups, constraints, binding, signed URLs |
+| [docs/controllers.md](docs/controllers.md) | Status codes, files, redirects, JSON/HTML responses |
+| [docs/commands.md](docs/commands.md) | In-depth CLI reference with examples |
 | [docs/generators.md](docs/generators.md) | Generators & field types |
 | [docs/project-structure.md](docs/project-structure.md) | Application vs framework layout |
-| [docs/routing.md](docs/routing.md) | Route groups & API resources |
 | [docs/features.md](docs/features.md) | Sessions, queues, API, i18n, channels |
 | [docs/templating.md](docs/templating.md) | GFT reference |
 | [docs/forms-validation.md](docs/forms-validation.md) | Vine schemas, GFT forms, flash errors |

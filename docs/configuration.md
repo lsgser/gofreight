@@ -23,9 +23,13 @@ Every new app includes a `.env` file. Key variables:
 | `DB_PASSWORD` | — | Database password |
 | `DB_SSLMODE` | `disable` | Postgres SSL mode |
 | `DATABASE_URL` | — | Full connection URL (overrides `DB_*`) |
-| `SESSION_DRIVER` | `memory` | `memory` or `redis` |
-| `QUEUE_DRIVER` | `memory` | `memory` or `redis` |
-| `REDIS_URL` | — | Redis connection URL |
+| `SESSION_DRIVER` | `file` | `file`, `redis`, or `memory` |
+| `CACHE_STORE` | `file` | `file`, `redis`, or in-memory default |
+| `QUEUE_DRIVER` / `QUEUE_CONNECTION` | `sync` | `sync` (in-process), `redis` |
+| `FILESYSTEM_DISK` | `local` | `local` filesystem disk (`storage/app`) |
+| `STORAGE_LOCAL_ROOT` | `storage/app` | Root path for local disk |
+| `VITE_DEV_SERVER_URL` | `http://localhost:5173` | Vite dev server (when `public/hot` exists) |
+| `REDIS_URL` | — | Redis for sessions, cache, queue, WebSocket broadcast |
 | `JWT_TTL` | `24h` | JWT token lifetime |
 | `LOG_LEVEL` | `info` | Log verbosity |
 | `MAIL_DRIVER` | `log` | `log`, `smtp`, `sendgrid` |
@@ -107,20 +111,22 @@ See **[ORM](orm.md#database-configuration)** and **[Database](database.md)**.
 
 ## Integrations via env
 
-Mail, storage, and cache drivers are configured through environment variables. See **[Integrations](integrations.md)**.
+Mail, cache, and local storage drivers are configured through environment variables. See **[Integrations](integrations.md)** and **[Storage](storage.md)**.
 
 ```env
 MAIL_DRIVER=smtp
 MAIL_HOST=smtp.example.com
 MAIL_PORT=587
-MAIL_USERNAME=user
-MAIL_PASSWORD=secret
 
-STORAGE_DRIVER=s3
-AWS_ACCESS_KEY_ID=...
-AWS_SECRET_ACCESS_KEY=...
-AWS_BUCKET=my-bucket
+SESSION_DRIVER=file
+CACHE_STORE=file
+FILESYSTEM_DISK=local
+
+# Optional — enables Redis sessions, cache, queue, and WebSocket broadcast
+REDIS_URL=redis://127.0.0.1:6379
 ```
+
+> **Honest defaults:** New apps scaffold with **file** sessions and cache. Cloud storage (S3) is not a built-in driver yet — use the local disk or wire a custom integration.
 
 ## Bootstrap wiring
 

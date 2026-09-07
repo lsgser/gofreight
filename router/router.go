@@ -3,6 +3,7 @@ package router
 import (
 	"fmt"
 	"net/http"
+	"regexp"
 	"strings"
 )
 
@@ -11,12 +12,14 @@ type HandlerFunc = http.HandlerFunc
 
 // Route represents a single HTTP route.
 type Route struct {
-	Method     string
-	Path       string
-	Name       string
-	Handler    HandlerFunc
-	PathPrefix string
-	middleware []MiddlewareFunc
+	Method      string
+	Path        string
+	Name        string
+	Handler     HandlerFunc
+	PathPrefix  string
+	Domain      string
+	middleware  []MiddlewareFunc
+	constraints map[string]*regexp.Regexp
 }
 
 // RouteRegistrar chains options (such as middleware) onto a single route.
@@ -42,6 +45,9 @@ type Router struct {
 	prefix          string
 	namePrefix      string
 	groupMiddleware []MiddlewareFunc
+	fallback        HandlerFunc
+	domain          string
+	defaultDomain   string
 }
 
 // New creates an empty router.
@@ -80,30 +86,34 @@ func (r *Router) Delete(path string, handler HandlerFunc, name ...string) *Route
 }
 
 // Resources registers RESTful HTML routes (includes new/edit).
-func (r *Router) Resources(name string, handlers ResourceHandlers) {
+func (r *Router) Resources(name string, handlers ResourceHandlers, opts ...ResourceOptions) {
+	var opt ResourceOptions
+	if len(opts) > 0 {
+		opt = opts[0]
+	}
 	base := "/" + strings.Trim(name, "/")
 	idPath := base + "/:id"
 
-	if handlers.Index != nil {
+	if opt.allows("index") && handlers.Index != nil {
 		r.Get(base, handlers.Index, name+".index")
 	}
-	if handlers.New != nil {
+	if opt.allows("new") && handlers.New != nil {
 		r.Get(base+"/new", handlers.New, name+".new")
 	}
-	if handlers.Create != nil {
+	if opt.allows("create") && handlers.Create != nil {
 		r.Post(base, handlers.Create, name+".create")
 	}
-	if handlers.Show != nil {
+	if opt.allows("show") && handlers.Show != nil {
 		r.Get(idPath, handlers.Show, name+".show")
 	}
-	if handlers.Edit != nil {
+	if opt.allows("edit") && handlers.Edit != nil {
 		r.Get(idPath+"/edit", handlers.Edit, name+".edit")
 	}
-	if handlers.Update != nil {
+	if opt.allows("update") && handlers.Update != nil {
 		r.Put(idPath, handlers.Update, name+".update")
 		r.Patch(idPath, handlers.Update, name+".update")
 	}
-	if handlers.Destroy != nil {
+	if opt.allows("destroy") && handlers.Destroy != nil {
 		r.Delete(idPath, handlers.Destroy, name+".destroy")
 	}
 }
@@ -116,27 +126,30 @@ func (r *Router) Resources(name string, handlers ResourceHandlers) {
 //	PUT    /posts/:id  -> update
 //	PATCH  /posts/:id  -> update
 //	DELETE /posts/:id  -> destroy
-func (r *Router) ApiResource(name string, handlers ApiResourceHandlers) {
+func (r *Router) ApiResource(name string, handlers ApiResourceHandlers, opts ...ResourceOptions) {
+	var opt ResourceOptions
+	if len(opts) > 0 {
+		opt = opts[0]
+	}
 	base := "/" + strings.Trim(name, "/")
 	idPath := base + "/:id"
 
-	if handlers.Index != nil {
+	if opt.allows("index") && handlers.Index != nil {
 		r.Get(base, handlers.Index, name+".index")
 	}
-	if handlers.Store != nil {
+	if opt.allows("store") && handlers.Store != nil {
 		r.Post(base, handlers.Store, name+".store")
 	}
-	// Reject HTML-only paths on JSON APIs (more specific than /:id).
 	r.Get(base+"/new", apiNotFound)
 	r.Get(base+"/:id/edit", apiNotFound)
-	if handlers.Show != nil {
+	if opt.allows("show") && handlers.Show != nil {
 		r.Get(idPath, handlers.Show, name+".show")
 	}
-	if handlers.Update != nil {
+	if opt.allows("update") && handlers.Update != nil {
 		r.Put(idPath, handlers.Update, name+".update")
 		r.Patch(idPath, handlers.Update, name+".update")
 	}
-	if handlers.Destroy != nil {
+	if opt.allows("destroy") && handlers.Destroy != nil {
 		r.Delete(idPath, handlers.Destroy, name+".destroy")
 	}
 }
@@ -176,6 +189,7 @@ func (r *Router) add(method, path string, handler HandlerFunc, name ...string) *
 		routeName = r.namePrefix + name[0]
 	}
 	fullPath := joinPaths(r.prefix, path)
+	fullPath = normalizeRoutePath(fullPath)
 	if fullPath == "" {
 		fullPath = "/"
 	}
@@ -184,6 +198,7 @@ func (r *Router) add(method, path string, handler HandlerFunc, name ...string) *
 		Path:       fullPath,
 		Name:       routeName,
 		Handler:    handler,
+		Domain:     r.domain,
 		middleware: append([]MiddlewareFunc{}, r.groupMiddleware...),
 	})
 	return &RouteRegistrar{router: r, index: len(r.routes) - 1}
@@ -193,6 +208,10 @@ func (r *Router) add(method, path string, handler HandlerFunc, name ...string) *
 func (r *Router) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	route := r.match(req)
 	if route == nil {
+		if r.fallback != nil {
+			r.fallback(w, req)
+			return
+		}
 		http.NotFound(w, req)
 		return
 	}
@@ -223,12 +242,26 @@ func (r *Router) match(req *http.Request) *Route {
 			}
 			continue
 		}
-		if params := matchPath(route.Path, req.URL.Path); params != nil {
+		hostParams, ok := matchHost(req.Host, route.Domain)
+		if !ok {
+			continue
+		}
+		if params := matchPathPattern(route.Path, req.URL.Path); params != nil {
+			if !paramsMatchConstraints(params, route.constraints) {
+				continue
+			}
 			score := routeSpecificity(route.Path)
 			if score > bestScore {
+				merged := make(map[string]string, len(params)+len(hostParams))
+				for k, v := range params {
+					merged[k] = v
+				}
+				for k, v := range hostParams {
+					merged["host_"+k] = v
+				}
 				best = route
 				bestScore = score
-				bestParams = params
+				bestParams = merged
 			}
 		}
 	}
@@ -238,52 +271,6 @@ func (r *Router) match(req *http.Request) *Route {
 		}
 	}
 	return best
-}
-
-// routeSpecificity scores routes so static segments beat :params (/posts/new > /posts/:id).
-func routeSpecificity(path string) int {
-	parts := strings.Split(strings.Trim(path, "/"), "/")
-	score := 0
-	for _, p := range parts {
-		if strings.HasPrefix(p, ":") {
-			score++
-		} else {
-			score += 100
-		}
-	}
-	return score
-}
-
-// matchPath compares a route pattern against a request path.
-func matchPath(pattern, path string) map[string]string {
-	pPattern := strings.TrimSuffix(pattern, "/")
-	pPath := strings.TrimSuffix(path, "/")
-	if pPattern == "" {
-		pPattern = "/"
-	}
-	if pPath == "" {
-		pPath = "/"
-	}
-
-	pParts := strings.Split(strings.Trim(pPattern, "/"), "/")
-	rParts := strings.Split(strings.Trim(pPath, "/"), "/")
-
-	if pPattern == "/" && pPath == "/" {
-		return map[string]string{}
-	}
-	if len(pParts) != len(rParts) {
-		return nil
-	}
-
-	params := make(map[string]string)
-	for i, pp := range pParts {
-		if strings.HasPrefix(pp, ":") {
-			params[strings.TrimPrefix(pp, ":")] = rParts[i]
-		} else if pp != rParts[i] {
-			return nil
-		}
-	}
-	return params
 }
 
 func apiNotFound(w http.ResponseWriter, req *http.Request) {

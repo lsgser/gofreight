@@ -83,14 +83,29 @@ See **[Tutorial: JWT Authentication](../examples/blog/)** (web: `tutorial-auth-j
 For long-lived machine-to-machine tokens:
 
 ```go
-store := auth.NewMemoryTokenStore() // use a database-backed store in production
+store := auth.NewMemoryTokenStore() // development only
+```
 
-token, _ := store.Create(userID, "mobile-app", time.Now().Add(365*24*time.Hour))
+### Database-backed tokens (production)
+
+`make:auth` creates the `api_tokens` table. Use the database store in production:
+
+```go
+store := auth.NewDatabaseTokenStore()
+
+token, err := store.Create(userID, "mobile-app", time.Now().Add(365*24*time.Hour))
+// store in api_tokens table
 
 r.Group(func(api *router.Router) {
     api.Get("/data", dataHandler)
 }).Use(auth.APITokenMiddleware(store)).Apply()
 ```
+
+| Method | Purpose |
+|--------|---------|
+| `Create(userID, name, expiresAt)` | Generate and persist token |
+| `Validate(token)` | Return user ID if valid |
+| `Revoke(token)` | Delete token |
 
 Revoke tokens with `store.Revoke(token)`.
 

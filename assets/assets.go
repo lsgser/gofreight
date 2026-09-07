@@ -17,6 +17,7 @@ type Pipeline struct {
 	Root      string
 	Prefix    string
 	Manifest  *Manifest
+	Vite      *Vite
 	mu        sync.RWMutex
 	digestMap map[string]string
 }

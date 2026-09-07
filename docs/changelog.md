@@ -5,8 +5,54 @@ All notable changes to Gofreight are documented here. The project follows [Seman
 Install a specific release:
 
 ```bash
-go install github.com/lsgser/gofreight/cmd/gofreight@v0.2.0
+go install github.com/lsgser/gofreight/cmd/gofreight@v0.3.0
 ```
+
+---
+
+## Unreleased
+
+---
+
+## 0.3.0 — September 7, 2026
+
+### Added — Routing (Laravel/Rails parity)
+
+- **Declarative redirect routes** — `Redirect()`, `PermanentRedirect()`
+- **Named route URL generation** — `Router.URL()`, `controller.RouteURL()`, `RedirectRoute()`
+- **Route constraints** — `.Where()`, `.WhereParam()` (regex on `:id`, `:slug`, etc.)
+- **Wildcard & optional parameters** — `{path*}`, `{id?}`, and colon equivalents
+- **Domain & subdomain routing** — `.Domain()`, `.Subdomain()` on route groups
+- **Route model binding** — `BindModel()`, `BindModelBy()`, custom `.Bind()`
+- **Signed URLs** — `URLSigner`, `.Signed()` middleware, `SignedURL()`, `TemporarySignedRoute()`
+- **File download & upload helpers** — `Download()`, `File()`, `StoreUpload()`, `UploadedFile()`
+- **HTTP status helpers** — `Created()`, `NoContent()`, `Abort()`, Rails-style `StatusFromName()`
+- **Route-level status** — `.Status()`, `.StatusName()` on route registrars
+- **Extra HTTP verbs** — `Any()`, `Match()`, `Head()`, `Options()`, `Fallback()`
+
+See the expanded **[Routing](routing.md)** and **[Controllers](controllers.md)** guides.
+
+### Added — Drivers & infrastructure
+
+- **File session driver** — `SESSION_DRIVER=file` persists to `storage/framework/sessions/`
+- **File cache store** — `CACHE_STORE=file` persists to `storage/framework/cache/data/`
+- **Local storage disk** — `FILESYSTEM_DISK=local` with `app.Storage` and upload helpers
+- **Redis job serialization** — named jobs (`NamedJob`, `RegisterJob`) for Redis workers
+- **Task scheduler** — `schedule.Scheduler`, `gofreight schedule:run`, `bootstrap/schedule.go`
+- **Notifications** — multi-channel sender (mail + database store callback)
+- **Exception handler** — `app.UseExceptionHandler()` with HTML/JSON panic recovery
+- **Route cache** — `gofreight route:cache`, `GOFREIGHT_ROUTE_CACHE=1`
+- **REST `only` / `except`** — `router.ResourceOptions` on `Resources()` / `ApiResource()`
+- **Authorization gates** — Laravel-style `auth.Gate` with model-aware rules
+- **Vite integration** — `#vite` GFT directive, dev proxy, `app.UseVite()`
+- **Redis WebSocket broadcast** — `app.UseRedisBroadcast()` for multi-instance realtime
+- **Auth starter** — `gofreight make:auth` generates login/register views, routes, and controllers
+
+### Added — Documentation
+
+- **CLI commands** — in-depth reference with examples for every `gofreight` command (including `tinker`, migrations, queues, generators)
+- **Scheduling, notifications, storage, error handling** — new guides with honest capability notes
+- **Testing guide fixes** — correct `Describe(t, ...)` and `app.Draw()` usage
 
 ---
 
@@ -20,7 +66,7 @@ go install github.com/lsgser/gofreight/cmd/gofreight@v0.2.0
 - **JWT authentication guard** — protect API routes with bearer tokens. See [Authentication](authentication.md) and the [JWT tutorial](tutorial-auth-jwt.md).
 - **Vine schema validation** — declarative request validation for forms and JSON APIs. See [Forms & Validation](forms-validation.md).
 - **Production CLI guard** — mutating commands (`migrate`, `db:wipe`, `db:seed`, `make:*`, queue/cache clears, and more) show a red **PRODUCTION ENVIRONMENT** banner and require typing `yes` to continue when `GOFREIGHT_ENV=production`. Pass `--force` to skip the prompt in CI/deploy scripts.
-- **Documentation site** — full framework guides, six step-by-step tutorials, and searchable docs.
+- **Documentation site** — full framework guides, six step-by-step tutorials, and searchable docs (see the `gofreight-web` repository).
 
 ### Changed
 
@@ -30,6 +76,7 @@ go install github.com/lsgser/gofreight/cmd/gofreight@v0.2.0
 ### Fixed
 
 - **CLI banner** — removed duplicate Gofreight name, version, and tagline when invoking the root command.
+- **Docs site dark mode** — “Start building” CTA button text is readable on the orange banner in dark theme.
 
 ---
 
@@ -62,6 +109,25 @@ Initial public release — a batteries-included Go web framework you compile to 
 ---
 
 ## Upgrade notes
+
+### From 0.2.0 to 0.3.0
+
+1. Update the module version in your app's `go.mod`:
+
+   ```bash
+   go get github.com/lsgser/gofreight@v0.3.0
+   go mod tidy
+   ```
+
+2. Reinstall the CLI:
+
+   ```bash
+   go install github.com/lsgser/gofreight/cmd/gofreight@v0.3.0
+   ```
+
+3. **New apps** pick up file session/cache drivers, `bootstrap/schedule.go`, and `make:auth` starter automatically.
+
+4. **Existing apps** — optionally add `app.UseExceptionHandler()`, `app.UseVite()`, and Redis broadcast wiring from the [Application wiring](application-wiring.md) guide.
 
 ### From 0.1.0 to 0.2.0
 

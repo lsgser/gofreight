@@ -32,6 +32,11 @@ func BuildServices(env EnvReader) (*Services, error) {
 			}
 		}
 	}
+	if config.ResolveCacheStore() == "file" {
+		if store, err := cache.NewFileStore(""); err == nil {
+			svc.Cache = store
+		}
+	}
 
 	mailer := strings.ToLower(envGet(env, "MAIL_MAILER", "MAIL_DRIVER"))
 	if mailer == "log" || mailer == "" {

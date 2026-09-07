@@ -141,6 +141,8 @@ func initCommands() {
 	registerCacheCommands()
 	registerConfigCommands()
 	registerRouteCommands()
+	registerScheduleCommands()
+	registerRouteCacheCommand()
 	registerAuthCommands()
 	registerOptimizeCommands()
 	registerViewCommands()

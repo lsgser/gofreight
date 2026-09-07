@@ -25,6 +25,7 @@ type Hub struct {
 	handlers     map[string]EventHandler
 	onConnect    func(*Connection)
 	onDisconnect func(*Connection)
+	publish      func(room, event string, data any) error
 }
 
 // Connection is a connected WebSocket client.
@@ -104,12 +105,16 @@ func (h *Hub) To(room string) *RoomEmitter {
 
 // Emit sends an event to all connections in a room.
 func (h *Hub) Emit(room, event string, data any) {
-	h.emit(room, event, data)
+	if h.publish != nil {
+		_ = h.publish(room, event, data)
+		return
+	}
+	h.emitLocal(room, event, data)
 }
 
 // Emit sends an event to all connections in the emitter's room.
 func (re *RoomEmitter) Emit(event string, data any) {
-	re.hub.emit(re.room, event, data)
+	re.hub.Emit(re.room, event, data)
 }
 
 // Broadcast sends an event to all subscribers on a channel (legacy alias for Emit).
@@ -122,7 +127,7 @@ func (h *Hub) Subscribe(client *Connection, channel string) {
 	client.Join(channel)
 }
 
-func (h *Hub) emit(room, event string, data any) {
+func (h *Hub) emitLocal(room, event string, data any) {
 	payload, err := json.Marshal(Message{Room: room, Channel: room, Event: event, Data: data})
 	if err != nil {
 		return

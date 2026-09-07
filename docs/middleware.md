@@ -86,10 +86,14 @@ app.UseCSRF()
 
 In templates, include the CSRF field:
 
+In GFT forms, use the `#token` directive:
+
 ```html
-{{ csrfField }}
-<!-- or -->
-<input type="hidden" name="authenticity_token" value="{{ csrfToken }}">
+#form action="/posts" method="POST"
+  #field "title" label="Title"
+  #token
+  <button type="submit">Save</button>
+#endform
 ```
 
 API routes using Bearer tokens typically skip CSRF. Safe methods (GET, HEAD, OPTIONS) are excluded automatically.
@@ -119,11 +123,11 @@ Returns 429 when the limit is exceeded.
 HTML forms cannot send PUT or DELETE. Gofreight middleware reads `_method` from the form body:
 
 ```html
-<form method="POST" action="/posts/1">
-  <input type="hidden" name="_method" value="PUT">
-  {{ csrfField }}
-  ...
-</form>
+#form action="/posts/1" method="PUT"
+  #token
+  #field "title" label="Title"
+  <button type="submit">Update</button>
+#endform
 ```
 
 Enabled automatically when sessions are configured.
@@ -202,6 +206,30 @@ app.Router.Use(middleware.Logger)
 app.UseCSRF()
 app.UseLocale()
 ```
+
+## Exception handler
+
+Rich panic recovery with HTML/JSON error pages:
+
+```go
+app.UseExceptionHandler()
+```
+
+Catches panics, logs stack traces, and renders:
+
+- `errors/404.gft` / `errors/500.gft` for HTML clients
+- JSON `{ "error": "..." }` when `Accept: application/json`
+- Debug details when `APP_DEBUG=true`
+
+Works alongside the built-in `middleware.Recovery`. See [Error handling](error-handling.md).
+
+## File sessions
+
+```go
+_ = app.UseFileSessions("") // storage/framework/sessions
+```
+
+See [Sessions](sessions.md) and [Application wiring](application-wiring.md).
 
 ## Related
 

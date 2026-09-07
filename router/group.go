@@ -19,6 +19,8 @@ type RouteGroup struct {
 	prefix     string
 	namePrefix string
 	middleware []MiddlewareFunc
+	domain     string
+	subdomain  string
 }
 
 // Group starts a route group. Call Prefix, Use, Name, then Apply.
@@ -54,19 +56,37 @@ func (g *RouteGroup) Name(prefix string) *RouteGroup {
 	return g
 }
 
+// Domain restricts routes in the group to a host pattern (e.g. "api.example.com", "{tenant}.example.com").
+func (g *RouteGroup) Domain(domain string) *RouteGroup {
+	g.domain = domain
+	return g
+}
+
+// Subdomain prefixes the default domain (e.g. Subdomain("api") → api.example.com).
+func (g *RouteGroup) Subdomain(subdomain string) *RouteGroup {
+	g.subdomain = subdomain
+	return g
+}
+
 // Apply registers the group routes on the parent router.
 func (g *RouteGroup) Apply() {
-	sub := g.parent.childRouter(g.prefix, g.namePrefix, g.middleware)
+	sub := g.parent.childRouter(g.prefix, g.namePrefix, g.middleware, g.domain, g.subdomain)
 	g.fn(sub)
 	g.parent.routes = append(g.parent.routes, sub.routes...)
 }
 
-func (r *Router) childRouter(prefix, namePrefix string, groupMiddleware []MiddlewareFunc) *Router {
+func (r *Router) childRouter(prefix, namePrefix string, groupMiddleware []MiddlewareFunc, domain, subdomain string) *Router {
+	resolvedDomain := resolveGroupDomain(subdomain, domain, r.defaultDomain)
+	if resolvedDomain == "" {
+		resolvedDomain = r.domain
+	}
 	return &Router{
 		prefix:          joinPaths(r.prefix, prefix),
 		namePrefix:      r.namePrefix + namePrefix,
 		middleware:      r.middleware,
 		groupMiddleware: append(append([]MiddlewareFunc{}, r.groupMiddleware...), groupMiddleware...),
+		domain:          resolvedDomain,
+		defaultDomain:   r.defaultDomain,
 	}
 }
 

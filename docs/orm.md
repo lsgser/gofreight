@@ -2,7 +2,7 @@
 
 Gofreight includes a type-safe ORM for Go structs. It provides chainable queries, associations, validations, lifecycle callbacks, soft deletes, and transactions — all driven by `context.Context`.
 
-For a complete working example, see the [blog app](../examples/blog/).
+For a complete working example, see the [blog app](https://github.com/lsgser/gofreight/tree/main/examples/blog).
 
 ## Quick start
 
@@ -524,8 +524,8 @@ app := gftest.NewApp(t,
             updated_at TEXT
         );
     `),
-    gftest.WithRoutes(routes.Register),
 )
+app.Draw(routes.Register)
 ```
 
 Or point at your migration directory:
@@ -575,7 +575,7 @@ See **[Generators](generators.md)** for field types and output layout.
 
 ## Related
 
-- [Example blog app](../examples/blog/) — full CRUD with associations and tests
+- [Example blog app](https://github.com/lsgser/gofreight/tree/main/examples/blog) — full CRUD with associations and tests
 - [Testing](testing.md) — `gftest`, factories, database assertions
 - [Admin Dashboard](admin.md) — schema browser and SQL export (development)
 - [Getting Started](getting-started.md) — database setup and first migration

@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/gofreight-icon.png" alt="Gofreight" width="96">
+  <img src="assets/gofreight-logo.png" alt="Gofreight" width="420">
 </p>
 
 <h1 align="center">Gofreight Documentation</h1>
@@ -8,7 +8,21 @@
   Batteries-included web framework for Go — compile to a single binary.
 </p>
 
-**Repository:** [github.com/lsgser/gofreight](https://github.com/lsgser/gofreight)
+<p align="center">
+  <strong>Framework repo:</strong> <a href="https://github.com/lsgser/gofreight">github.com/lsgser/gofreight</a>
+  · <strong>Docs site:</strong> <a href="https://lsgser.github.io/gofreight-web/">lsgser.github.io/gofreight-web</a>
+</p>
+
+---
+
+## Start here
+
+| Guide | Description |
+|-------|-------------|
+| [Getting Started](getting-started.md) | Install CLI, create an app, first routes |
+| [Features overview](features.md) | Complete index of framework capabilities |
+| [CLI commands](commands.md) | Every `gofreight` command with examples |
+| [Changelog](changelog.md) | Release history and unreleased features |
 
 ---
 
@@ -16,55 +30,81 @@
 
 | Guide | Description |
 |-------|-------------|
-| [Getting Started](getting-started.md) | Install the CLI, create an app, run migrations |
-| [Changelog](changelog.md) | Release history from v0.1.0 onward |
 | [Project structure](project-structure.md) | Framework vs application layout |
 | [Configuration](configuration.md) | Environment variables and YAML config |
+| [Application wiring](application-wiring.md) | Bootstrap helpers and driver setup |
+
+---
 
 ## The Basics
 
 | Guide | Description |
 |-------|-------------|
-| [Routes & routing](routing.md) | Route groups, API resources, middleware |
-| [Controllers](controllers.md) | Request handling, views, JSON responses |
+| [Routing](routing.md) | Groups, constraints, binding, signed URLs, files |
+| [Controllers](controllers.md) | Status codes, redirects, uploads, JSON/HTML |
 | [Middleware](middleware.md) | HTTP pipeline, CSRF, CORS, rate limiting |
+| [Error handling](error-handling.md) | Panic recovery and error pages |
 | [ORM](orm.md) | Models, queries, associations, validations |
 | [Database](database.md) | Migrations, seeding, blueprint DSL |
-| [Templating](templating.md) | Gofreight Templates (GFT) syntax |
-| [Forms & validation](forms-validation.md) | Vine schemas, GFT form components, flash errors |
+| [Templating (GFT)](templating.md) | Gofreight Templates syntax and Vite |
+| [Forms & validation](forms-validation.md) | Vine schemas and GFT form components |
+
+---
 
 ## Digging Deeper
 
 | Guide | Description |
 |-------|-------------|
 | [Authentication](authentication.md) | Session login, JWT, API tokens, OAuth |
-| [Authorization](authorization.md) | Policies and role-based access |
-| [Sessions](sessions.md) | Session storage, flash messages, cookies |
+| [Authorization](authorization.md) | Policies, gates, and roles |
+| [Sessions](sessions.md) | File/Redis sessions, flash, CSRF |
 | [Mail](mail.md) | Mailables, SMTP, queued delivery |
-| [Jobs & Queues](jobs.md) | Background jobs and workers |
-| [Cache](cache.md) | Memory, Redis, HTTP caching |
+| [Jobs & Queues](jobs.md) | Background jobs, Redis workers, named jobs |
+| [Scheduling](scheduling.md) | Cron-style task scheduler |
+| [Notifications](notifications.md) | Mail + database notifications |
+| [Cache](cache.md) | Memory, file, Redis, HTTP caching |
+| [Storage](storage.md) | Local disk, uploads, downloads |
 | [Services & Container](services.md) | Business logic and dependency injection |
 | [API Resources](api-resources.md) | JSON serializers for API responses |
-| [Real-time WebSockets](realtime.md) | Rooms, events, TypeScript client |
-| [GraphQL](graphql.md) | SDL schemas, modules, DataLoader, playground |
+| [Real-time WebSockets](realtime.md) | Rooms, events, Redis broadcast |
+| [GraphQL](graphql.md) | SDL schemas, DataLoader, playground |
+| [Localization](localization.md) | i18n and translation files |
+
+---
 
 ## Advanced
 
 | Guide | Description |
 |-------|-------------|
-| [Features overview](features.md) | Index of all framework capabilities |
 | [Security](security.md) | CSRF, headers, rate limiting, production |
-| [Testing](testing.md) | HTTP tests with `gftest` |
-| [Date & time](datetime.md) | Fluent date helpers via `support/datetime` |
-| [Integrations](integrations.md) | Pluggable mail, storage, cache, and custom APIs |
-| [Extending Gofreight](extending.md) | Custom integrations, events, plugins |
-| [Admin Dashboard](admin.md) | Local database admin (development only) |
-| [Deployment](deployment.md) | Docker, production checklist |
-| [CLI commands](commands.md) | Full `gofreight` command reference |
-| [Generators & field types](generators.md) | `make:*` commands and `name:type` fields |
+| [Testing](testing.md) | gftest, factories, BDD-style tests |
+| [Date & time](datetime.md) | Fluent date helpers |
+| [Integrations](integrations.md) | Mail, cache, storage drivers |
+| [Plugins](plugins.md) | Lifecycle hooks and extensions |
+| [Extending Gofreight](extending.md) | Custom integrations and events |
+| [Admin dashboard](admin.md) | Development database admin |
+| [Deployment](deployment.md) | Docker, systemd, production checklist |
+| [Generators](generators.md) | `make:*` scaffolds and field types |
+
+---
+
+## Tutorials
+
+Step-by-step guides from zero to production features:
+
+| Tutorial | Description |
+|----------|-------------|
+| [Your First App](tutorial-first-app.md) | Create and run a project from scratch |
+| [Build a REST API](tutorial-rest-api.md) | Route groups, JSON, ApiResource |
+| [HTML CRUD with GFT](tutorial-html-crud.md) | Templates, forms, validation |
+| [JWT Authentication](tutorial-auth-jwt.md) | Protected API routes |
+| [Real-time WebSockets](tutorial-realtime.md) | Live chat with rooms and events |
+| [GraphQL API](tutorial-graphql.md) | SDL, resolvers, DataLoader |
+
+---
 
 ## Quick links
 
-- [Main README](../README.md) — overview and API reference
-- [Example blog app](../examples/blog/) — full working application
-- Admin panel (development): `http://localhost:5000/admin`
+- [Example blog app](https://github.com/lsgser/gofreight/tree/main/examples/blog)
+- [Framework README](https://github.com/lsgser/gofreight/blob/main/README.md)
+- Admin panel (dev): `http://localhost:5000/admin`

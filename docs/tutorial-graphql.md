@@ -617,6 +617,6 @@ Interfaces and unions are supported programmatically — see **[GraphQL](graphql
 
 ## Next steps
 
-- **[GraphQL reference](graphql.md)** — resolvers, fragments, types, security, DataLoader
+- **[GraphQL reference](graphql.md)** — resolvers, types, security, DataLoader
 - **[Authentication](authentication.md)** — protect your GraphQL endpoint
 - **[Real-time WebSockets](realtime.md)** — live updates alongside GraphQL

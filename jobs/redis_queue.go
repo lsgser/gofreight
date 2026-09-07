@@ -69,6 +69,20 @@ func (q *RedisQueue) enqueue(payload JobPayload) {
 }
 
 func (q *RedisQueue) Dispatch(job Job) {
+	if named, ok := job.(NamedJob); ok && named.JobName() != "" {
+		registry.mu.Lock()
+		if df, ok := job.(NamedJobFunc); ok {
+			registry.named[named.JobName()] = df.Fn
+		} else if df, ok := job.(DispatchFuncJob); ok {
+			registry.named[named.JobName()] = df.Fn
+		} else {
+			name := named.JobName()
+			registry.named[name] = func(ctx context.Context) error { return job.Handle(ctx) }
+		}
+		registry.mu.Unlock()
+		q.enqueue(JobPayload{Name: named.JobName(), MaxAttempts: defaultMaxAttempts})
+		return
+	}
 	if named, ok := job.(DispatchFuncJob); ok && named.Name != "" {
 		registry.mu.Lock()
 		registry.named[named.Name] = named.Fn
