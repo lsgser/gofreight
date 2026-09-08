@@ -1,0 +1,222 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/public-textmate-snippets/master/schemas/tmLanguage.schema.json",
+  "name": "Gofreight GFT",
+  "scopeName": "source.gft",
+  "patterns": [
+    { "include": "#gft" },
+    { "include": "text.html.basic" }
+  ],
+  "repository": {
+    "gft": {
+      "patterns": [
+        { "include": "#gft-comment" },
+        { "include": "#gft-raw-output" },
+        { "include": "#gft-output" },
+        { "include": "#gft-directives" }
+      ]
+    },
+    "gft-comment": {
+      "name": "comment.block.gft",
+      "begin": "\\{#",
+      "end": "#\\}",
+      "beginCaptures": {
+        "0": { "name": "punctuation.definition.comment.begin.gft" }
+      },
+      "endCaptures": {
+        "0": { "name": "punctuation.definition.comment.end.gft" }
+      }
+    },
+    "gft-raw-output": {
+      "name": "meta.raw-output.gft",
+      "begin": "\\{!",
+      "end": "!\\}",
+      "beginCaptures": {
+        "0": { "name": "punctuation.definition.raw-output.begin.gft" }
+      },
+      "endCaptures": {
+        "0": { "name": "punctuation.definition.raw-output.end.gft" }
+      },
+      "patterns": [
+        { "include": "#gft-expr" }
+      ]
+    },
+    "gft-output": {
+      "name": "meta.output.gft",
+      "begin": "\\{=",
+      "end": "\\}",
+      "beginCaptures": {
+        "0": { "name": "punctuation.definition.output.begin.gft" }
+      },
+      "endCaptures": {
+        "0": { "name": "punctuation.definition.output.end.gft" }
+      },
+      "patterns": [
+        { "include": "#gft-expr" }
+      ]
+    },
+    "gft-expr": {
+      "patterns": [
+        { "include": "#gft-string" },
+        {
+          "match": "\\.(?:[A-Za-z_][\\w]*(?:\\.[A-Za-z_][\\w]*)*)",
+          "name": "variable.other.property.gft"
+        },
+        {
+          "match": "\\b(upper|lower|title|join|default|safeHTML|contains|trim|old|fieldErrors|hasError|vite|printf|index|with|range|if|not|and|or|eq|ne|lt|le|gt|ge)\\b",
+          "name": "support.function.gft"
+        },
+        {
+          "match": "\\$[A-Za-z_][\\w]*",
+          "name": "variable.other.gft"
+        },
+        {
+          "match": "\\b[0-9]+(?:\\.[0-9]+)?\\b",
+          "name": "constant.numeric.gft"
+        },
+        {
+          "match": "\\b(true|false|nil)\\b",
+          "name": "constant.language.gft"
+        }
+      ]
+    },
+    "gft-string": {
+      "patterns": [
+        {
+          "name": "string.quoted.double.gft",
+          "begin": "\"",
+          "end": "\"",
+          "patterns": [
+            { "match": "\\\\.", "name": "constant.character.escape.gft" }
+          ]
+        },
+        {
+          "name": "string.quoted.single.gft",
+          "begin": "'",
+          "end": "'",
+          "patterns": [
+            { "match": "\\\\.", "name": "constant.character.escape.gft" }
+          ]
+        }
+      ]
+    },
+    "gft-attrs": {
+      "patterns": [
+        { "include": "#gft-string" },
+        {
+          "match": "\\b(action|method|label|type|value|options|name)\\b(?==)",
+          "name": "entity.other.attribute-name.gft"
+        },
+        {
+          "match": "\\.(?:[A-Za-z_][\\w]*(?:\\.[A-Za-z_][\\w]*)*)",
+          "name": "variable.other.property.gft"
+        }
+      ]
+    },
+    "gft-directives": {
+      "patterns": [
+        {
+          "match": "(?m)^\\s*(#)(layout)\\s+(\"[^\"]*\"|'[^']*')\\s*$",
+          "captures": {
+            "1": { "name": "punctuation.definition.directive.gft" },
+            "2": { "name": "keyword.control.gft.layout" },
+            "3": { "name": "string.quoted.gft.path" }
+          }
+        },
+        {
+          "match": "(?m)^\\s*(#)(slot|endslot)\\s*(\"[^\"]*\"|'[^']*')?",
+          "captures": {
+            "1": { "name": "punctuation.definition.directive.gft" },
+            "2": { "name": "keyword.control.gft.slot" },
+            "3": { "name": "string.quoted.gft.path" }
+          }
+        },
+        {
+          "match": "(#)(place|partial|vite|error)\\b\\s*(\"[^\"]*\"|'[^']*')(?:\\s+(\"[^\"]*\"|'[^']*'))?",
+          "captures": {
+            "1": { "name": "punctuation.definition.directive.gft" },
+            "2": { "name": "keyword.control.gft.include" },
+            "3": { "name": "string.quoted.gft.path" },
+            "4": { "name": "string.quoted.gft.default" }
+          }
+        },
+        {
+          "match": "(#)(token)\\b",
+          "captures": {
+            "1": { "name": "punctuation.definition.directive.gft" },
+            "2": { "name": "keyword.control.gft.form" }
+          }
+        },
+        {
+          "match": "(?m)^\\s*(#)(form)\\s+(.*)$",
+          "captures": {
+            "1": { "name": "punctuation.definition.directive.gft" },
+            "2": { "name": "keyword.control.gft.form" },
+            "3": { "patterns": [{ "include": "#gft-attrs" }] }
+          }
+        },
+        {
+          "match": "(?m)^\\s*(#)(endform)\\b",
+          "captures": {
+            "1": { "name": "punctuation.definition.directive.gft" },
+            "2": { "name": "keyword.control.gft.form" }
+          }
+        },
+        {
+          "match": "(?m)^\\s*(#)(field)\\s+(.*)$",
+          "captures": {
+            "1": { "name": "punctuation.definition.directive.gft" },
+            "2": { "name": "keyword.control.gft.form" },
+            "3": { "patterns": [{ "include": "#gft-attrs" }] }
+          }
+        },
+        {
+          "match": "(#)(eachor)\\s+(.+)$",
+          "captures": {
+            "1": { "name": "punctuation.definition.directive.gft" },
+            "2": { "name": "keyword.control.gft.loop" },
+            "3": { "patterns": [{ "include": "#gft-expr" }] }
+          }
+        },
+        {
+          "match": "(#)(each)\\s+(.+?)\\s+(as)\\s+(\\w+)",
+          "captures": {
+            "1": { "name": "punctuation.definition.directive.gft" },
+            "2": { "name": "keyword.control.gft.loop" },
+            "3": { "patterns": [{ "include": "#gft-expr" }] },
+            "4": { "name": "keyword.control.gft.loop" },
+            "5": { "name": "variable.other.gft" }
+          }
+        },
+        {
+          "match": "(#)(when|orwhen|unless)\\s+(.+)$",
+          "captures": {
+            "1": { "name": "punctuation.definition.directive.gft" },
+            "2": { "name": "keyword.control.gft.condition" },
+            "3": { "patterns": [{ "include": "#gft-expr" }] }
+          }
+        },
+        {
+          "match": "(#)(otherwise|endwhen|endunless)\\b",
+          "captures": {
+            "1": { "name": "punctuation.definition.directive.gft" },
+            "2": { "name": "keyword.control.gft.condition" }
+          }
+        },
+        {
+          "match": "(#)(endeach)\\b",
+          "captures": {
+            "1": { "name": "punctuation.definition.directive.gft" },
+            "2": { "name": "keyword.control.gft.loop" }
+          }
+        },
+        {
+          "match": "(#)(signedin|signedout|endsignedin|endsignedout)\\b",
+          "captures": {
+            "1": { "name": "punctuation.definition.directive.gft" },
+            "2": { "name": "keyword.control.gft.auth" }
+          }
+        }
+      ]
+    }
+  }
+}

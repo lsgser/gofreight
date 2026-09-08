@@ -1,0 +1,118 @@
+{
+  "GFT layout page": {
+    "prefix": "gft-layout",
+    "body": [
+      "#layout \"layouts.application\"",
+      "",
+      "#slot \"title\"",
+      "${1:Page title}",
+      "#endslot",
+      "",
+      "#slot \"content\"",
+      "$0",
+      "#endslot"
+    ],
+    "description": "Layout with title and content slots"
+  },
+  "GFT output expression": {
+    "prefix": "gft-echo",
+    "body": "{= ${1:.Field} }",
+    "description": "Escaped output expression"
+  },
+  "GFT raw output": {
+    "prefix": "gft-raw",
+    "body": "{! ${1:.HTML} !}",
+    "description": "Unescaped raw HTML output"
+  },
+  "GFT comment": {
+    "prefix": "gft-comment",
+    "body": "{# ${1:comment} #}",
+    "description": "GFT block comment"
+  },
+  "GFT each loop": {
+    "prefix": "gft-each",
+    "body": [
+      "#each ${1:.Items} as ${2:item}",
+      "  $0",
+      "#endeach"
+    ],
+    "description": "Each loop"
+  },
+  "GFT each-or-empty": {
+    "prefix": "gft-eachor",
+    "body": [
+      "#eachor ${1:.Items} as ${2:item}",
+      "  $0",
+      "#otherwise",
+      "  <p>No items.</p>",
+      "#endeach"
+    ],
+    "description": "Each loop with empty fallback"
+  },
+  "GFT when conditional": {
+    "prefix": "gft-when",
+    "body": [
+      "#when ${1:.Condition}",
+      "  $0",
+      "#endwhen"
+    ],
+    "description": "When conditional"
+  },
+  "GFT unless conditional": {
+    "prefix": "gft-unless",
+    "body": [
+      "#unless ${1:.Condition}",
+      "  $0",
+      "#endunless"
+    ],
+    "description": "Unless conditional"
+  },
+  "GFT form": {
+    "prefix": "gft-form",
+    "body": [
+      "#form action=\"${1:/path}\" method=\"${2|POST,PUT,PATCH,DELETE,GET|}\"",
+      "  #token",
+      "  $0",
+      "#endform"
+    ],
+    "description": "Form with CSRF token"
+  },
+  "GFT field": {
+    "prefix": "gft-field",
+    "body": "#field \"${1:name}\" label=\"${2:Label}\" type=\"${3|text,email,password,textarea,select,checkbox|}\"",
+    "description": "Form field line"
+  },
+  "GFT partial": {
+    "prefix": "gft-partial",
+    "body": "#partial \"${1:partials/name}\"",
+    "description": "Include a partial template"
+  },
+  "GFT place slot": {
+    "prefix": "gft-place",
+    "body": "#place \"${1:content}\"${2: \"${3:Default}\"}",
+    "description": "Render a layout slot"
+  },
+  "GFT signed in": {
+    "prefix": "gft-signedin",
+    "body": [
+      "#signedin",
+      "  $0",
+      "#endsignedin"
+    ],
+    "description": "Authenticated user block"
+  },
+  "GFT signed out": {
+    "prefix": "gft-signedout",
+    "body": [
+      "#signedout",
+      "  $0",
+      "#endsignedout"
+    ],
+    "description": "Guest user block"
+  },
+  "GFT vite asset": {
+    "prefix": "gft-vite",
+    "body": "#vite \"${1:resources/js/app.js}\"",
+    "description": "Vite entry script"
+  }
+}

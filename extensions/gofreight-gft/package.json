@@ -1,0 +1,60 @@
+{
+  "name": "gofreight-gft",
+  "displayName": "Gofreight GFT",
+  "description": "Syntax highlighting, snippets, and editor support for Gofreight Template (.gft) files",
+  "version": "0.1.0",
+  "publisher": "gofreight",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lsgser/gofreight",
+    "directory": "extensions/gofreight-gft"
+  },
+  "homepage": "https://lsgser.github.io/gofreight-web/docs/templating",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Snippets"
+  ],
+  "keywords": [
+    "gofreight",
+    "gft",
+    "template",
+    "html"
+  ],
+  "contributes": {
+    "languages": [
+      {
+        "id": "gft",
+        "aliases": [
+          "GFT",
+          "Gofreight Template",
+          "gofreight-gft"
+        ],
+        "extensions": [
+          ".gft"
+        ],
+        "configuration": "./language-configuration.json",
+        "icon": {
+          "light": "./icons/gft-light.svg",
+          "dark": "./icons/gft-dark.svg"
+        }
+      }
+    ],
+    "grammars": [
+      {
+        "language": "gft",
+        "scopeName": "source.gft",
+        "path": "./syntaxes/gft.tmLanguage.json"
+      }
+    ],
+    "snippets": [
+      {
+        "language": "gft",
+        "path": "./snippets/gft.json"
+      }
+    ]
+  }
+}

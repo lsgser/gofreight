@@ -24,6 +24,18 @@ app/views/
     └── edit.gft
 ```
 
+## Editor support
+
+Install the **Gofreight GFT** VS Code extension for syntax highlighting, snippets, and block folding in `.gft` files:
+
+```bash
+cd extensions/gofreight-gft
+vsce package
+code --install-extension gofreight-gft-0.1.0.vsix
+```
+
+Or press **F5** from `extensions/gofreight-gft/` to open an Extension Development Host. See `extensions/gofreight-gft/README.md` for details.
+
 ## Output
 
 | Syntax | Meaning |
