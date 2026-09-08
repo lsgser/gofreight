@@ -302,6 +302,16 @@ gofreight migrate
 gofreight serve          # http://localhost:5000
 ` + "```" + `
 
+## Production
+
+` + "```bash" + `
+gofreight build                    # bin/{{.Name}}
+gofreight build --os linux --arch amd64
+GOFREIGHT_ENV=production ./bin/{{.Name}}
+` + "```" + `
+
+See the [deployment guide](https://lsgser.github.io/gofreight-web/docs/deployment).
+
 Admin (development): http://localhost:5000/admin
 
 ## Layout
@@ -487,11 +497,15 @@ const mailDocTmpl = `package mail
 | Mailables
 |--------------------------------------------------------------------------
 |
-| Mailable classes encapsulate email content and recipients. Templates live
-| in app/views/mail/. Configure delivery via MAIL_DRIVER in .env.
+| Mailable classes encapsulate email content and recipients. GFT templates live
+| in app/views/mail/ with layout app/views/layouts/mail/default.gft.
+| Configure delivery via MAIL_DRIVER in .env.
 |
 | Generate a mailable:
 |   gofreight make:mail WelcomeMail
+|
+| Preview without sending:
+|   gofreight mail:preview WelcomeMail
 |
 */
 `
@@ -754,6 +768,23 @@ database.SchemaCreate(ctx, "users", func(b *database.Blueprint) {
 Legacy SQL files (` + "*.sql`" + `) in this directory are still supported when ` + "`tools/migrate/`" + ` is not present.
 `
 
+const mailLayoutDefaultTmpl = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>#place "subject" "Email"</title>
+  <style>
+    body { font-family: system-ui, sans-serif; line-height: 1.5; color: #1a1a1a; margin: 0; padding: 0; background: #f4f4f5; }
+    .wrap { max-width: 560px; margin: 24px auto; background: #fff; border-radius: 8px; padding: 32px; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+  </style>
+</head>
+<body>
+  <div class="wrap">#place "content"</div>
+</body>
+</html>
+`
+
 const gftLayoutTmpl = `{# --------------------------------------------------------------------------
    Layout: Application Shell
    -------------------------------------------------------------------------- #}
@@ -764,6 +795,7 @@ const gftLayoutTmpl = `{# ------------------------------------------------------
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="color-scheme" content="light dark">
   <title>#place "title" "{{.Name}}"</title>
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="/assets/app.css">
   <script>
     (function () {
@@ -908,6 +940,13 @@ const layoutTmpl = `<!DOCTYPE html>
   <main>{{.Content}}</main>
 </body>
 </html>
+`
+
+const faviconTmpl = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <rect width="32" height="32" rx="8" fill="#0f172a"/>
+  <path d="M7 10h18M7 16h13M7 22h16" stroke="#34d399" stroke-width="2.2" stroke-linecap="round"/>
+  <path d="M22 14.5 26 16.5 22 18.5" stroke="#60a5fa" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
 `
 
 const cssTmpl = `/*

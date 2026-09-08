@@ -5,7 +5,8 @@ go 1.26.0
 require (
 	github.com/graph-gophers/dataloader/v7 v7.2.0
 	github.com/graphql-go/graphql v0.8.1
-	github.com/lsgser/gofreight v0.4.1
+	github.com/joho/godotenv v1.5.1
+	github.com/lsgser/gofreight v0.5.0
 )
 
 require (
@@ -16,7 +17,6 @@ require (
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/gorilla/websocket v1.5.3 // indirect
 	github.com/hashicorp/golang-lru/v2 v2.0.7 // indirect
-	github.com/joho/godotenv v1.5.1 // indirect
 	github.com/klauspost/compress v1.19.2 // indirect
 	github.com/klauspost/cpuid/v2 v2.4.0 // indirect
 	github.com/klauspost/crc32 v1.3.0 // indirect

@@ -30,12 +30,20 @@ func Mail(appPath, name string) error {
 	data := struct{ StructName, Module, ViewName string }{
 		StructName: structName,
 		Module:     moduleName(appPath),
-		ViewName:   base + ".html",
+		ViewName:   "mail/" + base + ".gft",
 	}
 	if err := writeTemplate(filepath.Join(mailDir, base+".go"), mailTmpl, data); err != nil {
 		return err
 	}
-	return writeTemplate(filepath.Join(viewDir, base+".html"), mailViewTmpl, data)
+	layoutDir := filepath.Join(appPath, "app", "views", "layouts", "mail")
+	os.MkdirAll(layoutDir, 0755)
+	layoutPath := filepath.Join(layoutDir, "default.gft")
+	if _, err := os.Stat(layoutPath); os.IsNotExist(err) {
+		if err := writeTemplate(layoutPath, mailLayoutDefaultTmpl, nil); err != nil {
+			return err
+		}
+	}
+	return writeTemplate(filepath.Join(viewDir, base+".gft"), mailViewTmpl, data)
 }
 
 // Job generates an app job in app/jobs/.
@@ -126,8 +134,8 @@ func New{{.StructName}}(to ...string) *{{.StructName}} {
 	}
 }
 
-func (m *{{.StructName}}) Send(mailer gofmail.Mailer, viewsDir string) error {
-	msg := gofmail.NewMailable(viewsDir, "{{.ViewName}}", m.Subject, m.To...)
+func (m *{{.StructName}}) Send(mailer gofmail.Mailer) error {
+	msg := gofmail.NewMailable(gofmail.DefaultViewsRoot, "{{.ViewName}}", m.Subject, m.To...)
 	for k, v := range m.Data {
 		msg.With(k, v)
 	}
@@ -135,8 +143,12 @@ func (m *{{.StructName}}) Send(mailer gofmail.Mailer, viewsDir string) error {
 }
 `
 
-const mailViewTmpl = `<h1>{{.StructName}}</h1>
+const mailViewTmpl = `#layout "layouts.mail.default"
+
+#slot "content"
+<h1>{{.StructName}}</h1>
 <p>Hello,</p>
+#endslot
 `
 
 const jobTmpl = `package jobs

@@ -46,10 +46,6 @@ func initCommands() {
 		Usage: "gofreight serve", Run: handleServe,
 	})
 	register(command{
-		Name: "test", Category: "app", Description: "Run the application tests",
-		Usage: "gofreight test [packages]", Run: handleTest,
-	})
-	register(command{
 		Name: "dev", Category: "app", Description: "Run the dev server with file watching",
 		Usage: "gofreight dev [dir]", Run: handleWatch,
 	})
@@ -137,6 +133,9 @@ func initCommands() {
 	})
 
 	registerMakeCommands()
+	registerBuildCommand()
+	registerTestCommands()
+	registerMailCommands()
 	registerQueueCommands()
 	registerCacheCommands()
 	registerConfigCommands()

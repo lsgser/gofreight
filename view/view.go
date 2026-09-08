@@ -13,12 +13,20 @@ import (
 
 // Engine renders HTML templates with layouts and partials using Gofreight Templates (GFT).
 type Engine struct {
-	mu        sync.RWMutex
-	templates *template.Template
-	layout    string
-	funcs     template.FuncMap
-	root      string
-	meta      map[string]CompiledGFT
+	mu               sync.RWMutex
+	templates        *template.Template
+	layout           string
+	funcs            template.FuncMap
+	root             string
+	meta             map[string]CompiledGFT
+	reloadOnRender   bool
+}
+
+// SetReloadOnRender reloads templates before each render (development hot reload).
+func (e *Engine) SetReloadOnRender(reload bool) {
+	e.mu.Lock()
+	defer e.mu.Unlock()
+	e.reloadOnRender = reload
 }
 
 // New creates a view engine rooted at the given directory (e.g. "app/views").
@@ -83,6 +91,11 @@ func (e *Engine) Load() error {
 
 // Render executes a template with optional layout wrapping.
 func (e *Engine) Render(w http.ResponseWriter, name string, data any) error {
+	if e.shouldReload() {
+		if err := e.Load(); err != nil {
+			return err
+		}
+	}
 	layout := e.layout
 	if m, ok := e.meta[name]; ok && m.Layout != "" {
 		layout = m.Layout
@@ -90,61 +103,109 @@ func (e *Engine) Render(w http.ResponseWriter, name string, data any) error {
 	return e.RenderWithLayout(w, name, layout, data)
 }
 
+// RenderString renders a template to an HTML string (with GFT layout when declared).
+func (e *Engine) RenderString(name string, data any) (string, error) {
+	if e.shouldReload() {
+		if err := e.Load(); err != nil {
+			return "", err
+		}
+	}
+	layout := e.layout
+	if m, ok := e.meta[name]; ok && m.Layout != "" {
+		layout = m.Layout
+	}
+	return e.renderStringWithLayout(name, layout, data)
+}
+
 // RenderWithLayout renders a template wrapped in the specified layout.
 func (e *Engine) RenderWithLayout(w http.ResponseWriter, name, layout string, data any) error {
-	tmpl, err := e.getTemplates()
+	html, err := e.renderStringWithLayout(name, layout, data)
 	if err != nil {
 		return err
 	}
-
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	_, err = w.Write([]byte(html))
+	return err
+}
+
+func (e *Engine) renderStringWithLayout(name, layout string, data any) (string, error) {
+	tmpl, err := e.getTemplates()
+	if err != nil {
+		return "", err
+	}
 
 	meta := e.meta[name]
 	if meta.Layout != "" {
 		layout = meta.Layout
 	}
 	if layout == "" {
-		return tmpl.ExecuteTemplate(w, name, data)
+		return e.executeString(tmpl, name, data)
 	}
 
 	content := ""
 	if sec := meta.Sections["content"]; sec != "" {
 		content, err = e.executeSource(sec, data)
 		if err != nil {
-			return err
+			return "", err
 		}
 	} else {
 		content, err = e.executeString(tmpl, name, data)
 		if err != nil {
-			return err
+			return "", err
 		}
 	}
 
-	layoutData := mergeLayoutData(data, content, meta)
-	return tmpl.ExecuteTemplate(w, layout, layoutData)
+	sections, err := e.renderSections(meta, data)
+	if err != nil {
+		return "", err
+	}
+
+	layoutData := mergeLayoutData(data, content, sections)
+	return e.executeString(tmpl, layout, layoutData)
 }
 
-func mergeLayoutData(data any, content string, meta CompiledGFT) map[string]any {
+func (e *Engine) renderSections(meta CompiledGFT, data any) (map[string]template.HTML, error) {
+	sections := make(map[string]template.HTML, len(meta.Sections))
+	for name, source := range meta.Sections {
+		if name == "content" {
+			continue
+		}
+		rendered, err := e.executeSource(source, data)
+		if err != nil {
+			return nil, fmt.Errorf("render section %q: %w", name, err)
+		}
+		sections[name] = template.HTML(rendered)
+	}
+	return sections, nil
+}
+
+func mergeLayoutData(data any, content string, sections map[string]template.HTML) map[string]any {
 	layoutData := map[string]any{
-		"Content": template.HTML(content),
-		"Data":    data,
-		"Sections": map[string]template.HTML{},
+		"Content":  template.HTML(content),
+		"Data":     data,
+		"Sections": sections,
 	}
 	if m, ok := data.(map[string]any); ok {
 		for k, v := range m {
 			layoutData[k] = v
 		}
 	}
-	sections := layoutData["Sections"].(map[string]template.HTML)
-	for k, v := range meta.Sections {
-		sections[k] = template.HTML(v)
+	if sections == nil {
+		sections = map[string]template.HTML{}
+		layoutData["Sections"] = sections
 	}
 	if _, ok := sections["content"]; !ok && content != "" {
 		sections["content"] = template.HTML(content)
 		layoutData["Content"] = template.HTML(content)
+		layoutData["Sections"] = sections
 	}
-	layoutData["Sections"] = sections
 	return layoutData
+}
+
+func (e *Engine) shouldReload() bool {
+	e.mu.RLock()
+	defer e.mu.RUnlock()
+	return e.reloadOnRender
 }
 
 // Partial renders a partial template (no layout).

@@ -84,6 +84,9 @@ func New() *Application {
 	r.Use(middleware.MethodSpoof)
 
 	views := view.New("app/views")
+	if cfg.IsDevelopment() {
+		views.SetReloadOnRender(true)
+	}
 	assetPipeline := assets.New("public")
 	jobQueue := jobs.New()
 	translator := i18n.New(cfg.Locale(), "en")

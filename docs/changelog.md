@@ -5,12 +5,25 @@ All notable changes to Gofreight are documented here. The project follows [Seman
 Install a specific release:
 
 ```bash
-go install github.com/lsgser/gofreight/cmd/gofreight@v0.4.1
+go install github.com/lsgser/gofreight/cmd/gofreight@v0.5.0
 ```
 
 ---
 
-## Unreleased
+## 0.5.0 — September 8, 2026
+
+### Added
+
+- **Production build command** — `gofreight build` compiles a production binary with cross-compile flags (`--os`, `--arch`), optional `--route-cache`, and deploy checklist output
+- **Separate test commands** — `gofreight test` runs gftest feature tests in `tests/`; `gofreight test:unit` runs Go unit tests in `app/` (distinct from raw `go test ./...`)
+- **GFT mail templates** — mailables render `.gft` views through the view engine with `app/views/layouts/mail/default.gft`; legacy `.html` templates still supported
+- **`gofreight mail:preview`** — render a mailable to stdout, a file, or the browser without sending mail
+- **Development hot reload** — `gofreight serve` watches `.go`, `.gft`, `.html`, `.css`, and config files in development; GFT views reload on each request
+- **Favicon** — new apps include `public/favicon.svg` linked from the default layout
+
+### Fixed
+
+- **GFT title slots** — `#slot "title"` content is executed before layout render (fixes browser tab showing `{{.Name}} — Welcome`)
 
 ---
 
@@ -154,6 +167,25 @@ Initial public release — a batteries-included Go web framework you compile to 
 ---
 
 ## Upgrade notes
+
+### From 0.4.1 to 0.5.0
+
+1. Update the module version in your app's `go.mod`:
+
+   ```bash
+   go get github.com/lsgser/gofreight@v0.5.0
+   go mod tidy
+   ```
+
+2. Reinstall the CLI:
+
+   ```bash
+   go install github.com/lsgser/gofreight/cmd/gofreight@v0.5.0
+   ```
+
+3. **Testing** — `gofreight test` now runs feature tests in `tests/` only; use `gofreight test:unit` for Go unit tests in `app/`, or `go test ./...` for everything.
+
+4. **Mail** — new mailables use GFT templates (`app/views/mail/*.gft`) with `app/views/layouts/mail/default.gft`. Existing `.html` mail views continue to work. Preview with `gofreight mail:preview`.
 
 ### From 0.4.0 to 0.4.1
 

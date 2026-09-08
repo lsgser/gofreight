@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"os"
-	"os/exec"
 
 	"github.com/lsgser/gofreight/config"
 	"github.com/lsgser/gofreight/database"
@@ -27,16 +26,6 @@ func handleWatch(args []string) {
 	}
 	if err := dev.Watch(root, "go", "run", "."); err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
-		os.Exit(1)
-	}
-}
-
-func handleTest(args []string) {
-	cmdArgs := append([]string{"test", "./..."}, args...)
-	cmd := exec.Command("go", cmdArgs...)
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	if err := cmd.Run(); err != nil {
 		os.Exit(1)
 	}
 }

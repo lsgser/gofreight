@@ -48,8 +48,11 @@ gofreight serve
 
 Loads `.env`, prints the development server banner (local URL and admin link in development), then runs `go run .`.
 
+In **development** (`GOFREIGHT_ENV=development`), `serve` automatically enables **hot reload** — the server restarts when `.go`, `.gft`, `.html`, `.css`, `.sql`, or config files change. GFT views also reload on each request without a restart.
+
 ```bash
 gofreight serve
+# Hot reload enabled — watching . (Ctrl+C to stop)
 # Local   http://localhost:5000
 # Admin   http://localhost:5000/admin  (development only)
 ```
@@ -60,14 +63,32 @@ Use this for normal local development. The server reads `PORT` and `HOST` from `
 
 ### `gofreight dev [dir]` / `gofreight watch`
 
-Runs the app with **file watching**. When `.go`, `.html`, `.sql`, or `.css` files change under `dir` (default `.`), the dev server restarts automatically.
+Same nodemon-style file watcher as `gofreight serve` in development. Restarts the app when watched files change under `dir` (default `.`).
 
 ```bash
 gofreight dev
 gofreight dev ./cmd   # watch a subdirectory only
 ```
 
-Equivalent to `watch` (hidden alias). Uses `go run .` under the hood.
+Watched extensions: `.go`, `.gft`, `.html`, `.css`, `.sql`, `.env`, `.yaml`, `.json`. Equivalent to `watch` (hidden alias).
+
+---
+
+### `gofreight build`
+
+Compiles your application into a **single production binary** with sensible defaults (`CGO_ENABLED=0`, `-trimpath`, stripped debug symbols).
+
+```bash
+gofreight build
+# Binary:   bin/myapp
+# Platform: linux/amd64
+
+gofreight build -o bin/myapp
+gofreight build --os linux --arch amd64
+gofreight build --route-cache   # optional: cache routes before build
+```
+
+After building, deploy the binary plus `.env`, `app/views/`, `public/`, `db/`, and `config/`. See **[Deployment](deployment.md)** for systemd, Docker, and nginx.
 
 ---
 
@@ -110,15 +131,59 @@ gofreight> exit
 
 ---
 
-### `gofreight test [packages]`
+### `gofreight test [flags] [packages]`
 
-Runs Go tests. Default: `go test ./...`. Pass package paths to narrow scope.
+Runs **Gofreight feature tests** — HTTP/integration tests in `tests/` using `gftest`. Sets `GOFREIGHT_ENV=test`.
+
+Default: `./tests/...`
 
 ```bash
 gofreight test
+gofreight test -v --filter TestPosts
+gofreight test --cover
 gofreight test ./tests/...
-gofreight test ./app/models/...
 ```
+
+Generate tests: `gofreight make:test Posts`
+
+---
+
+### `gofreight test:unit [flags] [packages]`
+
+Runs **Go unit tests** for application code (models, services, etc.). Sets `GOFREIGHT_ENV=test`.
+
+Default: `./app/...`
+
+```bash
+gofreight test:unit
+gofreight test:unit ./app/models/...
+gofreight test:unit -v --filter TestValidate
+```
+
+For full control (all packages), use standard Go: `go test ./...`
+
+See **[Testing](testing.md)** for `gftest`, factories, and BDD-style tests.
+
+---
+
+### `gofreight mail:preview <name> [flags]`
+
+Renders a mailable GFT (or `.html`) template without sending email. Useful when iterating on email design.
+
+```bash
+gofreight mail:preview WelcomeEmail
+gofreight mail:preview mail/welcome_email_mail --data '{"Name":"Ada"}'
+gofreight mail:preview WelcomeEmail --out /tmp/welcome.html --open
+```
+
+| Flag | Description |
+|------|-------------|
+| `--data JSON` | Template variables |
+| `--out`, `-o` | Write HTML to a file |
+| `--open` | Open in the default browser |
+| `--views PATH` | Views root (default `app/views`) |
+
+See **[Mail](mail.md)**.
 
 ---
 
@@ -128,7 +193,7 @@ Prints framework version, current environment, working directory, and masked dat
 
 ```bash
 gofreight about
-# Gofreight 0.4.1
+# Gofreight 0.5.0
 # Environment development
 # Path /Users/you/projects/blog
 # Database sqlite://***@/db/development.db
@@ -480,11 +545,12 @@ gofreight make:service PostPublishing
 
 ### `gofreight make:mail` / `make:mailable <Name>`
 
-Mailable class + GFT email view.
+Mailable class + GFT view in `app/views/mail/` and shared layout `app/views/layouts/mail/default.gft`.
 
 ```bash
 gofreight make:mail WelcomeEmail
 gofreight make:mailable OrderShipped   # alias
+# preview: gofreight mail:preview WelcomeEmail
 ```
 
 ---

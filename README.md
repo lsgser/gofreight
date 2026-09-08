@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-  <strong>v0.4.1</strong> · <a href="https://github.com/lsgser/gofreight">github.com/lsgser/gofreight</a>
+  <strong>v0.5.0</strong> · <a href="https://github.com/lsgser/gofreight">github.com/lsgser/gofreight</a>
 </p>
 
 <p align="center">
@@ -106,7 +106,8 @@ gofreight serve          # or: go run .
 | `gofreight key:generate` | Generate a unique `APP_KEY` in `.env` |
 | `gofreight serve` | Start the dev server (`go run .`) |
 | `gofreight dev` | Auto-restart on file changes |
-| `gofreight test` | Run the test suite |
+| `gofreight test` | Run gftest feature tests in `tests/` |
+| `gofreight test:unit` | Run Go unit tests in `app/` |
 | `gofreight migrate` | Apply pending migrations |
 | `gofreight db:seed` | Seed the database |
 | `gofreight make:seeder Name` | Create a Go seeder class |
@@ -260,7 +261,8 @@ app.Run() // views, /health, /assets, /admin (dev), graceful shutdown
 ```bash
 gofreight dev              # auto-reload on file changes
 gofreight tinker           # interactive SQL REPL
-gofreight test             # run test suite
+gofreight test             # feature tests (tests/)
+gofreight test:unit        # unit tests (app/)
 gofreight route:list       # inspect route definitions
 ```
 
@@ -678,7 +680,8 @@ func TestPosts(t *testing.T) {
 
 ```bash
 gofreight test
-gofreight test ./tests/... -v -cover
+gofreight test -v --cover
+gofreight test:unit
 ```
 
 See [docs/testing.md](docs/testing.md).

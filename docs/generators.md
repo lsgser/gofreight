@@ -202,7 +202,7 @@ Field names are lowercased for database columns (`title` → `db:"title"`) and t
 | `gofreight make:migration name` | Empty migration stub |
 | `gofreight make:api Name fields...` | JSON API controller + resource |
 | `gofreight make:service Name` | Service class in `app/services/` |
-| `gofreight make:mail Name` | Mailable + view in `app/mail/` |
+| `gofreight make:mail Name` | Mailable + GFT view in `app/views/mail/` + mail layout |
 | `gofreight make:job Name` | Job class in `app/jobs/` |
 | `gofreight make:middleware Name` | Middleware in `app/middleware/` |
 | `gofreight make:policy Name` | Policy in `app/policies/` |

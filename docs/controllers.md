@@ -313,7 +313,7 @@ Transform models into consistent JSON with `app/resources/` and the `api` packag
 
 ## Reference app
 
-The [blog example](../examples/blog/app/controllers/) shows dual HTML/JSON controllers with associations and validation.
+The [blog example on GitHub](https://github.com/lsgser/gofreight/tree/main/examples/blog/app/controllers) shows dual HTML/JSON controllers with associations and validation.
 
 ## Related
 
@@ -321,4 +321,4 @@ The [blog example](../examples/blog/app/controllers/) shows dual HTML/JSON contr
 - [Middleware](middleware.md) — CSRF, sessions, auth
 - [ORM](orm.md) — models and queries
 - [Templating](templating.md) — GFT views
-- [Tutorial: HTML CRUD](../examples/blog/) — step-by-step CRUD (see web tutorial)
+- [Tutorial: HTML CRUD](tutorial-html-crud.md) — step-by-step CRUD with GFT

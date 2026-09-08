@@ -231,7 +231,7 @@ go run .
 `go.mod` contains:
 
 ```go
-require github.com/lsgser/gofreight v0.4.1
+require github.com/lsgser/gofreight v0.5.0
 ```
 
 Go downloads the framework module from the module proxy.
@@ -296,4 +296,4 @@ Your app is a **thin MVC shell**. Gofreight is the **engine** imported as a Go m
 - [CLI commands](commands.md) — full command reference
 - [Templating](templating.md) — GFT views under `app/views/`
 - [Testing](testing.md) — tests under `tests/`
-- [Main README](../README.md) — quick reference
+- [Getting Started](getting-started.md) — quick reference and first app

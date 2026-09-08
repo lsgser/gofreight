@@ -6,15 +6,49 @@ Deploy Gofreight applications as a single compiled binary with optional Redis, P
 
 ## Build for production
 
-```bash
-# From app root
-go build -o bin/myapp .
+From your application root:
 
-# Cross-compile (Linux from macOS)
-GOOS=linux GOARCH=amd64 go build -o bin/myapp .
+```bash
+gofreight build
+# Binary:   bin/myapp
+# Platform: darwin/arm64
+
+# Cross-compile for Linux
+gofreight build --os linux --arch amd64
+
+# Custom output path
+gofreight build -o bin/myapp
 ```
 
-The binary includes your app code and links against Gofreight — no separate runtime needed.
+`gofreight build` runs `go build` with production-friendly defaults (`CGO_ENABLED=0`, `-trimpath`, `-ldflags="-s -w"`). The binary includes your app and links against Gofreight — no separate runtime needed.
+
+Optional flags:
+
+| Flag | Description |
+|------|-------------|
+| `-o`, `--output` | Output path (default `bin/<module-name>`) |
+| `--os` | Target GOOS (`linux`, `darwin`, `windows`) |
+| `--arch` | Target GOARCH (`amd64`, `arm64`) |
+| `--route-cache` | Run `route:cache` before building |
+| `--no-trimpath` | Keep full file paths in the binary |
+
+Manual build (equivalent):
+
+```bash
+CGO_ENABLED=0 go build -trimpath -ldflags="-s -w" -o bin/myapp .
+```
+
+Deploy the binary **plus** runtime files:
+
+```
+bin/myapp
+.env
+app/views/
+public/
+db/
+config/
+storage/
+```
 
 ---
 

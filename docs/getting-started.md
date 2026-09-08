@@ -14,7 +14,7 @@ The binary installs to `$(go env GOPATH)/bin` (usually `~/go/bin`). Add it to yo
 
 ```bash
 export PATH="$PATH:$(go env GOPATH)/bin"
-gofreight version   # gofreight v0.4.1
+gofreight version   # gofreight v0.5.0
 ```
 
 **macOS (zsh)** — persist in `~/.zshrc`:
@@ -53,11 +53,23 @@ gofreight serve
 | http://localhost:5000/admin | Database admin (development only) |
 | http://localhost:5000/health | Health check JSON |
 
-### Development with file watching
+### Development with hot reload
+
+`gofreight serve` enables hot reload automatically in development — restarts on code changes and reloads `.gft` views on each request.
 
 ```bash
-gofreight dev    # restarts on .go / .gft / .css changes
+gofreight serve    # hot reload in development (default)
+gofreight dev      # explicit file watcher (same behavior)
 ```
+
+### Production build
+
+```bash
+gofreight build
+GOFREIGHT_ENV=production ./bin/myapp
+```
+
+Cross-compile for Linux: `gofreight build --os linux --arch amd64`. See **[Deployment](deployment.md)**.
 
 ---
 
@@ -254,7 +266,9 @@ See [Templating](templating.md) and [Forms & Validation](forms-validation.md).
 ## Testing
 
 ```bash
-gofreight test
+gofreight test              # feature tests (gftest in tests/)
+gofreight test:unit           # Go unit tests (app/)
+go test ./...                 # all packages — raw Go runner
 ```
 
 ```go

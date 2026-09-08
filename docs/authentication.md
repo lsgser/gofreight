@@ -76,7 +76,7 @@ Clients send `Authorization: Bearer <token>`.
 
 Optional env: `JWT_TTL=24h` (default 24 hours).
 
-See **[Tutorial: JWT Authentication](../examples/blog/)** (web: `tutorial-auth-jwt.md`).
+See **[Tutorial: JWT Authentication](tutorial-auth-jwt.md)**.
 
 ## Opaque API tokens
 

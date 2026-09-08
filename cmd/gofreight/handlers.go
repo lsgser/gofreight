@@ -11,6 +11,7 @@ import (
 
 	"github.com/lsgser/gofreight/config"
 	"github.com/lsgser/gofreight/database"
+	"github.com/lsgser/gofreight/dev"
 	"github.com/lsgser/gofreight/generator"
 	"github.com/lsgser/gofreight/jobs"
 	"github.com/lsgser/gofreight/version"
@@ -63,6 +64,13 @@ func handleServe(args []string) {
 	loadEnv()
 	cfg := config.Load()
 	printServeWelcome(cfg.Port, string(cfg.Environment))
+	if cfg.IsDevelopment() {
+		if err := dev.Watch(".", "go", "run", "."); err != nil {
+			fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+			os.Exit(1)
+		}
+		return
+	}
 	cmd := exec.Command("go", "run", ".")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr

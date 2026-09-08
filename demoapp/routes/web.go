@@ -19,6 +19,7 @@ package routes
 import (
 	"github.com/lsgser/gofreight/controller"
 	"github.com/lsgser/gofreight/router"
+	"github.com/lsgser/gofreight/version"
 )
 
 /*
@@ -34,7 +35,7 @@ func Web(r *router.Router) {
 		return base.RenderView("home/index", base.ViewData(map[string]any{
 			"Name":             "demoapp",
 			"DocsURL":          "https://lsgser.github.io/gofreight-web/",
-			"FrameworkVersion": "v0.4.1",
+			"FrameworkVersion": version.Module(),
 		}))
 	}), "home")
 

@@ -1,11 +1,7 @@
 package mail
 
 import (
-	"bytes"
 	"context"
-	"html/template"
-	"os"
-	"path/filepath"
 )
 
 // Mailable is an email with an HTML template view.
@@ -35,22 +31,10 @@ func (m *Mailable) With(key string, value any) *Mailable {
 	return m
 }
 
-// Render builds the HTML body from the template file.
+// Render builds the HTML body from the template file (GFT or html/template).
 func (m *Mailable) Render() (string, error) {
-	path := filepath.Join(m.viewsDir, m.View)
-	raw, err := os.ReadFile(path)
-	if err != nil {
-		return "", err
-	}
-	tmpl, err := template.New(m.View).Parse(string(raw))
-	if err != nil {
-		return "", err
-	}
-	var buf bytes.Buffer
-	if err := tmpl.Execute(&buf, m.Data); err != nil {
-		return "", err
-	}
-	return buf.String(), nil
+	viewsRoot, templateName := ResolveView(m.viewsDir, m.View)
+	return RenderView(viewsRoot, templateName, m.Data)
 }
 
 // Send renders and sends via the mailer.

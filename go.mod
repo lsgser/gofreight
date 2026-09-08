@@ -4,6 +4,7 @@ go 1.26.0
 
 require (
 	github.com/dromara/carbon/v2 v2.6.17
+	github.com/fsnotify/fsnotify v1.9.0
 	github.com/go-faker/faker/v4 v4.11.0
 	github.com/go-sql-driver/mysql v1.8.1
 	github.com/golang-jwt/jwt/v5 v5.3.1

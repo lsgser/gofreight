@@ -1,17 +1,48 @@
 # Testing
 
-Gofreight ships **`gftest`**, a full-featured testing library for HTTP endpoints, database assertions, factories, and BDD-style test organization.
+Gofreight ships **`gftest`** for HTTP feature tests, factories, and BDD-style organization. **Go unit tests** live in `app/` and other packages. Use separate CLI commands for each — don't mix them with a single `go test ./...` unless you intend to run everything.
 
-## Running tests
+## Test commands
+
+| Command | Purpose | Default packages |
+|---------|---------|------------------|
+| **`gofreight test`** | Gofreight **feature tests** (`gftest`, HTTP, DB assertions) | `./tests/...` |
+| **`gofreight test:unit`** | **Go unit tests** (models, services, pure logic) | `./app/...` |
+| **`go test ./...`** | Raw Go test runner — all packages, full control | `./...` |
+
+Both Gofreight commands set **`GOFREIGHT_ENV=test`** automatically.
+
+### Feature tests (gftest)
 
 ```bash
-gofreight test              # from app root — runs go test ./...
-go test ./...               # standard Go
-go test -v ./tests/...      # verbose, specific package
-go test -run TestPosts      # single test
+gofreight test                        # tests/ — HTTP & integration tests
+gofreight test -v                     # verbose
+gofreight test --filter TestPosts     # run matching tests
+gofreight test --cover                # coverage
+gofreight test ./tests/...            # explicit package path
 ```
 
-Set `GOFREIGHT_ENV=test` automatically via `gftest.NewApp`.
+Generate a new feature test:
+
+```bash
+gofreight make:test Posts
+```
+
+### Unit tests (Go)
+
+```bash
+gofreight test:unit                   # app/ packages
+gofreight test:unit ./app/models/...  # narrow scope
+gofreight test:unit -v --filter TestValidate
+```
+
+For package-level tests colocated with code, use standard Go:
+
+```bash
+go test ./app/models/... -v
+go test -run TestPosts ./...
+go test ./... -cover                  # entire module including tests/
+```
 
 ---
 
@@ -32,6 +63,8 @@ func TestHomePage(t *testing.T) {
     app.Get("/").AssertOk().AssertSee("Welcome")
 }
 ```
+
+Run with **`gofreight test`**, not `go test ./...`, so only your feature suite runs and `GOFREIGHT_ENV=test` is applied.
 
 ---
 
@@ -331,17 +364,33 @@ func TestPostsCRUD(t *testing.T) {
 
 ---
 
+## CI
+
+```bash
+# Feature / HTTP tests
+gofreight test --cover
+
+# Unit tests
+gofreight test:unit
+
+# Or run everything with Go directly
+go test ./... -cover
+```
+
+---
+
 ## Tips
 
-- Use `sqlite://:memory:` for fast isolated tests
+- Use `sqlite://:memory:` for fast isolated feature tests
 - Call `app.Draw(routes.Register)` after every `NewApp`
 - Use factories instead of hard-coded SQL inserts
 - Prefer `PostJSON` for API tests, `Post` with form body for HTML forms
-- Run `gofreight test` in CI the same way as locally
+- Use **`gofreight test`** for `tests/` and **`gofreight test:unit`** for `app/` — keep feature and unit suites separate
 
 ## Related
 
-- [Generators](generators.md) — `make:factory`, `make:test`
+- [Factories](factories.md) — `make:factory`, states, sequences
+- [Generators](generators.md) — `make:test`, `make:factory`
 - [Database](database.md) — migrations in tests
 - [Routing](routing.md) — testing named routes
 - [Authentication](authentication.md) — testing protected endpoints

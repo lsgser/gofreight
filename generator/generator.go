@@ -24,6 +24,7 @@ func NewApp(name string) error {
 		filepath.Join(root, "app", "policies"),
 		filepath.Join(root, "app", "requests"),
 		filepath.Join(root, "app", "views", "layouts"),
+		filepath.Join(root, "app", "views", "layouts", "mail"),
 		filepath.Join(root, "app", "views", "partials"),
 		filepath.Join(root, "app", "views", "components"),
 		filepath.Join(root, "app", "views", "mail"),
@@ -81,6 +82,7 @@ func NewApp(name string) error {
 		filepath.Join(root, ".env.example"):          envExampleTmpl,
 		filepath.Join(root, ".gitignore"):            gitignoreTmpl,
 		filepath.Join(root, "app", "views", "layouts", "application.gft"): gftLayoutTmpl,
+		filepath.Join(root, "app", "views", "layouts", "mail", "default.gft"): mailLayoutDefaultTmpl,
 		filepath.Join(root, "app", "views", "partials", "flash.gft"):       gftFlashPartialTmpl,
 		filepath.Join(root, "app", "views", "home", "index.gft"):            gftHomeTmpl,
 		filepath.Join(root, "app", "services", "example_service.go"):       exampleServiceTmpl,
@@ -97,6 +99,7 @@ func NewApp(name string) error {
 		filepath.Join(root, "tools", "migrate", "main.go"):              migrateToolMainTmpl,
 		filepath.Join(root, "db", "seeders", "doc.go"):                    seedersDocTmpl,
 		filepath.Join(root, "public", "app.css"):                           cssTmpl,
+		filepath.Join(root, "public", "favicon.svg"):                       faviconTmpl,
 		filepath.Join(root, "tests", "example_test.go"):                    testExampleTmpl,
 		filepath.Join(root, "tests", "factories", "factories.go"):          testFactoriesTmpl,
 	}
