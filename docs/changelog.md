@@ -5,12 +5,20 @@ All notable changes to Gofreight are documented here. The project follows [Seman
 Install a specific release:
 
 ```bash
-go install github.com/lsgser/gofreight/cmd/gofreight@v0.4.0
+go install github.com/lsgser/gofreight/cmd/gofreight@v0.4.1
 ```
 
 ---
 
 ## Unreleased
+
+---
+
+## 0.4.1 — September 8, 2026
+
+### Added
+
+- **GFT VS Code extension** — syntax highlighting, snippets, and language configuration for `.gft` templates (`extensions/gofreight-gft/`)
 
 ---
 
@@ -146,6 +154,23 @@ Initial public release — a batteries-included Go web framework you compile to 
 ---
 
 ## Upgrade notes
+
+### From 0.4.0 to 0.4.1
+
+1. Update the module version in your app's `go.mod`:
+
+   ```bash
+   go get github.com/lsgser/gofreight@v0.4.1
+   go mod tidy
+   ```
+
+2. Reinstall the CLI:
+
+   ```bash
+   go install github.com/lsgser/gofreight/cmd/gofreight@v0.4.1
+   ```
+
+3. **GFT templates** — optionally install the VS Code extension from `extensions/gofreight-gft/` for syntax highlighting and snippets.
 
 ### From 0.3.1 to 0.4.0
 

@@ -34,7 +34,7 @@ func Web(r *router.Router) {
 		return base.RenderView("home/index", base.ViewData(map[string]any{
 			"Name":             "demoapp",
 			"DocsURL":          "https://lsgser.github.io/gofreight-web/",
-			"FrameworkVersion": "v0.4.0",
+			"FrameworkVersion": "v0.4.1",
 		}))
 	}), "home")
 

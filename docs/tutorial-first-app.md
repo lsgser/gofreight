@@ -23,7 +23,7 @@ export PATH="$PATH:$(go env GOPATH)/bin"
 gofreight version
 ```
 
-You should see `gofreight v0.4.0` (or newer).
+You should see `gofreight v0.4.1` (or newer).
 
 ## Step 2 — Create a new app
 
