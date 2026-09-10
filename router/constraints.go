@@ -1,5 +1,26 @@
 package router
 
+/*
+|--------------------------------------------------------------------------
+| Constraints
+|--------------------------------------------------------------------------
+|
+| Implements Constraints as part of the router package in the Gofreight
+| framework. Key symbols: Where, WhereParam, MustCompileConstraint.
+| 
+| The router matches verbs and paths, supports groups, prefixes, named
+| routes, constraints, signed URLs, and domain routing.
+| 
+| Routes register in routes/web.go and routes/api.go; see docs/routing.md
+| for middleware and model binding.
+| 
+| Symbols defined here include: Where (Where attaches regex constraints to
+| route parameters.); WhereParam (WhereParam constrains a single route
+| parameter.); MustCompileConstraint (MustCompileConstraint compiles a
+| constraint pattern for reuse.).
+| 
+*/
+
 import (
 	"regexp"
 )

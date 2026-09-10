@@ -1,5 +1,29 @@
 package graphql
 
+/*
+|--------------------------------------------------------------------------
+| Mount
+|--------------------------------------------------------------------------
+|
+| Implements Mount as part of the graphql package in the Gofreight
+| framework. Key symbols: Mount, MountOn.
+| 
+| The graphql package integrates graphql-go with Gofreight: schema
+| registration, HTTP mount, playground, DataLoader batching, and
+| field-level rate limits.
+| 
+| Generate modules with gofreight make:graphql-module; SDL and resolvers
+| live under app/graphql in your project.
+| 
+| See docs/graphql.md and the tutorial for N+1 avoidance and security
+| middleware.
+| 
+| Symbols defined here include: Mount (Mount registers GraphQL routes on
+| the application router.); MountOn (Mountable matches router and channels
+| mount patterns.).
+| 
+*/
+
 import (
 	"net/http"
 	"strings"

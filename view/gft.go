@@ -1,5 +1,28 @@
 package view
 
+/*
+|--------------------------------------------------------------------------
+| Gft
+|--------------------------------------------------------------------------
+|
+| Compiles Gofreight Template source into Go html/template syntax.
+| 
+| Handles #layout, #slot, #each, #form, #partial, and output directives;
+| compiled metadata drives layout merging in view.go.
+| 
+| The view engine compiles Gofreight Templates (.gft) to html/template,
+| supports layouts, slots, partials, and RenderString for mail.
+| 
+| Views live under app/views; hot reload in development reloads templates
+| on each request when enabled.
+| 
+| Symbols defined here include: CompiledGFT (exported type); CompileGFT
+| (CompileGFT transforms Gofreight Template syntax into Go
+| html/template.); IsGFTSource (IsGFTSource returns true if the source
+| uses Gofreight Template directives.); GFTExtension (exported value).
+| 
+*/
+
 import (
 	"fmt"
 	"regexp"

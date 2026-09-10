@@ -1,5 +1,37 @@
 package application
 
+/*
+|--------------------------------------------------------------------------
+| Application
+|--------------------------------------------------------------------------
+|
+| Constructs Application with default LogMailer, memory queue, and view
+| engine; Run() starts HTTP.
+| 
+| Expose Jobs, Mailer, Router, and DB accessors used throughout
+| controllers and CLI tools.
+| 
+| The application package is the framework kernel: it constructs the
+| Application value that owns the router, ORM, mailer, cache, queue, and
+| view engine.
+| 
+| bootstrap/app.go in your project returns application.New() with your
+| bindings; Run() serves HTTP and optional background workers.
+| 
+| Most cross-cutting services are configured here or via
+| ConfigureIntegrations from environment variables.
+| 
+| Symbols defined here include: Application (exported type); New (New
+| creates and configures a new Application instance.); Bind (Bind
+| registers a transient service in the container.); Singleton (Singleton
+| registers a shared service in the container.); Make (Make resolves a
+| service from the container.); ConnectDatabase (ConnectDatabase
+| establishes the database connection using config.); UseFileSessions
+| (UseFileSessions switches session storage to disk files.);
+| UseRedisSessions (UseRedisSessions switches session storage to Redis.).
+| 
+*/
+
 import (
 	"context"
 	"fmt"

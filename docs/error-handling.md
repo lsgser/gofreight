@@ -1,3 +1,29 @@
+<!--
+| --------------------------------------------------------------------------
+| Error-handling
+| --------------------------------------------------------------------------
+|
+| Official Gofreight documentation consumed by the docs site and linked
+| from the CLI welcome page.
+|
+| Keep examples aligned with the current CLI and version; sync copies to
+| gofreight-web when publishing.
+|
+| Covers concepts, tutorials, and reference material for this topic.
+|
+
+-->
+
+<!--
+| --------------------------------------------------------------------------
+| Error handling
+| --------------------------------------------------------------------------
+|
+| Official Gofreight documentation (published on the docs site).
+|
+
+-->
+
 # Error handling
 
 Consistent error responses for panics, missing pages, and API failures.

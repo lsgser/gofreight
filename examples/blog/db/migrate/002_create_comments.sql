@@ -1,3 +1,19 @@
+-- --------------------------------------------------------------------------
+-- 002 Create Comments
+-- --------------------------------------------------------------------------
+--
+-- Database migration defining schema changes applied in order by gofreight
+-- migrate.
+--
+-- Pair up/down migrations when altering columns; prefer blueprint Go
+-- migrations for new projects.
+--
+-- --------------------------------------------------------------------------
+-- 002 Create Comments
+-- --------------------------------------------------------------------------
+--
+-- Database migration or schema SQL for versioned database changes.
+--
 -- Migration: create_comments
 CREATE TABLE IF NOT EXISTS comments (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,

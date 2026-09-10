@@ -1,5 +1,29 @@
 package i18n
 
+/*
+|--------------------------------------------------------------------------
+| I18n
+|--------------------------------------------------------------------------
+|
+| Implements I18n as part of the i18n package in the Gofreight framework.
+| Key symbols: Translator, New, LoadDir, SetLocale, Locale, T.
+| 
+| The i18n package loads JSON locale files from config/locales and
+| resolves translation keys in views and controllers.
+| 
+| Middleware can set locale from session or Accept-Language; helpers
+| mirror Laravel-style __() usage in GFT.
+| 
+| Symbols defined here include: Translator (exported type); New (New
+| creates a translator with default locale.); LoadDir (LoadDir loads JSON
+| translation files from a directory (e.g. config/locales/en.json).);
+| SetLocale (SetLocale sets the active locale.); Locale (Locale returns
+| the active locale.); T (T translates a key with optional :placeholder
+| replacements.); FormatNumber (FormatNumber formats a number for the
+| locale (basic grouping).).
+| 
+*/
+
 import (
 	"encoding/json"
 	"fmt"

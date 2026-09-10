@@ -1,3 +1,29 @@
+<!--
+| --------------------------------------------------------------------------
+| Plugins
+| --------------------------------------------------------------------------
+|
+| Official Gofreight documentation consumed by the docs site and linked
+| from the CLI welcome page.
+|
+| Keep examples aligned with the current CLI and version; sync copies to
+| gofreight-web when publishing.
+|
+| Covers concepts, tutorials, and reference material for this topic.
+|
+
+-->
+
+<!--
+| --------------------------------------------------------------------------
+| Plugins & lifecycle hooks
+| --------------------------------------------------------------------------
+|
+| Official Gofreight documentation (published on the docs site).
+|
+
+-->
+
 # Plugins & lifecycle hooks
 
 Gofreight provides a lightweight plugin registry for lifecycle hooks — useful for packages, internal modules, or app extensions that need to run code at boot time.

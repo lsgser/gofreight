@@ -1,5 +1,31 @@
 package router
 
+/*
+|--------------------------------------------------------------------------
+| Group
+|--------------------------------------------------------------------------
+|
+| Implements Group as part of the router package in the Gofreight
+| framework. Key symbols: MiddlewareFunc, RouteGroup, Group, GroupPrefix,
+| Prefix, Use.
+| 
+| The router matches verbs and paths, supports groups, prefixes, named
+| routes, constraints, signed URLs, and domain routing.
+| 
+| Routes register in routes/web.go and routes/api.go; see docs/routing.md
+| for middleware and model binding.
+| 
+| Symbols defined here include: MiddlewareFunc (exported type); RouteGroup
+| (exported type); Group (Group starts a route group. Call Prefix, Use,
+| Name, then Apply.); GroupPrefix (GroupPrefix registers routes under a
+| prefix (legacy sugar for Group(...).Prefix(p).Apply()).); Prefix (Prefix
+| sets the URI prefix for all routes in the group.); Use (Use attaches
+| middleware to all routes in the group (runs before route handlers).);
+| Middleware (Middleware is an alias for Use.); Name (Name sets a prefix
+| for route names inside the group (e.g. "api." → "api.users.index").).
+| 
+*/
+
 import (
 	"net/http"
 	"strings"

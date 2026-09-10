@@ -1,5 +1,28 @@
 package view
 
+/*
+|--------------------------------------------------------------------------
+| Context
+|--------------------------------------------------------------------------
+|
+| Implements Context as part of the view package in the Gofreight
+| framework. Key symbols: MergeRequestContext, Old, FieldErrors, HasError.
+| 
+| The view engine compiles Gofreight Templates (.gft) to html/template,
+| supports layouts, slots, partials, and RenderString for mail.
+| 
+| Views live under app/views; hot reload in development reloads templates
+| on each request when enabled.
+| 
+| Symbols defined here include: MergeRequestContext (MergeRequestContext
+| injects CSRF token, flash, validation errors, and old input into view
+| data.); Old (Old returns a repopulated field value (old input first,
+| then fallback).); FieldErrors (FieldErrors returns validation messages
+| for a field.); HasError (HasError reports whether a field has validation
+| errors.).
+| 
+*/
+
 import (
 	"net/http"
 

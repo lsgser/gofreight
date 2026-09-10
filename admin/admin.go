@@ -1,5 +1,33 @@
 package admin
 
+/*
+|--------------------------------------------------------------------------
+| Admin
+|--------------------------------------------------------------------------
+|
+| Implements Admin as part of the admin package in the Gofreight
+| framework. Key symbols: Config, DefaultConfig, Panel, New, Mount,
+| Dashboard.
+| 
+| The admin package exposes a development-only database browser and schema
+| tools.
+| 
+| It introspects tables and columns so you can inspect SQLite, PostgreSQL,
+| or MySQL data without leaving the browser.
+| 
+| Mount it only in non-production environments; see docs and application
+| wiring for route registration.
+| 
+| Symbols defined here include: Config (exported type); DefaultConfig
+| (DefaultConfig returns sensible defaults for local development.); Panel
+| (exported type); New (New creates an admin panel.); Mount (Mount
+| registers admin routes on the router. Only mounts if Development is
+| true.); Dashboard (Dashboard lists all tables.); TableIndex (TableIndex
+| lists records in a table.); TableSearch (TableSearch shows the search
+| interface (GET) or results (POST redirect).).
+| 
+*/
+
 import (
 	"context"
 	"crypto/subtle"

@@ -1,5 +1,27 @@
 package assets
 
+/*
+|--------------------------------------------------------------------------
+| Vite Proxy
+|--------------------------------------------------------------------------
+|
+| Implements Vite Proxy as part of the assets package in the Gofreight
+| framework. Key symbols: ViteProxyMiddleware.
+| 
+| The assets package connects your public/ directory and optional Vite dev
+| server to HTTP handlers.
+| 
+| In development, Vite can proxy hot module replacement; in production, a
+| manifest maps entry points to built files.
+| 
+| GFT templates use #vite and /assets/ paths documented in the templating
+| guide.
+| 
+| Symbols defined here include: ViteProxyMiddleware (ViteProxyMiddleware
+| forwards Vite dev-server paths when public/hot exists.).
+| 
+*/
+
 import (
 	"net/http"
 	"net/http/httputil"

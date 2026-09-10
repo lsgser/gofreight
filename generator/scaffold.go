@@ -1,5 +1,26 @@
 package generator
 
+/*
+|--------------------------------------------------------------------------
+| Scaffold
+|--------------------------------------------------------------------------
+|
+| Implements Scaffold as part of the generator package in the Gofreight
+| framework. Key symbols: Auth.
+| 
+| The generator package powers gofreight new and all make:* scaffolds.
+| 
+| It writes idiomatic directory layouts, GFT views, migrations, tests, and
+| auth stubs from templates.
+| 
+| CLI handlers in cmd/gofreight call into this package; templates live
+| primarily in templates.go.
+| 
+| Symbols defined here include: Auth (Auth generates user model,
+| migration, and login routes snippet.).
+| 
+*/
+
 import (
 	"os"
 	"path/filepath"

@@ -1,5 +1,30 @@
 package main
 
+/*
+|--------------------------------------------------------------------------
+| Gofreight CLI Entry Point
+|--------------------------------------------------------------------------
+|
+| Entry point for the gofreight CLI binary.
+| 
+| Parses os.Args, initializes the command registry, and dispatches to the
+| matching handler or prints usage.
+| 
+| Install with go install ./cmd/gofreight; subcommand implementations live
+| alongside this file.
+| 
+| This directory contains the gofreight CLI binary: command registration,
+| terminal UI, and handlers for make:*, migrate, serve, test, and
+| mail:preview.
+| 
+| Each subcommand lives in its own source file; commands.go registers the
+| catalog shown by gofreight list.
+| 
+| Install locally with go install ./cmd/gofreight from the framework
+| repository root.
+| 
+*/
+
 import (
 	"os"
 	"strings"

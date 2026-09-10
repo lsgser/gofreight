@@ -1,5 +1,36 @@
 package graphql
 
+/*
+|--------------------------------------------------------------------------
+| Dataloader
+|--------------------------------------------------------------------------
+|
+| Implements Dataloader as part of the graphql package in the Gofreight
+| framework. Key symbols: LoaderFactory, LoaderRegistry,
+| NewLoaderRegistry, Register, Get, WithLoaders.
+| 
+| The graphql package integrates graphql-go with Gofreight: schema
+| registration, HTTP mount, playground, DataLoader batching, and
+| field-level rate limits.
+| 
+| Generate modules with gofreight make:graphql-module; SDL and resolvers
+| live under app/graphql in your project.
+| 
+| See docs/graphql.md and the tutorial for N+1 avoidance and security
+| middleware.
+| 
+| Symbols defined here include: LoaderFactory (exported type);
+| LoaderRegistry (exported type); NewLoaderRegistry (NewLoaderRegistry
+| creates an empty loader registry.); Register (Register adds a named
+| loader factory invoked once per request.); Get (Get returns a
+| request-scoped loader, creating it on first access.); WithLoaders
+| (WithLoaders attaches a loader registry to context.); LoadersFromContext
+| (LoadersFromContext returns the loader registry for this request.);
+| LoaderFromContext (LoaderFromContext returns a typed dataloader from the
+| request context.).
+| 
+*/
+
 import (
 	"context"
 	"sync"

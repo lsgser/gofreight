@@ -2,13 +2,13 @@ package models
 
 /*
 |--------------------------------------------------------------------------
-| Application Models
+| Demoapp — App — Models Overview
 |--------------------------------------------------------------------------
 |
-| Models represent database tables and define validations, associations,
-| and query helpers. Each model maps to a table via model.NewRepository.
-|
-| Generate a model:
-|   gofreight make:model Post title:string body:text
-|
+| Overview and conventions for the Demoapp — App — Models layer in a
+| Gofreight application.
+| 
+| Documents generator commands and where application code should live; not
+| imported at runtime for logic.
+| 
 */

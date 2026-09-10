@@ -1,5 +1,28 @@
 package assets
 
+/*
+|--------------------------------------------------------------------------
+| Manifest
+|--------------------------------------------------------------------------
+|
+| Implements Manifest as part of the assets package in the Gofreight
+| framework. Key symbols: Manifest, LoadManifest, Path.
+| 
+| The assets package connects your public/ directory and optional Vite dev
+| server to HTTP handlers.
+| 
+| In development, Vite can proxy hot module replacement; in production, a
+| manifest maps entry points to built files.
+| 
+| GFT templates use #vite and /assets/ paths documented in the templating
+| guide.
+| 
+| Symbols defined here include: Manifest (exported type); LoadManifest
+| (LoadManifest loads public/manifest.json (Vite build output).); Path
+| (Path returns the hashed asset path from the manifest.).
+| 
+*/
+
 import (
 	"encoding/json"
 	"os"

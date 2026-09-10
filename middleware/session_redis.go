@@ -1,5 +1,29 @@
 package middleware
 
+/*
+|--------------------------------------------------------------------------
+| Session Redis
+|--------------------------------------------------------------------------
+|
+| Implements Session Redis as part of the middleware package in the
+| Gofreight framework. Key symbols: RedisSessionStore,
+| NewRedisSessionStore, Get, Save, Delete.
+| 
+| HTTP middleware implements sessions, CSRF, CORS, locale, structured
+| logging, rate limiting, and maintenance mode.
+| 
+| Register global middleware in bootstrap or attach to route groups for
+| API-specific stacks.
+| 
+| Session drivers include file, cookie, and Redis variants selected by
+| SESSION_DRIVER.
+| 
+| Symbols defined here include: RedisSessionStore (exported type);
+| NewRedisSessionStore (NewRedisSessionStore creates a Redis-backed
+| session store.).
+| 
+*/
+
 import (
 	"context"
 	"encoding/json"

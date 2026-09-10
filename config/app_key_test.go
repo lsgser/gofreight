@@ -1,5 +1,29 @@
 package config_test
 
+/*
+|--------------------------------------------------------------------------
+| App Key
+|--------------------------------------------------------------------------
+|
+| Test suite for App Key in the config package.
+| 
+| Uses table-driven tests, httptest, or gftest where applicable. Failures
+| should indicate regressions in public API or HTTP behavior.
+| 
+| The config package loads .env files, resolves MAIL_DRIVER and database
+| URLs, and reads config/app.yaml.
+| 
+| Database drivers and app keys are validated early so misconfiguration
+| fails fast at boot.
+| 
+| Application code reads config through helpers rather than os.Getenv
+| scattered across the codebase.
+| 
+| Run with go test ./config/... or go test for this package from the
+| framework root.
+| 
+*/
+
 import (
 	"strings"
 	"testing"

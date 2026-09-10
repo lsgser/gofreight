@@ -1,5 +1,33 @@
 package model
 
+/*
+|--------------------------------------------------------------------------
+| Validation
+|--------------------------------------------------------------------------
+|
+| Implements Validation as part of the model package in the Gofreight
+| framework. Key symbols: Errors, Add, Any, Messages, Validator,
+| Validatable.
+| 
+| The model package is the ORM layer: repositories, queries, associations,
+| soft deletes, validation, serialization, collections, and pagination.
+| 
+| Models map to tables via struct tags; migrations define schema
+| separately in db/migrate.
+| 
+| See docs/models.md, docs/orm.md, and docs/factories.md for
+| Laravel-aligned patterns.
+| 
+| Symbols defined here include: Errors (exported type); Validator
+| (exported type); Validatable (exported type); Validate (Validate runs
+| all validators on the record and returns collected errors.); Presence
+| (Presence validates that a value is not empty.); Length (Length
+| validates string length within min and max bounds.); Format (Format
+| validates a string against a regex pattern.); Numericality (Numericality
+| validates that a numeric field is within range.).
+| 
+*/
+
 import (
 	"context"
 	"fmt"

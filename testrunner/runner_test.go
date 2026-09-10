@@ -1,5 +1,26 @@
 package testrunner_test
 
+/*
+|--------------------------------------------------------------------------
+| Runner
+|--------------------------------------------------------------------------
+|
+| Test suite for Runner in the testrunner package.
+| 
+| Uses table-driven tests, httptest, or gftest where applicable. Failures
+| should indicate regressions in public API or HTTP behavior.
+| 
+| testrunner powers gofreight test (feature tests in tests/) and gofreight
+| test:unit (Go tests in app/).
+| 
+| It sets GOFREIGHT_ENV=test and forwards flags to go test with sensible
+| default package paths.
+| 
+| Run with go test ./testrunner/... or go test for this package from the
+| framework root.
+| 
+*/
+
 import (
 	"testing"
 

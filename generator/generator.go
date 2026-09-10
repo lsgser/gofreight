@@ -1,5 +1,27 @@
 package generator
 
+/*
+|--------------------------------------------------------------------------
+| Generator
+|--------------------------------------------------------------------------
+|
+| Implements Generator as part of the generator package in the Gofreight
+| framework. Key symbols: NewApp, Model, Controller.
+| 
+| The generator package powers gofreight new and all make:* scaffolds.
+| 
+| It writes idiomatic directory layouts, GFT views, migrations, tests, and
+| auth stubs from templates.
+| 
+| CLI handlers in cmd/gofreight call into this package; templates live
+| primarily in templates.go.
+| 
+| Symbols defined here include: NewApp (NewApp scaffolds a new Gofreight
+| application.); Model (Model generates a model file and migration.);
+| Controller (Controller generates a controller with RESTful actions.).
+| 
+*/
+
 import (
 	"os"
 	"path/filepath"

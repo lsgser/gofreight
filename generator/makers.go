@@ -1,5 +1,30 @@
 package generator
 
+/*
+|--------------------------------------------------------------------------
+| Makers
+|--------------------------------------------------------------------------
+|
+| Implements Makers as part of the generator package in the Gofreight
+| framework. Key symbols: Mail, Job, Middleware, Policy, Request.
+| 
+| The generator package powers gofreight new and all make:* scaffolds.
+| 
+| It writes idiomatic directory layouts, GFT views, migrations, tests, and
+| auth stubs from templates.
+| 
+| CLI handlers in cmd/gofreight call into this package; templates live
+| primarily in templates.go.
+| 
+| Symbols defined here include: Mail (Mail generates a mailable in
+| app/mail/ and a view template.); Job (Job generates an app job in
+| app/jobs/.); Middleware (Middleware generates app middleware in
+| app/middleware/.); Policy (Policy generates an authorization policy in
+| app/policies/.); Request (Request generates a form request in
+| app/requests/.).
+| 
+*/
+
 import (
 	"os"
 	"path/filepath"
@@ -143,7 +168,15 @@ func (m *{{.StructName}}) Send(mailer gofmail.Mailer) error {
 }
 `
 
-const mailViewTmpl = `#layout "layouts.mail.default"
+const mailViewTmpl = `{#
+|--------------------------------------------------------------------------
+| Mailable View
+|--------------------------------------------------------------------------
+|
+| GFT content for a generated mailable. Uses layouts.mail.default.
+|
+#}
+#layout "layouts.mail.default"
 
 #slot "content"
 <h1>{{.StructName}}</h1>

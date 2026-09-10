@@ -1,3 +1,25 @@
+{#
+| --------------------------------------------------------------------------
+| Flash
+| --------------------------------------------------------------------------
+|
+| Gofreight Template (GFT) view rendered by the view engine with optional
+| layout and slots.
+|
+| Edit GFT syntax here; use gofreight serve in development for hot reload
+| on .gft changes.
+|
+#}
+
+{#
+| --------------------------------------------------------------------------
+| Flash
+| --------------------------------------------------------------------------
+|
+| Gofreight Template (GFT) view rendered by the view engine.
+|
+#}
+
 {# Partial: flash messages — include with #partial "partials.flash" #}
 #when .Flash
 <div class="flash">{= .Flash }</div>

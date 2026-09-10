@@ -1,5 +1,26 @@
 package i18n
 
+/*
+|--------------------------------------------------------------------------
+| I18n
+|--------------------------------------------------------------------------
+|
+| Test suite for I18n in the i18n package.
+| 
+| Uses table-driven tests, httptest, or gftest where applicable. Failures
+| should indicate regressions in public API or HTTP behavior.
+| 
+| The i18n package loads JSON locale files from config/locales and
+| resolves translation keys in views and controllers.
+| 
+| Middleware can set locale from session or Accept-Language; helpers
+| mirror Laravel-style __() usage in GFT.
+| 
+| Run with go test ./i18n/... or go test for this package from the
+| framework root.
+| 
+*/
+
 import (
 	"os"
 	"path/filepath"

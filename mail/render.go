@@ -1,5 +1,32 @@
 package mail
 
+/*
+|--------------------------------------------------------------------------
+| Render
+|--------------------------------------------------------------------------
+|
+| Implements Render as part of the mail package in the Gofreight
+| framework. Key symbols: ResolveView, ResolvePreviewName, RenderView.
+| 
+| Mail covers Message and Mailer interfaces, LogMailer for tests,
+| SMTP/SendGrid transports, mailable GFT rendering, and queued delivery.
+| 
+| Mailables render app/views/mail templates through the view engine;
+| preview with gofreight mail:preview.
+| 
+| Configure MAIL_DRIVER in .env; authentication flows accept mail
+| callbacks for reset and verification emails.
+| 
+| Symbols defined here include: DefaultViewsRoot (exported value);
+| ResolveView (ResolveView maps a mailable or CLI name to views root and
+| template name (e.g. mail/welcome_email).); ResolvePreviewName
+| (ResolvePreviewName maps CLI input (WelcomeEmail, welcome_email,
+| mail/welcome_email_mail) to a template name.); RenderView (RenderView
+| renders a mail template from app/views using GFT (with layouts) or
+| html/template.).
+| 
+*/
+
 import (
 	"bytes"
 	"fmt"

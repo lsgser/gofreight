@@ -1,5 +1,33 @@
 package database
 
+/*
+|--------------------------------------------------------------------------
+| Introspect
+|--------------------------------------------------------------------------
+|
+| Implements Introspect as part of the database package in the Gofreight
+| framework. Key symbols: ColumnInfo, TableInfo, PrimaryKey, ListTables,
+| TableSchema, TableRows.
+| 
+| The database package manages connections, fluent schema blueprints, Go
+| and SQL migrations, seeding, and introspection.
+| 
+| Migrations run via gofreight migrate; blueprints generate portable DDL
+| across SQLite, PostgreSQL, and MySQL.
+| 
+| Lower-level query helpers complement the model ORM in the model package.
+| 
+| Symbols defined here include: ColumnInfo (exported type); TableInfo
+| (exported type); PrimaryKey (PrimaryKey returns the primary key column
+| name, defaulting to "id".); ListTables (ListTables returns user tables
+| excluding system/migration tables.); TableSchema (TableSchema returns
+| column metadata for a table.); TableRows (TableRows returns paginated
+| rows from a table.); TableRowsQuery (TableRowsQuery returns paginated,
+| optionally filtered and sorted rows.); TableCountQuery (TableCountQuery
+| returns row count with optional WHERE clause.).
+| 
+*/
+
 import (
 	"context"
 	"database/sql"

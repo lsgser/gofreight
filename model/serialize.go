@@ -1,5 +1,34 @@
 package model
 
+/*
+|--------------------------------------------------------------------------
+| Serialize
+|--------------------------------------------------------------------------
+|
+| Implements Serialize as part of the model package in the Gofreight
+| framework. Key symbols: AppendFunc, Serializer, Serialize, Hidden,
+| Visible, MakeVisible.
+| 
+| The model package is the ORM layer: repositories, queries, associations,
+| soft deletes, validation, serialization, collections, and pagination.
+| 
+| Models map to tables via struct tags; migrations define schema
+| separately in db/migrate.
+| 
+| See docs/models.md, docs/orm.md, and docs/factories.md for
+| Laravel-aligned patterns.
+| 
+| Symbols defined here include: AppendFunc (exported type); Serializer
+| (exported type); Serialize (Serialize begins serialization for a model
+| or struct pointer.); Hidden (Hidden marks attributes hidden from output
+| (Laravel $hidden).); Visible (Visible sets an allow-list of attributes
+| (Laravel $visible).); MakeVisible (MakeVisible temporarily exposes
+| hidden attributes.); MakeHidden (MakeHidden temporarily hides
+| attributes.); SetVisible (SetVisible replaces the visible attribute
+| list.).
+| 
+*/
+
 import (
 	"encoding/json"
 	"reflect"

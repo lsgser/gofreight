@@ -1,5 +1,30 @@
 package request
 
+/*
+|--------------------------------------------------------------------------
+| Form
+|--------------------------------------------------------------------------
+|
+| Implements Form as part of the request package in the Gofreight
+| framework. Key symbols: FormRequest, Rule, NewFormRequest, FromJSON,
+| Authorize, Required.
+| 
+| Form requests bind and validate HTTP input using vine schemas or
+| validation tags before controller actions run.
+| 
+| Integrates with controller Base for 422 Unprocessable responses and GFT
+| error display helpers.
+| 
+| Symbols defined here include: FormRequest (exported type); Rule
+| (exported type); NewFormRequest (NewFormRequest creates a form request
+| from an HTTP request.); FromJSON (FromJSON creates a form request from
+| JSON body.); Authorize (Authorize sets whether the request is
+| authorized.); Required (Required adds required rule.); Email (Email adds
+| email validation.); MinLength (MinLength adds minimum length
+| validation.).
+| 
+*/
+
 import (
 	"encoding/json"
 	"io"

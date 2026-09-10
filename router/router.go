@@ -1,5 +1,30 @@
 package router
 
+/*
+|--------------------------------------------------------------------------
+| Router
+|--------------------------------------------------------------------------
+|
+| Core HTTP router: registers GET/POST/PUT/PATCH/DELETE routes,
+| parameters, middleware chains, and dispatches requests.
+| 
+| Groups and named routes build clean route files in application projects.
+| 
+| The router matches verbs and paths, supports groups, prefixes, named
+| routes, constraints, signed URLs, and domain routing.
+| 
+| Routes register in routes/web.go and routes/api.go; see docs/routing.md
+| for middleware and model binding.
+| 
+| Symbols defined here include: HandlerFunc (exported type); Route
+| (exported type); RouteRegistrar (exported type); Use (Use attaches
+| middleware to this route (runs after group middleware, before the
+| handler).); Router (exported type); New (New creates an empty router.);
+| Use (Use adds global middleware to the router stack.); Get (Get
+| registers a GET route.).
+| 
+*/
+
 import (
 	"fmt"
 	"net/http"

@@ -2,11 +2,18 @@ package routes
 
 /*
 |--------------------------------------------------------------------------
-| API Routes
+| Api
 |--------------------------------------------------------------------------
 |
-| Stateless JSON API routes. Prefix /api/v1 is applied in routes/register.go.
-|
+| Implements Api as part of the routes package in the Gofreight framework.
+| Key symbols: API.
+| 
+| Symbols defined here include: API (/*
+| |--------------------------------------------------------------------------
+| | API
+| |--------------------------------------------------------------------------
+| | | Registers JSON API routes (prefix applied by Register). | */).
+| 
 */
 
 import (

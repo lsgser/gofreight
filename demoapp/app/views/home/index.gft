@@ -1,3 +1,25 @@
+{#
+| --------------------------------------------------------------------------
+| Index
+| --------------------------------------------------------------------------
+|
+| Gofreight Template (GFT) view rendered by the view engine with optional
+| layout and slots.
+|
+| Edit GFT syntax here; use gofreight serve in development for hot reload
+| on .gft changes.
+|
+#}
+
+{#
+| --------------------------------------------------------------------------
+| Index
+| --------------------------------------------------------------------------
+|
+| Gofreight Template (GFT) view rendered by the view engine.
+|
+#}
+
 {# View: home/index — rendered by the / route in routes/web.go #}
 #layout "layouts.application"
 

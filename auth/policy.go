@@ -1,5 +1,33 @@
 package auth
 
+/*
+|--------------------------------------------------------------------------
+| Policy
+|--------------------------------------------------------------------------
+|
+| Implements Policy as part of the auth package in the Gofreight
+| framework. Key symbols: Policy, NewPolicy, Define, Allows,
+| RequirePolicy, RequireRole.
+| 
+| The auth package covers session login, password hashing, API token
+| storage, OAuth callbacks, email verification, and password reset flows.
+| 
+| Controllers compose auth helpers with your User model; tokens and
+| verification stores can be in-memory or database-backed.
+| 
+| Install scaffolding with gofreight make:auth and wire find-user
+| callbacks in app/auth.
+| 
+| Symbols defined here include: Policy (exported type); NewPolicy
+| (NewPolicy creates an empty policy registry.); Define (Define registers
+| an authorization rule by name.); Allows (Allows checks if the current
+| request passes a policy.); RequirePolicy (RequirePolicy middleware
+| denies requests that fail a policy check.); RequireRole (RequireRole
+| middleware allows only users with a given role (JWT, session, or API
+| context).).
+| 
+*/
+
 import "net/http"
 
 // Policy defines named authorization rules.

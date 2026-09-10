@@ -1,5 +1,26 @@
 package router
 
+/*
+|--------------------------------------------------------------------------
+| Domain
+|--------------------------------------------------------------------------
+|
+| Implements Domain as part of the router package in the Gofreight
+| framework. Key symbols: SetDefaultDomain, DomainFromURL.
+| 
+| The router matches verbs and paths, supports groups, prefixes, named
+| routes, constraints, signed URLs, and domain routing.
+| 
+| Routes register in routes/web.go and routes/api.go; see docs/routing.md
+| for middleware and model binding.
+| 
+| Symbols defined here include: SetDefaultDomain (SetDefaultDomain sets
+| the root domain used by Subdomain() groups (e.g. "example.com").);
+| DomainFromURL (DomainFromURL extracts the host from an application URL
+| (https://api.example.com/path → api.example.com).).
+| 
+*/
+
 import (
 	"net/http"
 	"strings"

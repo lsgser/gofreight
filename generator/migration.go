@@ -1,5 +1,31 @@
 package generator
 
+/*
+|--------------------------------------------------------------------------
+| Migration
+|--------------------------------------------------------------------------
+|
+| Implements Migration as part of the generator package in the Gofreight
+| framework. Key symbols: MigrationKind, ParseMigrationName,
+| BlueprintLine, MigrationFileData, CreateBlueprintMigration.
+| 
+| The generator package powers gofreight new and all make:* scaffolds.
+| 
+| It writes idiomatic directory layouts, GFT views, migrations, tests, and
+| auth stubs from templates.
+| 
+| CLI handlers in cmd/gofreight call into this package; templates live
+| primarily in templates.go.
+| 
+| Symbols defined here include: MigrationKind (exported type);
+| ParseMigrationName (ParseMigrationName infers table/action from
+| Laravel-style migration names.); BlueprintLine (BlueprintLine returns a
+| fluent blueprint statement for a parsed field.); MigrationFileData
+| (exported type); CreateBlueprintMigration (CreateBlueprintMigration
+| writes a Laravel-style Go migration file.).
+| 
+*/
+
 import (
 	"fmt"
 	"os"

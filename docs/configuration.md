@@ -1,3 +1,29 @@
+<!--
+| --------------------------------------------------------------------------
+| Configuration
+| --------------------------------------------------------------------------
+|
+| Official Gofreight documentation consumed by the docs site and linked
+| from the CLI welcome page.
+|
+| Keep examples aligned with the current CLI and version; sync copies to
+| gofreight-web when publishing.
+|
+| Covers concepts, tutorials, and reference material for this topic.
+|
+
+-->
+
+<!--
+| --------------------------------------------------------------------------
+| Configuration
+| --------------------------------------------------------------------------
+|
+| Official Gofreight documentation (published on the docs site).
+|
+
+-->
+
 # Configuration
 
 Gofreight loads configuration from environment variables, `.env` files, and layered YAML config files. Environment variables always take precedence.

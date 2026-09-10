@@ -1,5 +1,27 @@
 package api
 
+/*
+|--------------------------------------------------------------------------
+| Routes
+|--------------------------------------------------------------------------
+|
+| Implements Routes as part of the api package in the Gofreight framework.
+| Key symbols: Group.
+| 
+| The api package implements JSON resource transformers and helpers for
+| versioned HTTP APIs.
+| 
+| Resources map models and structs to consistent JSON shapes, pagination
+| metadata, and optional link collections.
+| 
+| Use api.Group with the router to register /api/v1-style routes with
+| shared middleware.
+| 
+| Symbols defined here include: Group (Group registers API routes under
+| /api/{version} with optional middleware.).
+| 
+*/
+
 import "github.com/lsgser/gofreight/router"
 
 // Group registers API routes under /api/{version} with optional middleware.

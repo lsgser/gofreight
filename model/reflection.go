@@ -1,5 +1,24 @@
 package model
 
+/*
+|--------------------------------------------------------------------------
+| Reflection
+|--------------------------------------------------------------------------
+|
+| Implements Reflection as part of the model package in the Gofreight
+| framework.
+| 
+| The model package is the ORM layer: repositories, queries, associations,
+| soft deletes, validation, serialization, collections, and pagination.
+| 
+| Models map to tables via struct tags; migrations define schema
+| separately in db/migrate.
+| 
+| See docs/models.md, docs/orm.md, and docs/factories.md for
+| Laravel-aligned patterns.
+| 
+*/
+
 import (
 	"database/sql"
 	"fmt"

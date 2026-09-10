@@ -1,5 +1,32 @@
 package controller
 
+/*
+|--------------------------------------------------------------------------
+| Routes
+|--------------------------------------------------------------------------
+|
+| Implements Routes as part of the controller package in the Gofreight
+| framework. Key symbols: SetRouter, Router, RouteURL, RedirectBack,
+| RedirectRoute.
+| 
+| Controllers wrap http.HandlerFunc with a Base struct that exposes
+| Request, Response, validation, views, and JSON helpers.
+| 
+| This package defines RenderView, Redirect, status helpers, file
+| downloads, and route registration utilities.
+| 
+| Application controllers embed these patterns; see docs/controllers.md
+| for request lifecycle.
+| 
+| Symbols defined here include: SetRouter (SetRouter configures the
+| application router for named-route URL helpers.); Router (Router returns
+| the configured application router.); RouteURL (RouteURL builds a URL for
+| a named route.); RedirectBack (RedirectBack redirects to the Referer
+| header, or fallback when absent.); RedirectRoute (RedirectRoute
+| redirects to a named route.).
+| 
+*/
+
 import (
 	"fmt"
 	"net/http"

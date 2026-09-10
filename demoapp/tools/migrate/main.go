@@ -1,5 +1,18 @@
 package main
 
+/*
+|--------------------------------------------------------------------------
+| Migration Tool Entry Point
+|--------------------------------------------------------------------------
+|
+| Application main: loads bootstrap, registers routes, and starts the HTTP
+| server.
+| 
+| Use gofreight serve for development; production uses a binary from
+| gofreight build.
+| 
+*/
+
 import (
 	"fmt"
 	"os"

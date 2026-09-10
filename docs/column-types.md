@@ -1,3 +1,29 @@
+<!--
+| --------------------------------------------------------------------------
+| Column-types
+| --------------------------------------------------------------------------
+|
+| Official Gofreight documentation consumed by the docs site and linked
+| from the CLI welcome page.
+|
+| Keep examples aligned with the current CLI and version; sync copies to
+| gofreight-web when publishing.
+|
+| Covers concepts, tutorials, and reference material for this topic.
+|
+
+-->
+
+<!--
+| --------------------------------------------------------------------------
+| Column Types
+| --------------------------------------------------------------------------
+|
+| Official Gofreight documentation (published on the docs site).
+|
+
+-->
+
 # Column Types
 
 Reference for every column type supported by Gofreight migrations, generators, and the blueprint DSL. Gofreight uses **SQL-first migrations** — you can always write raw SQL for types not covered by generators or blueprints.

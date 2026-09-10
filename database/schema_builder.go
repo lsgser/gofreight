@@ -1,5 +1,36 @@
 package database
 
+/*
+|--------------------------------------------------------------------------
+| Schema Builder
+|--------------------------------------------------------------------------
+|
+| Implements Schema Builder as part of the database package in the
+| Gofreight framework. Key symbols: SchemaCreate, SchemaTable, SchemaDrop,
+| SchemaDropIfExists, SchemaRename, HasTable.
+| 
+| The database package manages connections, fluent schema blueprints, Go
+| and SQL migrations, seeding, and introspection.
+| 
+| Migrations run via gofreight migrate; blueprints generate portable DDL
+| across SQLite, PostgreSQL, and MySQL.
+| 
+| Lower-level query helpers complement the model ORM in the model package.
+| 
+| Symbols defined here include: SchemaCreate (SchemaCreate creates a table
+| using the blueprint DSL (Laravel Schema::create).); SchemaTable
+| (SchemaTable alters a table using the blueprint DSL (Laravel
+| Schema::table).); SchemaDrop (SchemaDrop drops a table (Laravel
+| Schema::drop / dropIfExists).); SchemaDropIfExists (SchemaDropIfExists
+| drops a table when it exists.); SchemaRename (SchemaRename renames a
+| table (Laravel Schema::rename).); HasTable (HasTable reports whether a
+| table exists (Laravel Schema::hasTable).); HasColumn (HasColumn reports
+| whether a table has a column (Laravel Schema::hasColumn).);
+| HasGoMigrations (HasGoMigrations reports whether any Go migrations are
+| registered.).
+| 
+*/
+
 import (
 	"context"
 	"fmt"

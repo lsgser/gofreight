@@ -1,5 +1,26 @@
 package mail
 
+/*
+|--------------------------------------------------------------------------
+| Sendgrid
+|--------------------------------------------------------------------------
+|
+| Implements Sendgrid as part of the mail package in the Gofreight
+| framework. Key symbols: SendGridMailer, NewSendGrid, Send.
+| 
+| Mail covers Message and Mailer interfaces, LogMailer for tests,
+| SMTP/SendGrid transports, mailable GFT rendering, and queued delivery.
+| 
+| Mailables render app/views/mail templates through the view engine;
+| preview with gofreight mail:preview.
+| 
+| Configure MAIL_DRIVER in .env; authentication flows accept mail
+| callbacks for reset and verification emails.
+| 
+| Symbols defined here include: SendGridMailer (exported type).
+| 
+*/
+
 import (
 	"bytes"
 	"encoding/json"

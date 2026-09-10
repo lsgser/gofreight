@@ -1,5 +1,31 @@
 package database
 
+/*
+|--------------------------------------------------------------------------
+| Dialect
+|--------------------------------------------------------------------------
+|
+| Implements Dialect as part of the database package in the Gofreight
+| framework. Key symbols: Driver, DetectDriver, DriverName, Placeholder,
+| Placeholders, ReturningClause.
+| 
+| The database package manages connections, fluent schema blueprints, Go
+| and SQL migrations, seeding, and introspection.
+| 
+| Migrations run via gofreight migrate; blueprints generate portable DDL
+| across SQLite, PostgreSQL, and MySQL.
+| 
+| Lower-level query helpers complement the model ORM in the model package.
+| 
+| Symbols defined here include: Driver (exported type); Postgres (exported
+| value); SQLite (exported value); MySQL (exported value); MariaDB
+| (exported value); DetectDriver (DetectDriver determines the database
+| driver from a connection URL.); DriverName (DriverName returns the
+| active driver.); Placeholder (Placeholder returns the parameter
+| placeholder for the given 1-based index.).
+| 
+*/
+
 import (
 	"fmt"
 	"net/url"

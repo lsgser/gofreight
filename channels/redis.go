@@ -1,5 +1,31 @@
 package channels
 
+/*
+|--------------------------------------------------------------------------
+| Redis
+|--------------------------------------------------------------------------
+|
+| Implements Redis as part of the channels package in the Gofreight
+| framework. Key symbols: RedisBroadcaster, NewRedisBroadcaster, Publish,
+| UseRedisBroadcast.
+| 
+| The channels package provides WebSocket broadcasting and a channel
+| server for real-time features.
+| 
+| Demo applications register chat or notification endpoints; production
+| setups typically sit behind Redis or a dedicated broker.
+| 
+| See channels documentation for server lifecycle and message fan-out
+| patterns.
+| 
+| Symbols defined here include: RedisBroadcaster (exported type);
+| NewRedisBroadcaster (NewRedisBroadcaster connects a hub to Redis for
+| horizontal scaling.); Publish (Publish emits an event to Redis and the
+| local hub.); UseRedisBroadcast (UseRedisBroadcast configures the hub to
+| publish via Redis.).
+| 
+*/
+
 import (
 	"context"
 	"encoding/json"

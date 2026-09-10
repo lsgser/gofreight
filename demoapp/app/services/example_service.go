@@ -5,14 +5,16 @@ package services
 | Example Service
 |--------------------------------------------------------------------------
 |
-| Services hold business logic and keep controllers thin. Register services
-| in bootstrap/app.go and resolve them via the container:
-|
-|   app.Singleton("example", func() any { return services.NewExampleService() })
-|
-| Generate a new service:
-|   gofreight make:service OrderProcessing
-|
+| Implements Example Service as part of the services package in the
+| Gofreight framework. Key symbols: ExampleService, NewExampleService.
+| 
+| Symbols defined here include: ExampleService (exported type);
+| NewExampleService (/*
+| |--------------------------------------------------------------------------
+| | NewExampleService
+| |--------------------------------------------------------------------------
+| | | Creates a new ExampleService instance. | */).
+| 
 */
 
 /*

@@ -1,5 +1,29 @@
 package storage
 
+/*
+|--------------------------------------------------------------------------
+| Local
+|--------------------------------------------------------------------------
+|
+| Implements Local as part of the storage package in the Gofreight
+| framework. Key symbols: LocalDisk, NewLocalDisk, Put, Get, Delete,
+| Exists.
+| 
+| Storage abstracts local disk and cloud disks configured through
+| FILESYSTEM_DISK and integrations.
+| 
+| Uploads and public assets may use different disks; see docs/storage.md.
+| 
+| Symbols defined here include: LocalDisk (exported type); NewLocalDisk
+| (NewLocalDisk creates a local storage disk.); Put (Put writes content to
+| the disk.); Get (Get reads a file from the disk.); Delete (Delete
+| removes a file from the disk.); Exists (Exists reports whether a file
+| exists.); Path (Path returns the absolute filesystem path for a key.);
+| URL (URL returns a public URL path (app must serve files from public
+| disk separately).).
+| 
+*/
+
 import (
 	"context"
 	"io"

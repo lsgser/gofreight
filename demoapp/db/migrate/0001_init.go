@@ -1,5 +1,15 @@
 package migrate
 
+/*
+|--------------------------------------------------------------------------
+| 0001 Init
+|--------------------------------------------------------------------------
+|
+| Implements 0001 Init as part of the migrate package in the Gofreight
+| framework.
+| 
+*/
+
 import (
 	"context"
 

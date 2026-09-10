@@ -1,5 +1,28 @@
 package integrations
 
+/*
+|--------------------------------------------------------------------------
+| Storage Client
+|--------------------------------------------------------------------------
+|
+| Implements Storage Client as part of the integrations package in the
+| Gofreight framework. Key symbols: Upload, Download, Delete.
+| 
+| Integrations register pluggable drivers for mail, storage, cache, queue,
+| and custom third-party APIs.
+| 
+| Active() resolves the configured implementation from environment
+| variables; wire Application in ConfigureIntegrations.
+| 
+| Built-in connectors cover SMTP, SendGrid, S3-compatible storage, and
+| Redis without vendor-specific SDKs in app code.
+| 
+| Symbols defined here include: Upload (Upload puts an object into
+| S3-compatible storage.); Download (Download retrieves an object from
+| storage.); Delete (Delete removes an object from storage.).
+| 
+*/
+
 import (
 	"context"
 	"fmt"

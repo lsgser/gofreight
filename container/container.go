@@ -1,5 +1,32 @@
 package container
 
+/*
+|--------------------------------------------------------------------------
+| Container
+|--------------------------------------------------------------------------
+|
+| Implements Container as part of the container package in the Gofreight
+| framework. Key symbols: Container, New, Bind, Singleton, Resolve,
+| MustResolve.
+| 
+| The container package implements a lightweight service container for
+| bindings and singletons.
+| 
+| Register factories in bootstrap/app.go; resolve services from
+| controllers or jobs by name or type.
+| 
+| Pattern mirrors Laravel's container at a smaller scale for explicit
+| wiring in Go.
+| 
+| Symbols defined here include: Container (exported type); New (New
+| creates an empty container.); Bind (Bind registers a transient factory
+| (new instance each Resolve).); Singleton (Singleton registers a shared
+| instance factory.); Resolve (Resolve returns a service by name.);
+| MustResolve (MustResolve returns a service or panics.); Has (Has reports
+| whether a binding exists.).
+| 
+*/
+
 import (
 	"sync"
 )

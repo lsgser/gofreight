@@ -1,5 +1,32 @@
 package model
 
+/*
+|--------------------------------------------------------------------------
+| Aggregates
+|--------------------------------------------------------------------------
+|
+| Implements Aggregates as part of the model package in the Gofreight
+| framework. Key symbols: Count, Sum, Avg, Min, Max, Pluck.
+| 
+| The model package is the ORM layer: repositories, queries, associations,
+| soft deletes, validation, serialization, collections, and pagination.
+| 
+| Models map to tables via struct tags; migrations define schema
+| separately in db/migrate.
+| 
+| See docs/models.md, docs/orm.md, and docs/factories.md for
+| Laravel-aligned patterns.
+| 
+| Symbols defined here include: Count (Count returns the number of
+| matching records.); Sum (Sum returns the sum of a column.); Avg (Avg
+| returns the average of a column.); Min (Min returns the minimum value of
+| a column.); Max (Max returns the maximum value of a column.); Pluck
+| (Pluck returns a slice of values for a single column.); PluckStrings
+| (PluckStrings plucks string values from a column.); PluckInt64s
+| (PluckInt64s plucks int64 values from a column.).
+| 
+*/
+
 import (
 	"fmt"
 	"strings"

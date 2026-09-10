@@ -1,5 +1,28 @@
 package middleware
 
+/*
+|--------------------------------------------------------------------------
+| Middleware
+|--------------------------------------------------------------------------
+|
+| Implements Middleware as part of the middleware package in the Gofreight
+| framework. Key symbols: Logger, Recovery, WriteHeader.
+| 
+| HTTP middleware implements sessions, CSRF, CORS, locale, structured
+| logging, rate limiting, and maintenance mode.
+| 
+| Register global middleware in bootstrap or attach to route groups for
+| API-specific stacks.
+| 
+| Session drivers include file, cookie, and Redis variants selected by
+| SESSION_DRIVER.
+| 
+| Symbols defined here include: Logger (Logger logs each request with
+| method, path, status, and duration.); Recovery (Recovery catches panics
+| and returns a 500 response.).
+| 
+*/
+
 import (
 	"log"
 	"net/http"

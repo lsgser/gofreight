@@ -5,9 +5,12 @@ package main
 | Application Entry Point
 |--------------------------------------------------------------------------
 |
-| Bootstraps the Gofreight application and starts the HTTP server.
-| Wiring: bootstrap/app.go · Routes: routes/
-|
+| Application main: loads bootstrap, registers routes, and starts the HTTP
+| server.
+| 
+| Use gofreight serve for development; production uses a binary from
+| gofreight build.
+| 
 */
 
 import (

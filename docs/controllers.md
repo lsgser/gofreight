@@ -1,3 +1,29 @@
+<!--
+| --------------------------------------------------------------------------
+| Controllers
+| --------------------------------------------------------------------------
+|
+| Official Gofreight documentation consumed by the docs site and linked
+| from the CLI welcome page.
+|
+| Keep examples aligned with the current CLI and version; sync copies to
+| gofreight-web when publishing.
+|
+| Covers concepts, tutorials, and reference material for this topic.
+|
+
+-->
+
+<!--
+| --------------------------------------------------------------------------
+| Controllers
+| --------------------------------------------------------------------------
+|
+| Official Gofreight documentation (published on the docs site).
+|
+
+-->
+
 # Controllers
 
 Controllers handle HTTP requests and return responses — HTML views, JSON, redirects, or errors. Each resource gets a struct with action methods bound via `controller.Handler`.

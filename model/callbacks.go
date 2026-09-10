@@ -1,5 +1,32 @@
 package model
 
+/*
+|--------------------------------------------------------------------------
+| Callbacks
+|--------------------------------------------------------------------------
+|
+| Implements Callbacks as part of the model package in the Gofreight
+| framework. Key symbols: CallbackType, Callback, Callbacks, NewCallbacks,
+| Register, Run.
+| 
+| The model package is the ORM layer: repositories, queries, associations,
+| soft deletes, validation, serialization, collections, and pagination.
+| 
+| Models map to tables via struct tags; migrations define schema
+| separately in db/migrate.
+| 
+| See docs/models.md, docs/orm.md, and docs/factories.md for
+| Laravel-aligned patterns.
+| 
+| Symbols defined here include: CallbackType (exported type);
+| BeforeValidate (exported value); AfterValidate (exported value);
+| BeforeSave (exported value); AfterSave (exported value); BeforeCreate
+| (exported value); AfterCreate (exported value); BeforeUpdate (exported
+| value); AfterUpdate (exported value); BeforeDelete (exported value);
+| AfterDelete (exported value).
+| 
+*/
+
 import "context"
 
 // CallbackType represents a lifecycle hook point.

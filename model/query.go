@@ -1,5 +1,32 @@
 package model
 
+/*
+|--------------------------------------------------------------------------
+| Query
+|--------------------------------------------------------------------------
+|
+| Implements Query as part of the model package in the Gofreight
+| framework. Key symbols: WhereOperator, Query, ScopeFunc, NewQuery,
+| Context, Select.
+| 
+| The model package is the ORM layer: repositories, queries, associations,
+| soft deletes, validation, serialization, collections, and pagination.
+| 
+| Models map to tables via struct tags; migrations define schema
+| separately in db/migrate.
+| 
+| See docs/models.md, docs/orm.md, and docs/factories.md for
+| Laravel-aligned patterns.
+| 
+| Symbols defined here include: WhereOperator (exported type); OpEq
+| (exported value); OpNotEq (exported value); OpGt (exported value); OpGte
+| (exported value); OpLt (exported value); OpLte (exported value); OpLike
+| (exported value); OpNotLike (exported value); OpIn (exported value);
+| OpNotIn (exported value); OpIsNull (exported value); OpIsNotNull
+| (exported value); OpBetween (exported value).
+| 
+*/
+
 import (
 	"context"
 	"fmt"

@@ -1,5 +1,30 @@
 package graphql_test
 
+/*
+|--------------------------------------------------------------------------
+| Server
+|--------------------------------------------------------------------------
+|
+| Test suite for Server in the graphql package.
+| 
+| Uses table-driven tests, httptest, or gftest where applicable. Failures
+| should indicate regressions in public API or HTTP behavior.
+| 
+| The graphql package integrates graphql-go with Gofreight: schema
+| registration, HTTP mount, playground, DataLoader batching, and
+| field-level rate limits.
+| 
+| Generate modules with gofreight make:graphql-module; SDL and resolvers
+| live under app/graphql in your project.
+| 
+| See docs/graphql.md and the tutorial for N+1 avoidance and security
+| middleware.
+| 
+| Run with go test ./graphql/... or go test for this package from the
+| framework root.
+| 
+*/
+
 import (
 	"bytes"
 	"encoding/json"

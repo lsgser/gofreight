@@ -1,5 +1,36 @@
 package gftest
 
+/*
+|--------------------------------------------------------------------------
+| Factory
+|--------------------------------------------------------------------------
+|
+| Implements Factory as part of the gftest package in the Gofreight
+| framework. Key symbols: Factory, NewFactory, Define, Sequence, State,
+| StateFn.
+| 
+| gftest is the feature testing harness used from tests/ in your
+| application.
+| 
+| NewApp boots a test HTTP server, runs migrations, exposes HTTP helpers
+| (Get, Post, AssertOk), database assertions, and fakes for mail, cache,
+| and queue.
+| 
+| Run the suite with gofreight test; see docs/testing.md for factories and
+| authentication in tests.
+| 
+| Symbols defined here include: Factory (exported type); NewFactory
+| (NewFactory creates a model factory for the given repository.); Define
+| (Define sets default attribute values for the factory.); Sequence
+| (Sequence sets a sequenced value for a field (increments each
+| Make/Create).); State (State applies attribute overrides (Laravel
+| factory states).); StateFn (StateFn applies a state callback (Laravel
+| state(fn)).); AfterMaking (AfterMaking registers a callback after
+| building an instance.); AfterCreating (AfterCreating registers a
+| callback after persisting an instance.).
+| 
+*/
+
 import (
 	"context"
 	"maps"

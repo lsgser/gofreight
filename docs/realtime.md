@@ -1,3 +1,29 @@
+<!--
+| --------------------------------------------------------------------------
+| Realtime
+| --------------------------------------------------------------------------
+|
+| Official Gofreight documentation consumed by the docs site and linked
+| from the CLI welcome page.
+|
+| Keep examples aligned with the current CLI and version; sync copies to
+| gofreight-web when publishing.
+|
+| Covers concepts, tutorials, and reference material for this topic.
+|
+
+-->
+
+<!--
+| --------------------------------------------------------------------------
+| Real-time WebSockets
+| --------------------------------------------------------------------------
+|
+| Official Gofreight documentation (published on the docs site).
+|
+
+-->
+
 # Real-time WebSockets
 
 Gofreight ships a **socket.io-style** WebSocket layer for rooms, events, and broadcasts — no third-party real-time server required for single-process apps.

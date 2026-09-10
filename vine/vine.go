@@ -1,5 +1,29 @@
 package vine
 
+/*
+|--------------------------------------------------------------------------
+| Vine
+|--------------------------------------------------------------------------
+|
+| Implements Vine as part of the vine package in the Gofreight framework.
+| Key symbols: Rule, ObjectSchema, Object, Compile, Validate, String.
+| 
+| Vine is a fluent validation DSL: vine.String().Required().Email() builds
+| schemas validated against form maps or JSON.
+| 
+| Used in form requests, API payloads, and anywhere you want Laravel-like
+| validation chains in Go.
+| 
+| Symbols defined here include: Rule (exported type); ObjectSchema
+| (exported type); Object (Object builds a schema from field rules.);
+| Compile (Compile returns the schema (mirrors schema-first validator
+| APIs).); Validate (Validate checks data against the schema and returns
+| cleaned data + errors.); String (String starts a string field rule
+| chain.); Boolean (Boolean validates checkbox-style fields ("1", "true",
+| "on").); Number (Number validates numeric string fields.).
+| 
+*/
+
 import (
 	"fmt"
 	"regexp"

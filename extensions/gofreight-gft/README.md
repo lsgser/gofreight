@@ -1,3 +1,23 @@
+<!--
+| --------------------------------------------------------------------------
+| README
+| --------------------------------------------------------------------------
+|
+| Part of the Gofreight project source tree.
+|
+
+-->
+
+<!--
+| --------------------------------------------------------------------------
+| Gofreight GFT — VS Code Extension
+| --------------------------------------------------------------------------
+|
+| Documentation for the Gofreight framework.
+|
+
+-->
+
 # Gofreight GFT — VS Code Extension
 
 Syntax highlighting, snippets, and editor support for [Gofreight Template](https://lsgser.github.io/gofreight-web/docs/templating) (`.gft`) files.

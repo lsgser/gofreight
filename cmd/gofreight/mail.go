@@ -1,5 +1,25 @@
 package main
 
+/*
+|--------------------------------------------------------------------------
+| Mail
+|--------------------------------------------------------------------------
+|
+| Implements Mail as part of the gofreight package in the Gofreight
+| framework.
+| 
+| This directory contains the gofreight CLI binary: command registration,
+| terminal UI, and handlers for make:*, migrate, serve, test, and
+| mail:preview.
+| 
+| Each subcommand lives in its own source file; commands.go registers the
+| catalog shown by gofreight list.
+| 
+| Install locally with go install ./cmd/gofreight from the framework
+| repository root.
+| 
+*/
+
 import (
 	"encoding/json"
 	"fmt"

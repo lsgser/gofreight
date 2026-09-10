@@ -1,5 +1,29 @@
 package model_test
 
+/*
+|--------------------------------------------------------------------------
+| Collection
+|--------------------------------------------------------------------------
+|
+| Test suite for Collection in the model package.
+| 
+| Uses table-driven tests, httptest, or gftest where applicable. Failures
+| should indicate regressions in public API or HTTP behavior.
+| 
+| The model package is the ORM layer: repositories, queries, associations,
+| soft deletes, validation, serialization, collections, and pagination.
+| 
+| Models map to tables via struct tags; migrations define schema
+| separately in db/migrate.
+| 
+| See docs/models.md, docs/orm.md, and docs/factories.md for
+| Laravel-aligned patterns.
+| 
+| Run with go test ./model/... or go test for this package from the
+| framework root.
+| 
+*/
+
 import (
 	"context"
 	"testing"

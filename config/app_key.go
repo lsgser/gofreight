@@ -1,5 +1,30 @@
 package config
 
+/*
+|--------------------------------------------------------------------------
+| App Key
+|--------------------------------------------------------------------------
+|
+| Implements App Key as part of the config package in the Gofreight
+| framework. Key symbols: GenerateAppKey, ResolveAppKey, IsDefaultAppKey.
+| 
+| The config package loads .env files, resolves MAIL_DRIVER and database
+| URLs, and reads config/app.yaml.
+| 
+| Database drivers and app keys are validated early so misconfiguration
+| fails fast at boot.
+| 
+| Application code reads config through helpers rather than os.Getenv
+| scattered across the codebase.
+| 
+| Symbols defined here include: GenerateAppKey (GenerateAppKey returns a
+| new application key (base64-encoded 32 bytes).); ResolveAppKey
+| (ResolveAppKey reads APP_KEY (or legacy SECRET_KEY) from env and config
+| files.); IsDefaultAppKey (IsDefaultAppKey reports whether the resolved
+| key is still the scaffold placeholder.).
+| 
+*/
+
 import (
 	"crypto/rand"
 	"encoding/base64"

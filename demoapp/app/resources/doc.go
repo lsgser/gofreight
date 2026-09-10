@@ -2,13 +2,13 @@ package resources
 
 /*
 |--------------------------------------------------------------------------
-| API Resources
+| Demoapp — App — Resources Overview
 |--------------------------------------------------------------------------
 |
-| API resources transform models into consistent JSON responses for your
-| REST API. Use with API controllers in app/controllers/.
-|
-| Generate an API resource:
-|   gofreight make:api Post title:string body:text
-|
+| Overview and conventions for the Demoapp — App — Resources layer in
+| a Gofreight application.
+| 
+| Documents generator commands and where application code should live; not
+| imported at runtime for logic.
+| 
 */

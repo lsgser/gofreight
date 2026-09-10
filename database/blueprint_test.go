@@ -1,5 +1,28 @@
 package database
 
+/*
+|--------------------------------------------------------------------------
+| Blueprint
+|--------------------------------------------------------------------------
+|
+| Test suite for Blueprint in the database package.
+| 
+| Uses table-driven tests, httptest, or gftest where applicable. Failures
+| should indicate regressions in public API or HTTP behavior.
+| 
+| The database package manages connections, fluent schema blueprints, Go
+| and SQL migrations, seeding, and introspection.
+| 
+| Migrations run via gofreight migrate; blueprints generate portable DDL
+| across SQLite, PostgreSQL, and MySQL.
+| 
+| Lower-level query helpers complement the model ORM in the model package.
+| 
+| Run with go test ./database/... or go test for this package from the
+| framework root.
+| 
+*/
+
 import "testing"
 
 func TestCreateTableBlueprint(t *testing.T) {

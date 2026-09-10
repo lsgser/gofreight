@@ -1,3 +1,29 @@
+<!--
+| --------------------------------------------------------------------------
+| Commands
+| --------------------------------------------------------------------------
+|
+| Official Gofreight documentation consumed by the docs site and linked
+| from the CLI welcome page.
+|
+| Keep examples aligned with the current CLI and version; sync copies to
+| gofreight-web when publishing.
+|
+| Covers concepts, tutorials, and reference material for this topic.
+|
+
+-->
+
+<!--
+| --------------------------------------------------------------------------
+| CLI commands
+| --------------------------------------------------------------------------
+|
+| Official Gofreight documentation (published on the docs site).
+|
+
+-->
+
 # CLI commands
 
 Gofreight ships a comprehensive CLI for scaffolding, migrations, queues, and day-to-day development. Run from your **application root** (where `main.go` and `.env` live).

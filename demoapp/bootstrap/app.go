@@ -1,5 +1,21 @@
 package bootstrap
 
+/*
+|--------------------------------------------------------------------------
+| App
+|--------------------------------------------------------------------------
+|
+| Implements App as part of the bootstrap package in the Gofreight
+| framework. Key symbols: Application.
+| 
+| Symbols defined here include: Application (/*
+| |--------------------------------------------------------------------------
+| | Application
+| |--------------------------------------------------------------------------
+| | | Creates and configures the Gofreight application instance. | */).
+| 
+*/
+
 import (
 	"encoding/json"
 	"os"

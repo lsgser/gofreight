@@ -1,5 +1,35 @@
 package gftest
 
+/*
+|--------------------------------------------------------------------------
+| Suite
+|--------------------------------------------------------------------------
+|
+| Implements Suite as part of the gftest package in the Gofreight
+| framework. Key symbols: DescribeContext, Describe, BeforeAll, AfterAll,
+| BeforeEach, AfterEach.
+| 
+| gftest is the feature testing harness used from tests/ in your
+| application.
+| 
+| NewApp boots a test HTTP server, runs migrations, exposes HTTP helpers
+| (Get, Post, AssertOk), database assertions, and fakes for mail, cache,
+| and queue.
+| 
+| Run the suite with gofreight test; see docs/testing.md for factories and
+| authentication in tests.
+| 
+| Symbols defined here include: DescribeContext (exported type); Describe
+| (Describe groups related tests with shared setup hooks.); BeforeAll
+| (BeforeAll runs once before all tests in the group.); AfterAll (AfterAll
+| runs once after all tests in the group.); BeforeEach (BeforeEach runs
+| before each test in the group.); AfterEach (AfterEach runs after each
+| test in the group.); It (It registers a test case within the describe
+| block.); ItWith (ItWith runs a test for each dataset entry (like Pest
+| datasets).).
+| 
+*/
+
 import (
 	"testing"
 )

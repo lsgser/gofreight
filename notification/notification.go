@@ -1,5 +1,27 @@
 package notification
 
+/*
+|--------------------------------------------------------------------------
+| Notification
+|--------------------------------------------------------------------------
+|
+| Implements Notification as part of the notification package in the
+| Gofreight framework. Key symbols: Notifiable, Notification,
+| BaseNotification, Via, ToMail, ToDatabase.
+| 
+| Notifications send mail and database inbox messages from a single
+| notification class with Via(), ToMail(), and ToDatabase().
+| 
+| Wire a store callback for in-app alerts; queue mail channel delivery
+| through the jobs system when needed.
+| 
+| Symbols defined here include: Notifiable (exported type); Notification
+| (exported type); BaseNotification (exported type); Sender (exported
+| type); DatabaseStore (exported type); MemoryStore (exported type); Send
+| (Send delivers a notification to a user across configured channels.).
+| 
+*/
+
 import (
 	"context"
 

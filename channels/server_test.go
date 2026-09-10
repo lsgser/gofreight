@@ -1,5 +1,29 @@
 package channels
 
+/*
+|--------------------------------------------------------------------------
+| Server
+|--------------------------------------------------------------------------
+|
+| Test suite for Server in the channels package.
+| 
+| Uses table-driven tests, httptest, or gftest where applicable. Failures
+| should indicate regressions in public API or HTTP behavior.
+| 
+| The channels package provides WebSocket broadcasting and a channel
+| server for real-time features.
+| 
+| Demo applications register chat or notification endpoints; production
+| setups typically sit behind Redis or a dedicated broker.
+| 
+| See channels documentation for server lifecycle and message fan-out
+| patterns.
+| 
+| Run with go test ./channels/... or go test for this package from the
+| framework root.
+| 
+*/
+
 import (
 	"encoding/json"
 	"net/http"

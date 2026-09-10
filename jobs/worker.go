@@ -1,5 +1,30 @@
 package jobs
 
+/*
+|--------------------------------------------------------------------------
+| Worker
+|--------------------------------------------------------------------------
+|
+| Implements Worker as part of the jobs package in the Gofreight
+| framework. Key symbols: Worker, NewWorker, Start, Stop, DispatchAsync.
+| 
+| The jobs package defines queue interfaces, in-memory and Redis drivers,
+| retries, and named job registration.
+| 
+| Dispatch struct jobs or func workers from controllers; process with
+| gofreight queue:work.
+| 
+| Queued mail and long-running tasks should use this layer instead of
+| blocking HTTP handlers.
+| 
+| Symbols defined here include: Worker (exported type); NewWorker
+| (NewWorker creates a background worker for a queue.); Start (Start
+| begins processing jobs in the background.); Stop (Stop gracefully stops
+| the worker.); DispatchAsync (DispatchAsync adds a job and ensures worker
+| is running.).
+| 
+*/
+
 import (
 	"context"
 	"sync"

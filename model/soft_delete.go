@@ -1,5 +1,36 @@
 package model
 
+/*
+|--------------------------------------------------------------------------
+| Soft Delete
+|--------------------------------------------------------------------------
+|
+| Implements Soft Delete as part of the model package in the Gofreight
+| framework. Key symbols: SoftDeletesEnabled, Restore, RestoreByID,
+| ForceDestroy, ForceDelete, RestoreAll.
+| 
+| The model package is the ORM layer: repositories, queries, associations,
+| soft deletes, validation, serialization, collections, and pagination.
+| 
+| Models map to tables via struct tags; migrations define schema
+| separately in db/migrate.
+| 
+| See docs/models.md, docs/orm.md, and docs/factories.md for
+| Laravel-aligned patterns.
+| 
+| Symbols defined here include: ErrSoftDeleteDisabled (exported value);
+| SoftDeletesEnabled (SoftDeletesEnabled reports whether soft delete is
+| enabled on this repository.); Restore (Restore clears the deleted
+| timestamp for a soft-deleted record.); RestoreByID (RestoreByID restores
+| a soft-deleted record by primary key.); ForceDestroy (ForceDestroy
+| permanently removes a record, bypassing soft delete.); ForceDelete
+| (ForceDelete permanently removes a record by ID.); RestoreAll
+| (RestoreAll clears deleted_at for all matching rows (must include
+| WithTrashed in the query chain).); ForceDelete (ForceDelete permanently
+| deletes all matching rows.).
+| 
+*/
+
 import (
 	"context"
 	"fmt"

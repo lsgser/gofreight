@@ -1,5 +1,32 @@
 package router
 
+/*
+|--------------------------------------------------------------------------
+| Signed
+|--------------------------------------------------------------------------
+|
+| Implements Signed as part of the router package in the Gofreight
+| framework. Key symbols: URLSigner, NewURLSigner, Sign, SignRelative,
+| TemporarySignedRoute, Verify.
+| 
+| The router matches verbs and paths, supports groups, prefixes, named
+| routes, constraints, signed URLs, and domain routing.
+| 
+| Routes register in routes/web.go and routes/api.go; see docs/routing.md
+| for middleware and model binding.
+| 
+| Symbols defined here include: URLSigner (exported type); NewURLSigner
+| (NewURLSigner creates a signer using the application key (APP_KEY).);
+| Sign (Sign appends expires and signature query params to path.);
+| SignRelative (SignRelative signs a relative path for the given
+| duration.); TemporarySignedRoute (TemporarySignedRoute builds a signed
+| URL for a named route.); Verify (Verify checks whether a request URL has
+| a valid signature and has not expired.); Middleware (Middleware rejects
+| requests with missing or invalid signatures.); Signed (Signed requires a
+| valid signed URL for this route.).
+| 
+*/
+
 import (
 	"crypto/hmac"
 	"crypto/sha256"

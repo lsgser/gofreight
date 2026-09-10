@@ -1,5 +1,34 @@
 package controller
 
+/*
+|--------------------------------------------------------------------------
+| Binding
+|--------------------------------------------------------------------------
+|
+| Implements Binding as part of the controller package in the Gofreight
+| framework. Key symbols: SetURLSigner, URLSigner, Bound, BoundAs,
+| SignedURL, TemporarySignedRoute.
+| 
+| Controllers wrap http.HandlerFunc with a Base struct that exposes
+| Request, Response, validation, views, and JSON helpers.
+| 
+| This package defines RenderView, Redirect, status helpers, file
+| downloads, and route registration utilities.
+| 
+| Application controllers embed these patterns; see docs/controllers.md
+| for request lifecycle.
+| 
+| Symbols defined here include: SetURLSigner (SetURLSigner configures
+| signed URL generation for controllers.); URLSigner (URLSigner returns
+| the configured URL signer.); Bound (Bound returns a route-model binding
+| from the request context.); BoundAs (BoundAs returns a typed route-model
+| binding.); SignedURL (SignedURL returns a temporary signed relative
+| URL.); TemporarySignedRoute (TemporarySignedRoute returns a signed URL
+| for a named route.); HasValidSignature (HasValidSignature reports
+| whether the current request URL is signed and valid.).
+| 
+*/
+
 import (
 	"time"
 

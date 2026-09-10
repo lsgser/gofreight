@@ -1,3 +1,29 @@
+<!--
+| --------------------------------------------------------------------------
+| Jobs
+| --------------------------------------------------------------------------
+|
+| Official Gofreight documentation consumed by the docs site and linked
+| from the CLI welcome page.
+|
+| Keep examples aligned with the current CLI and version; sync copies to
+| gofreight-web when publishing.
+|
+| Covers concepts, tutorials, and reference material for this topic.
+|
+
+-->
+
+<!--
+| --------------------------------------------------------------------------
+| Jobs & Queues
+| --------------------------------------------------------------------------
+|
+| Official Gofreight documentation (published on the docs site).
+|
+
+-->
+
 # Jobs & Queues
 
 Background job processing for emails, exports, webhooks, and any work that should not block HTTP requests.

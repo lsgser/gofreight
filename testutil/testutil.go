@@ -1,5 +1,28 @@
 package testutil
 
+/*
+|--------------------------------------------------------------------------
+| Testutil
+|--------------------------------------------------------------------------
+|
+| Implements Testutil as part of the testutil package in the Gofreight
+| framework. Key symbols: TestApp, SetupTestApp, Draw, Request, Get, Post.
+| 
+| Shared test utilities for framework packages: temp databases, HTTP
+| recorder helpers, and assertion shortcuts.
+| 
+| Not imported by application code; for framework and generator tests.
+| 
+| Symbols defined here include: TestApp (exported type); SetupTestApp
+| (SetupTestApp creates an application in test mode.); Draw (Draw
+| registers routes on the test application.); Request (Request performs an
+| HTTP request against the test app.); Get (Get performs a GET request.);
+| Post (Post performs a POST request with JSON body.); Put (Put performs a
+| PUT request with JSON body.); Delete (Delete performs a DELETE
+| request.).
+| 
+*/
+
 import (
 	"io"
 	"net/http/httptest"

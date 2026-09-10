@@ -1,3 +1,29 @@
+<!--
+| --------------------------------------------------------------------------
+| Application-wiring
+| --------------------------------------------------------------------------
+|
+| Official Gofreight documentation consumed by the docs site and linked
+| from the CLI welcome page.
+|
+| Keep examples aligned with the current CLI and version; sync copies to
+| gofreight-web when publishing.
+|
+| Covers concepts, tutorials, and reference material for this topic.
+|
+
+-->
+
+<!--
+| --------------------------------------------------------------------------
+| Application wiring
+| --------------------------------------------------------------------------
+|
+| Official Gofreight documentation (published on the docs site).
+|
+
+-->
+
 # Application wiring
 
 Every Gofreight app boots through `bootstrap/app.go`. This guide documents every wiring helper on `*application.Application` — what it does, when to call it, and how environment variables connect.

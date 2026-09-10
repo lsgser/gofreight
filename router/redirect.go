@@ -1,5 +1,27 @@
 package router
 
+/*
+|--------------------------------------------------------------------------
+| Redirect
+|--------------------------------------------------------------------------
+|
+| Implements Redirect as part of the router package in the Gofreight
+| framework. Key symbols: Redirect, PermanentRedirect, URL, URLParams.
+| 
+| The router matches verbs and paths, supports groups, prefixes, named
+| routes, constraints, signed URLs, and domain routing.
+| 
+| Routes register in routes/web.go and routes/api.go; see docs/routing.md
+| for middleware and model binding.
+| 
+| Symbols defined here include: Redirect (Redirect registers a GET route
+| that redirects to another URL.); PermanentRedirect (PermanentRedirect
+| registers a 301 redirect from one path to another.); URL (URL builds a
+| path for a named route, substituting :param placeholders.); URLParams
+| (URLParams builds a named route URL from alternating key/value pairs.).
+| 
+*/
+
 import (
 	"fmt"
 	"net/http"

@@ -1,5 +1,33 @@
 package mail
 
+/*
+|--------------------------------------------------------------------------
+| Mailable
+|--------------------------------------------------------------------------
+|
+| Implements Mailable as part of the mail package in the Gofreight
+| framework. Key symbols: Mailable, NewMailable, With, Render, Send,
+| QueuedMailer.
+| 
+| Mail covers Message and Mailer interfaces, LogMailer for tests,
+| SMTP/SendGrid transports, mailable GFT rendering, and queued delivery.
+| 
+| Mailables render app/views/mail templates through the view engine;
+| preview with gofreight mail:preview.
+| 
+| Configure MAIL_DRIVER in .env; authentication flows accept mail
+| callbacks for reset and verification emails.
+| 
+| Symbols defined here include: Mailable (exported type); NewMailable
+| (NewMailable creates a mailable with template path relative to
+| viewsDir.); With (With sets template data.); Render (Render builds the
+| HTML body from the template file (GFT or html/template).); Send (Send
+| renders and sends via the mailer.); QueuedMailer (exported type);
+| JobDispatcher (exported type); Send (Send queues the message for
+| background delivery.).
+| 
+*/
+
 import (
 	"context"
 )

@@ -1,5 +1,33 @@
 package auth
 
+/*
+|--------------------------------------------------------------------------
+| Tokens
+|--------------------------------------------------------------------------
+|
+| Implements Tokens as part of the auth package in the Gofreight
+| framework. Key symbols: TokenStore, MemoryTokenStore,
+| NewMemoryTokenStore, Create, Validate, Revoke.
+| 
+| The auth package covers session login, password hashing, API token
+| storage, OAuth callbacks, email verification, and password reset flows.
+| 
+| Controllers compose auth helpers with your User model; tokens and
+| verification stores can be in-memory or database-backed.
+| 
+| Install scaffolding with gofreight make:auth and wire find-user
+| callbacks in app/auth.
+| 
+| Symbols defined here include: TokenStore (exported type);
+| MemoryTokenStore (exported type); APITokenMiddleware (APITokenMiddleware
+| authenticates requests via Bearer opaque API token.); PasswordResetStore
+| (exported type); MemoryPasswordResetStore (exported type);
+| RequestPasswordReset (RequestPasswordReset handles POST
+| /password/forgot.); ResetPassword (ResetPassword handles POST
+| /password/reset.).
+| 
+*/
+
 import (
 	"context"
 	"crypto/rand"

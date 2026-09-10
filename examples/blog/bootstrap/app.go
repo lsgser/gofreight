@@ -2,12 +2,18 @@ package bootstrap
 
 /*
 |--------------------------------------------------------------------------
-| Application Bootstrap
+| App
 |--------------------------------------------------------------------------
 |
-| Configure middleware, sessions, queues, locale, and service bindings.
-| Loaded on every request via main.go.
-|
+| Implements App as part of the bootstrap package in the Gofreight
+| framework. Key symbols: Application.
+| 
+| Symbols defined here include: Application (/*
+| |--------------------------------------------------------------------------
+| | Application
+| |--------------------------------------------------------------------------
+| | | Creates and configures the Gofreight application instance. | */).
+| 
 */
 
 import (

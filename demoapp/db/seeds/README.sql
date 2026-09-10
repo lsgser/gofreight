@@ -1,4 +1,20 @@
 -- --------------------------------------------------------------------------
+-- README
+-- --------------------------------------------------------------------------
+--
+-- Database migration defining schema changes applied in order by gofreight
+-- migrate.
+--
+-- Pair up/down migrations when altering columns; prefer blueprint Go
+-- migrations for new projects.
+--
+-- --------------------------------------------------------------------------
+-- README
+-- --------------------------------------------------------------------------
+--
+-- Database migration or schema SQL for versioned database changes.
+--
+-- --------------------------------------------------------------------------
 -- Database Seed Files (SQL)
 -- --------------------------------------------------------------------------
 --

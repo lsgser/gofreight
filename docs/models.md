@@ -1,3 +1,29 @@
+<!--
+| --------------------------------------------------------------------------
+| Models
+| --------------------------------------------------------------------------
+|
+| Official Gofreight documentation consumed by the docs site and linked
+| from the CLI welcome page.
+|
+| Keep examples aligned with the current CLI and version; sync copies to
+| gofreight-web when publishing.
+|
+| Covers concepts, tutorials, and reference material for this topic.
+|
+
+-->
+
+<!--
+| --------------------------------------------------------------------------
+| Models
+| --------------------------------------------------------------------------
+|
+| Official Gofreight documentation (published on the docs site).
+|
+
+-->
+
 # Models
 
 Models are plain Go structs mapped to database tables. Each model gets a **repository** for queries, validation, and persistence. For the query builder, associations, and advanced ORM features, see **[ORM](orm.md)**. For column and migration types, see **[Column Types](column-types.md)**.

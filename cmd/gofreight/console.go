@@ -1,5 +1,28 @@
 package main
 
+/*
+|--------------------------------------------------------------------------
+| Console
+|--------------------------------------------------------------------------
+|
+| Implements Console as part of the gofreight package in the Gofreight
+| framework. Key symbols: RunConsole.
+| 
+| This directory contains the gofreight CLI binary: command registration,
+| terminal UI, and handlers for make:*, migrate, serve, test, and
+| mail:preview.
+| 
+| Each subcommand lives in its own source file; commands.go registers the
+| catalog shown by gofreight list.
+| 
+| Install locally with go install ./cmd/gofreight from the framework
+| repository root.
+| 
+| Symbols defined here include: RunConsole (RunConsole starts an
+| interactive SQL console for the connected database.).
+| 
+*/
+
 import (
 	"bufio"
 	"context"

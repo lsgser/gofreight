@@ -1,5 +1,33 @@
 package model
 
+/*
+|--------------------------------------------------------------------------
+| Collection
+|--------------------------------------------------------------------------
+|
+| Implements Collection as part of the model package in the Gofreight
+| framework. Key symbols: Collection, NewCollection, All, Count, IsEmpty,
+| First.
+| 
+| The model package is the ORM layer: repositories, queries, associations,
+| soft deletes, validation, serialization, collections, and pagination.
+| 
+| Models map to tables via struct tags; migrations define schema
+| separately in db/migrate.
+| 
+| See docs/models.md, docs/orm.md, and docs/factories.md for
+| Laravel-aligned patterns.
+| 
+| Symbols defined here include: Collection (exported type); NewCollection
+| (NewCollection creates a collection from a slice.); All (All returns the
+| underlying slice.); Count (Count returns the number of models in the
+| collection.); IsEmpty (IsEmpty reports whether the collection has no
+| items.); First (First returns the first model, if any.); Last (Last
+| returns the last model, if any.); Find (Find returns the model with the
+| given primary key.).
+| 
+*/
+
 import (
 	"encoding/json"
 	"reflect"

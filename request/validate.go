@@ -1,5 +1,25 @@
 package request
 
+/*
+|--------------------------------------------------------------------------
+| Validate
+|--------------------------------------------------------------------------
+|
+| Implements Validate as part of the request package in the Gofreight
+| framework. Key symbols: All, ValidateUsing.
+| 
+| Form requests bind and validate HTTP input using vine schemas or
+| validation tags before controller actions run.
+| 
+| Integrates with controller Base for 422 Unprocessable responses and GFT
+| error display helpers.
+| 
+| Symbols defined here include: All (All returns merged request input from
+| form values and query string.); ValidateUsing (ValidateUsing validates
+| request input with a Vine schema.).
+| 
+*/
+
 import (
 	"encoding/json"
 	"fmt"

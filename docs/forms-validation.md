@@ -1,3 +1,29 @@
+<!--
+| --------------------------------------------------------------------------
+| Forms-validation
+| --------------------------------------------------------------------------
+|
+| Official Gofreight documentation consumed by the docs site and linked
+| from the CLI welcome page.
+|
+| Keep examples aligned with the current CLI and version; sync copies to
+| gofreight-web when publishing.
+|
+| Covers concepts, tutorials, and reference material for this topic.
+|
+
+-->
+
+<!--
+| --------------------------------------------------------------------------
+| Forms & validation
+| --------------------------------------------------------------------------
+|
+| Official Gofreight documentation (published on the docs site).
+|
+
+-->
+
 # Forms & validation
 
 Gofreight provides schema-based validation and GFT form components for HTML flows — validate in controllers, redirect back with errors, and repopulate fields automatically.

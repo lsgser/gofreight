@@ -1,3 +1,25 @@
+{#
+| --------------------------------------------------------------------------
+| Application
+| --------------------------------------------------------------------------
+|
+| Gofreight Template (GFT) view rendered by the view engine with optional
+| layout and slots.
+|
+| Edit GFT syntax here; use gofreight serve in development for hot reload
+| on .gft changes.
+|
+#}
+
+{#
+| --------------------------------------------------------------------------
+| Application
+| --------------------------------------------------------------------------
+|
+| Gofreight Template (GFT) view rendered by the view engine.
+|
+#}
+
 {# --------------------------------------------------------------------------
    Layout: Application Shell
    -------------------------------------------------------------------------- #}

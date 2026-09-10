@@ -1,5 +1,26 @@
 package health
 
+/*
+|--------------------------------------------------------------------------
+| Health
+|--------------------------------------------------------------------------
+|
+| Implements Health as part of the health package in the Gofreight
+| framework. Key symbols: Checker, New, Handler, Mount.
+| 
+| Health check handlers report process liveness and optional dependency
+| status for load balancers and orchestrators.
+| 
+| Typically mounted at /health returning JSON; extend with database ping
+| checks in your bootstrap.
+| 
+| Symbols defined here include: Checker (exported type); New (New creates
+| a health checker with a database check.); Handler (Handler returns an
+| HTTP handler for GET /health.); Mount (Mount registers /health on a
+| mux-compatible handler.).
+| 
+*/
+
 import (
 	"context"
 	"encoding/json"

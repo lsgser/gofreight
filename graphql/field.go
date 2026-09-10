@@ -1,5 +1,35 @@
 package graphql
 
+/*
+|--------------------------------------------------------------------------
+| Field
+|--------------------------------------------------------------------------
+|
+| Helpers to define GraphQL fields with optional per-resolver rate
+| limiting.
+| 
+| Composes with graphql-go FieldConfig and security middleware documented
+| in the GraphQL guide.
+| 
+| The graphql package integrates graphql-go with Gofreight: schema
+| registration, HTTP mount, playground, DataLoader batching, and
+| field-level rate limits.
+| 
+| Generate modules with gofreight make:graphql-module; SDL and resolvers
+| live under app/graphql in your project.
+| 
+| See docs/graphql.md and the tutorial for N+1 avoidance and security
+| middleware.
+| 
+| Symbols defined here include: FieldConfig (exported type); FieldOption
+| (exported type); WithFieldRateLimit (WithFieldRateLimit applies a
+| per-field rate limit to this resolver endpoint.); Field (Field creates a
+| GraphQL field with optional per-endpoint rate limiting.);
+| RateLimitedField (RateLimitedField wraps an existing field resolver with
+| a per-endpoint rate limit.).
+| 
+*/
+
 import (
 	"fmt"
 	"time"

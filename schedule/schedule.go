@@ -1,5 +1,26 @@
 package schedule
 
+/*
+|--------------------------------------------------------------------------
+| Schedule
+|--------------------------------------------------------------------------
+|
+| Implements Schedule as part of the schedule package in the Gofreight
+| framework. Key symbols: Task, Scheduler, New, Every, Daily, Tasks.
+| 
+| Schedule defines cron-like tasks invoked by gofreight schedule:run,
+| suitable for system crontab or Kubernetes CronJob.
+| 
+| Register closures or command strings in bootstrap/schedule.go.
+| 
+| Symbols defined here include: Task (exported type); Scheduler (exported
+| type); New (New creates a scheduler.); Every (Every registers a task at
+| an interval.); Daily (Daily registers a task at HH:MM each day.); Tasks
+| (Tasks returns registered tasks.); RunDue (RunDue executes tasks that
+| are due now.).
+| 
+*/
+
 import (
 	"context"
 	"sync"

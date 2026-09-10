@@ -1,5 +1,18 @@
 package models
 
+/*
+|--------------------------------------------------------------------------
+| Post
+|--------------------------------------------------------------------------
+|
+| Implements Post as part of the models package in the Gofreight
+| framework. Key symbols: Post, Callbacks, Validators, Save, Delete.
+| 
+| Symbols defined here include: Post (exported type); Posts (exported
+| value).
+| 
+*/
+
 import (
 	"context"
 

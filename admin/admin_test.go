@@ -1,5 +1,29 @@
 package admin_test
 
+/*
+|--------------------------------------------------------------------------
+| Admin
+|--------------------------------------------------------------------------
+|
+| Test suite for Admin in the admin package.
+| 
+| Uses table-driven tests, httptest, or gftest where applicable. Failures
+| should indicate regressions in public API or HTTP behavior.
+| 
+| The admin package exposes a development-only database browser and schema
+| tools.
+| 
+| It introspects tables and columns so you can inspect SQLite, PostgreSQL,
+| or MySQL data without leaving the browser.
+| 
+| Mount it only in non-production environments; see docs and application
+| wiring for route registration.
+| 
+| Run with go test ./admin/... or go test for this package from the
+| framework root.
+| 
+*/
+
 import (
 	"net/http"
 	"net/url"

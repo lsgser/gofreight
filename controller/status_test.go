@@ -1,5 +1,29 @@
 package controller_test
 
+/*
+|--------------------------------------------------------------------------
+| Status
+|--------------------------------------------------------------------------
+|
+| Test suite for Status in the controller package.
+| 
+| Uses table-driven tests, httptest, or gftest where applicable. Failures
+| should indicate regressions in public API or HTTP behavior.
+| 
+| Controllers wrap http.HandlerFunc with a Base struct that exposes
+| Request, Response, validation, views, and JSON helpers.
+| 
+| This package defines RenderView, Redirect, status helpers, file
+| downloads, and route registration utilities.
+| 
+| Application controllers embed these patterns; see docs/controllers.md
+| for request lifecycle.
+| 
+| Run with go test ./controller/... or go test for this package from the
+| framework root.
+| 
+*/
+
 import (
 	"net/http"
 	"net/http/httptest"

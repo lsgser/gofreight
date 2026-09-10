@@ -1,5 +1,31 @@
 package integrations
 
+/*
+|--------------------------------------------------------------------------
+| Builtin
+|--------------------------------------------------------------------------
+|
+| Implements Builtin as part of the integrations package in the Gofreight
+| framework. Key symbols: Storage, Name, Configure, Enabled, Category,
+| DriverID.
+| 
+| Integrations register pluggable drivers for mail, storage, cache, queue,
+| and custom third-party APIs.
+| 
+| Active() resolves the configured implementation from environment
+| variables; wire Application in ConfigureIntegrations.
+| 
+| Built-in connectors cover SMTP, SendGrid, S3-compatible storage, and
+| Redis without vendor-specific SDKs in app code.
+| 
+| Symbols defined here include: Storage (exported type); URL (URL returns
+| the public URL for an object key.); Email (exported type); Redis
+| (exported type); Webhook (exported type); Analytics (exported type);
+| AsStorage (AsStorage returns the storage integration if enabled.);
+| AsEmail (AsEmail returns the email integration if enabled.).
+| 
+*/
+
 import (
 	"fmt"
 	"strings"

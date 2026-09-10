@@ -1,5 +1,21 @@
 package router
 
+/*
+|--------------------------------------------------------------------------
+| Match
+|--------------------------------------------------------------------------
+|
+| Implements Match as part of the router package in the Gofreight
+| framework.
+| 
+| The router matches verbs and paths, supports groups, prefixes, named
+| routes, constraints, signed URLs, and domain routing.
+| 
+| Routes register in routes/web.go and routes/api.go; see docs/routing.md
+| for middleware and model binding.
+| 
+*/
+
 import (
 	"regexp"
 	"strings"

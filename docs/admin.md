@@ -1,3 +1,29 @@
+<!--
+| --------------------------------------------------------------------------
+| Admin
+| --------------------------------------------------------------------------
+|
+| Official Gofreight documentation consumed by the docs site and linked
+| from the CLI welcome page.
+|
+| Keep examples aligned with the current CLI and version; sync copies to
+| gofreight-web when publishing.
+|
+| Covers concepts, tutorials, and reference material for this topic.
+|
+
+-->
+
+<!--
+| --------------------------------------------------------------------------
+| Admin dashboard
+| --------------------------------------------------------------------------
+|
+| Official Gofreight documentation (published on the docs site).
+|
+
+-->
+
 # Admin dashboard
 
 Browser-based database administration for **development and test environments only**. The UI is inspired by phpMyAdmin — sidebar table list, tabbed table views, SQL console, and schema tools.

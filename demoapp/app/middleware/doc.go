@@ -2,13 +2,13 @@ package middleware
 
 /*
 |--------------------------------------------------------------------------
-| HTTP Middleware
+| Demoapp — App — Middleware Overview
 |--------------------------------------------------------------------------
 |
-| Application middleware runs on every request before your controller.
-| Framework middleware (CSRF, sessions, CORS) is configured in bootstrap.
-|
-| Generate middleware:
-|   gofreight make:middleware RequestLogger
-|
+| Overview and conventions for the Demoapp — App — Middleware layer in
+| a Gofreight application.
+| 
+| Documents generator commands and where application code should live; not
+| imported at runtime for logic.
+| 
 */

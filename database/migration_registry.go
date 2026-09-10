@@ -1,5 +1,31 @@
 package database
 
+/*
+|--------------------------------------------------------------------------
+| Migration Registry
+|--------------------------------------------------------------------------
+|
+| Implements Migration Registry as part of the database package in the
+| Gofreight framework. Key symbols: RegisteredMigration,
+| RegisterMigration, RegisteredMigrations, ResetRegisteredMigrations.
+| 
+| The database package manages connections, fluent schema blueprints, Go
+| and SQL migrations, seeding, and introspection.
+| 
+| Migrations run via gofreight migrate; blueprints generate portable DDL
+| across SQLite, PostgreSQL, and MySQL.
+| 
+| Lower-level query helpers complement the model ORM in the model package.
+| 
+| Symbols defined here include: RegisteredMigration (exported type);
+| RegisterMigration (RegisterMigration registers a Go migration. Call from
+| init() in db/migrate/*.go files.); RegisteredMigrations
+| (RegisteredMigrations returns a sorted copy of all registered
+| migrations.); ResetRegisteredMigrations (ResetRegisteredMigrations
+| clears the registry (for tests).).
+| 
+*/
+
 import (
 	"context"
 	"sort"

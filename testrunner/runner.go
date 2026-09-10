@@ -1,5 +1,29 @@
 package testrunner
 
+/*
+|--------------------------------------------------------------------------
+| Runner
+|--------------------------------------------------------------------------
+|
+| Implements Runner as part of the testrunner package in the Gofreight
+| framework. Key symbols: Mode, Options, DefaultPackages, Run, ParseArgs,
+| SuiteLabel.
+| 
+| testrunner powers gofreight test (feature tests in tests/) and gofreight
+| test:unit (Go tests in app/).
+| 
+| It sets GOFREIGHT_ENV=test and forwards flags to go test with sensible
+| default package paths.
+| 
+| Symbols defined here include: Mode (exported type); ModeFeature
+| (exported value); ModeUnit (exported value); Options (exported type);
+| DefaultPackages (DefaultPackages returns package paths for the given
+| mode when none are specified.); Run (Run executes go test with Gofreight
+| test defaults.); ParseArgs (ParseArgs splits CLI flags from package
+| paths.); SuiteLabel (SuiteLabel returns a human-readable suite name.).
+| 
+*/
+
 import (
 	"fmt"
 	"os"

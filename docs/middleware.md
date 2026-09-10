@@ -1,3 +1,29 @@
+<!--
+| --------------------------------------------------------------------------
+| Middleware
+| --------------------------------------------------------------------------
+|
+| Official Gofreight documentation consumed by the docs site and linked
+| from the CLI welcome page.
+|
+| Keep examples aligned with the current CLI and version; sync copies to
+| gofreight-web when publishing.
+|
+| Covers concepts, tutorials, and reference material for this topic.
+|
+
+-->
+
+<!--
+| --------------------------------------------------------------------------
+| Middleware
+| --------------------------------------------------------------------------
+|
+| Official Gofreight documentation (published on the docs site).
+|
+
+-->
+
 # Middleware
 
 Middleware wraps HTTP handlers in a pipeline — each layer can inspect or modify the request before passing it to the next handler. Gofreight ships built-in middleware for sessions, CSRF, CORS, rate limiting, logging, and more.

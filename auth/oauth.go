@@ -1,5 +1,31 @@
 package auth
 
+/*
+|--------------------------------------------------------------------------
+| Oauth
+|--------------------------------------------------------------------------
+|
+| Implements Oauth as part of the auth package in the Gofreight framework.
+| Key symbols: OAuthProvider, OAuthUserInfo, OAuthConfig, OAuthRedirect,
+| OAuthCallback.
+| 
+| The auth package covers session login, password hashing, API token
+| storage, OAuth callbacks, email verification, and password reset flows.
+| 
+| Controllers compose auth helpers with your User model; tokens and
+| verification stores can be in-memory or database-backed.
+| 
+| Install scaffolding with gofreight make:auth and wire find-user
+| callbacks in app/auth.
+| 
+| Symbols defined here include: OAuthProvider (exported type);
+| OAuthUserInfo (exported type); OAuthConfig (exported type);
+| OAuthRedirect (OAuthRedirect starts the OAuth authorization flow.);
+| OAuthCallback (OAuthCallback handles the OAuth callback and logs the
+| user in.).
+| 
+*/
+
 import (
 	"context"
 	"encoding/json"

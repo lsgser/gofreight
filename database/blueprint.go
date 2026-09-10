@@ -1,5 +1,33 @@
 package database
 
+/*
+|--------------------------------------------------------------------------
+| Blueprint
+|--------------------------------------------------------------------------
+|
+| Fluent schema builder for migrations: columns, indexes, timestamps, soft
+| deletes, and dialect-specific SQL.
+| 
+| Used by db/migrate/*.go files and gofreight make:migration output.
+| 
+| The database package manages connections, fluent schema blueprints, Go
+| and SQL migrations, seeding, and introspection.
+| 
+| Migrations run via gofreight migrate; blueprints generate portable DDL
+| across SQLite, PostgreSQL, and MySQL.
+| 
+| Lower-level query helpers complement the model ORM in the model package.
+| 
+| Symbols defined here include: Blueprint (exported type); NewBlueprint
+| (NewBlueprint creates a migration blueprint for a table.); ColNotNull
+| (ColNotNull marks a column NOT NULL (for StringColumn, IntegerColumn,
+| etc.).); ColNullable (ColNullable marks a column nullable.); ColDefault
+| (ColDefault sets a column default value.); ColUnique (ColUnique marks a
+| column UNIQUE.); ColumnBuilder (exported type); String (String adds a
+| string/text column. Chain NotNull(), Unique(), Default(), etc.).
+| 
+*/
+
 import (
 	"fmt"
 	"os"

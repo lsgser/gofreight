@@ -1,3 +1,29 @@
+<!--
+| --------------------------------------------------------------------------
+| Seeding
+| --------------------------------------------------------------------------
+|
+| Official Gofreight documentation consumed by the docs site and linked
+| from the CLI welcome page.
+|
+| Keep examples aligned with the current CLI and version; sync copies to
+| gofreight-web when publishing.
+|
+| Covers concepts, tutorials, and reference material for this topic.
+|
+
+-->
+
+<!--
+| --------------------------------------------------------------------------
+| Database Seeding
+| --------------------------------------------------------------------------
+|
+| Official Gofreight documentation (published on the docs site).
+|
+
+-->
+
 # Database Seeding
 
 Gofreight seeding follows the [Laravel seeding](https://laravel.com/docs/seeding) pattern: Go seeder classes in `db/seeders/`, a root `DatabaseSeeder`, and `gofreight db:seed`.

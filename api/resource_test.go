@@ -1,5 +1,29 @@
 package api
 
+/*
+|--------------------------------------------------------------------------
+| Resource
+|--------------------------------------------------------------------------
+|
+| Test suite for Resource in the api package.
+| 
+| Uses table-driven tests, httptest, or gftest where applicable. Failures
+| should indicate regressions in public API or HTTP behavior.
+| 
+| The api package implements JSON resource transformers and helpers for
+| versioned HTTP APIs.
+| 
+| Resources map models and structs to consistent JSON shapes, pagination
+| metadata, and optional link collections.
+| 
+| Use api.Group with the router to register /api/v1-style routes with
+| shared middleware.
+| 
+| Run with go test ./api/... or go test for this package from the
+| framework root.
+| 
+*/
+
 import (
 	"encoding/json"
 	"net/http"

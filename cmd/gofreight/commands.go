@@ -1,5 +1,28 @@
 package main
 
+/*
+|--------------------------------------------------------------------------
+| Commands
+|--------------------------------------------------------------------------
+|
+| Registers every first-party CLI command with name, category, usage
+| string, and Run func.
+| 
+| initCommands is called from main before dispatch; add new commands here
+| or via registerXxxCommands helpers.
+| 
+| This directory contains the gofreight CLI binary: command registration,
+| terminal UI, and handlers for make:*, migrate, serve, test, and
+| mail:preview.
+| 
+| Each subcommand lives in its own source file; commands.go registers the
+| catalog shown by gofreight list.
+| 
+| Install locally with go install ./cmd/gofreight from the framework
+| repository root.
+| 
+*/
+
 import (
 	"fmt"
 	"io"

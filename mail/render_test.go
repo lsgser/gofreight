@@ -1,5 +1,29 @@
 package mail_test
 
+/*
+|--------------------------------------------------------------------------
+| Render
+|--------------------------------------------------------------------------
+|
+| Test suite for Render in the mail package.
+| 
+| Uses table-driven tests, httptest, or gftest where applicable. Failures
+| should indicate regressions in public API or HTTP behavior.
+| 
+| Mail covers Message and Mailer interfaces, LogMailer for tests,
+| SMTP/SendGrid transports, mailable GFT rendering, and queued delivery.
+| 
+| Mailables render app/views/mail templates through the view engine;
+| preview with gofreight mail:preview.
+| 
+| Configure MAIL_DRIVER in .env; authentication flows accept mail
+| callbacks for reset and verification emails.
+| 
+| Run with go test ./mail/... or go test for this package from the
+| framework root.
+| 
+*/
+
 import (
 	"os"
 	"path/filepath"

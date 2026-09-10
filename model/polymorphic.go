@@ -1,5 +1,32 @@
 package model
 
+/*
+|--------------------------------------------------------------------------
+| Polymorphic
+|--------------------------------------------------------------------------
+|
+| Implements Polymorphic as part of the model package in the Gofreight
+| framework. Key symbols: PolymorphicAssoc, PolymorphicBelongsTo,
+| PolymorphicHasMany, NestedSave.
+| 
+| The model package is the ORM layer: repositories, queries, associations,
+| soft deletes, validation, serialization, collections, and pagination.
+| 
+| Models map to tables via struct tags; migrations define schema
+| separately in db/migrate.
+| 
+| See docs/models.md, docs/orm.md, and docs/factories.md for
+| Laravel-aligned patterns.
+| 
+| Symbols defined here include: PolymorphicAssoc (exported type);
+| PolymorphicBelongsTo (PolymorphicBelongsTo loads the parent record for a
+| polymorphic association.); PolymorphicHasMany (PolymorphicHasMany loads
+| child records for a polymorphic association.); NestedSave
+| (NestedAttributes saves associated records (pass pre-built records via
+| callback).).
+| 
+*/
+
 import (
 	"context"
 	"fmt"

@@ -2,13 +2,13 @@ package policies
 
 /*
 |--------------------------------------------------------------------------
-| Authorization Policies
+| Demoapp — App — Policies Overview
 |--------------------------------------------------------------------------
 |
-| Policies determine whether a user can perform an action on a resource.
-| Call from controllers before create, update, or delete operations.
-|
-| Generate a policy:
-|   gofreight make:policy PostPolicy
-|
+| Overview and conventions for the Demoapp — App — Policies layer in a
+| Gofreight application.
+| 
+| Documents generator commands and where application code should live; not
+| imported at runtime for logic.
+| 
 */

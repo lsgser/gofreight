@@ -1,5 +1,34 @@
 package model
 
+/*
+|--------------------------------------------------------------------------
+| Pagination
+|--------------------------------------------------------------------------
+|
+| Implements Pagination as part of the model package in the Gofreight
+| framework. Key symbols: Page, SimplePage, LinksFor, SetLinks,
+| PaginationLinks, Paginate.
+| 
+| The model package is the ORM layer: repositories, queries, associations,
+| soft deletes, validation, serialization, collections, and pagination.
+| 
+| Models map to tables via struct tags; migrations define schema
+| separately in db/migrate.
+| 
+| See docs/models.md, docs/orm.md, and docs/factories.md for
+| Laravel-aligned patterns.
+| 
+| Symbols defined here include: Page (exported type); SimplePage (exported
+| type); LinksFor (LinksFor builds Laravel-style pagination links (first,
+| prev, next, last).); SetLinks (SetLinks sets pagination links using the
+| given base URL.); PaginationLinks (PaginationLinks builds URL links for
+| JSON API responses.); Paginate (Paginate returns a page of results with
+| metadata.); SimplePaginate (SimplePaginate returns results without total
+| count (Laravel simplePaginate).); FindEach (FindEach iterates records in
+| batches to limit memory use.).
+| 
+*/
+
 import (
 	"context"
 	"fmt"

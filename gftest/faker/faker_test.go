@@ -1,5 +1,26 @@
 package faker_test
 
+/*
+|--------------------------------------------------------------------------
+| Faker
+|--------------------------------------------------------------------------
+|
+| Test suite for Faker in the faker package.
+| 
+| Uses table-driven tests, httptest, or gftest where applicable. Failures
+| should indicate regressions in public API or HTTP behavior.
+| 
+| Test fakers generate random emails, names, and type-aware values for
+| factories and gftest seed data.
+| 
+| Used by gofreight make:factory and table-driven tests that need
+| realistic but non-production data.
+| 
+| Run with go test ./gftest/faker/... or go test for this package from the
+| framework root.
+| 
+*/
+
 import (
 	"testing"
 

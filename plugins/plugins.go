@@ -1,5 +1,26 @@
 package plugins
 
+/*
+|--------------------------------------------------------------------------
+| Plugins
+|--------------------------------------------------------------------------
+|
+| Implements Plugins as part of the plugins package in the Gofreight
+| framework. Key symbols: Hook, Registry, Register, Run, Events.
+| 
+| Plugins register extension hooks so packages can subscribe to framework
+| events without modifying core code.
+| 
+| Use for optional packages or internal modules that need boot-time
+| registration.
+| 
+| Symbols defined here include: Hook (exported type); Registry (exported
+| type); Register (Register adds a hook for an event (boot, route,
+| migrate, etc.).); Run (Run executes all hooks for an event.); Events
+| (Events lists registered hook names.).
+| 
+*/
+
 import "sync"
 
 // Hook is a lifecycle callback registered by plugins.

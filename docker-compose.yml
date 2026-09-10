@@ -1,3 +1,17 @@
+# --------------------------------------------------------------------------
+# Docker-compose
+# --------------------------------------------------------------------------
+#
+# YAML configuration loaded at application boot alongside .env.
+#
+# Non-secret defaults belong here; secrets stay in environment variables.
+#
+# --------------------------------------------------------------------------
+# Docker-compose
+# --------------------------------------------------------------------------
+#
+# Documentation for the Gofreight framework.
+#
 services:
   app:
     build: .

@@ -1,5 +1,33 @@
 package auth
 
+/*
+|--------------------------------------------------------------------------
+| Login
+|--------------------------------------------------------------------------
+|
+| Implements Login as part of the auth package in the Gofreight framework.
+| Key symbols: LoginConfig, DefaultLoginConfig, LoginWithJWT, Login,
+| Logout, CurrentUserID.
+| 
+| The auth package covers session login, password hashing, API token
+| storage, OAuth callbacks, email verification, and password reset flows.
+| 
+| Controllers compose auth helpers with your User model; tokens and
+| verification stores can be in-memory or database-backed.
+| 
+| Install scaffolding with gofreight make:auth and wire find-user
+| callbacks in app/auth.
+| 
+| Symbols defined here include: LoginConfig (exported type);
+| DefaultLoginConfig (DefaultLoginConfig returns sensible login
+| defaults.); LoginWithJWT (LoginWithJWT handles POST /login and returns a
+| JWT for API clients.); Login (Login handles POST /login form
+| submissions.); Logout (Logout clears the session and redirects.);
+| CurrentUserID (CurrentUserID returns the logged-in user ID from
+| session.).
+| 
+*/
+
 import (
 	"net/http"
 	"time"

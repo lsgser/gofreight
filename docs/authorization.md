@@ -1,3 +1,29 @@
+<!--
+| --------------------------------------------------------------------------
+| Authorization
+| --------------------------------------------------------------------------
+|
+| Official Gofreight documentation consumed by the docs site and linked
+| from the CLI welcome page.
+|
+| Keep examples aligned with the current CLI and version; sync copies to
+| gofreight-web when publishing.
+|
+| Covers concepts, tutorials, and reference material for this topic.
+|
+
+-->
+
+<!--
+| --------------------------------------------------------------------------
+| Authorization
+| --------------------------------------------------------------------------
+|
+| Official Gofreight documentation (published on the docs site).
+|
+
+-->
+
 # Authorization
 
 Authentication confirms **who** the user is; authorization decides **what** they can do. Gofreight provides three complementary tools:

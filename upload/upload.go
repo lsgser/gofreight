@@ -1,5 +1,25 @@
 package upload
 
+/*
+|--------------------------------------------------------------------------
+| Upload
+|--------------------------------------------------------------------------
+|
+| Implements Upload as part of the upload package in the Gofreight
+| framework. Key symbols: SaveFile, ParseMultipart.
+| 
+| Upload helpers save multipart form files with sanitized names and size
+| checks to configured storage directories.
+| 
+| Use from controllers handling form posts with enctype multipart; paths
+| typically under storage/uploads.
+| 
+| Symbols defined here include: SaveFile (SaveFile saves an uploaded file
+| to destDir with a sanitized filename.); ParseMultipart (ParseMultipart
+| parses multipart form and returns the first file for a field.).
+| 
+*/
+
 import (
 	"fmt"
 	"io"

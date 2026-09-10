@@ -1,5 +1,32 @@
 package auth
 
+/*
+|--------------------------------------------------------------------------
+| Verification
+|--------------------------------------------------------------------------
+|
+| Implements Verification as part of the auth package in the Gofreight
+| framework. Key symbols: VerificationStore, MemoryVerificationStore,
+| NewMemoryVerificationStore, Create, Consume, SendVerificationEmail.
+| 
+| The auth package covers session login, password hashing, API token
+| storage, OAuth callbacks, email verification, and password reset flows.
+| 
+| Controllers compose auth helpers with your User model; tokens and
+| verification stores can be in-memory or database-backed.
+| 
+| Install scaffolding with gofreight make:auth and wire find-user
+| callbacks in app/auth.
+| 
+| Symbols defined here include: VerificationStore (exported type);
+| MemoryVerificationStore (exported type); SendVerificationEmail
+| (SendVerificationEmail creates a token and invokes the mail callback.);
+| VerifyEmailHandler (VerifyEmailHandler handles GET
+| /email/verify?token=...); ResendVerificationHandler
+| (ResendVerificationHandler handles POST /email/verification/resend.).
+| 
+*/
+
 import (
 	"crypto/rand"
 	"encoding/hex"

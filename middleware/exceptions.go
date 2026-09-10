@@ -1,5 +1,31 @@
 package middleware
 
+/*
+|--------------------------------------------------------------------------
+| Exceptions
+|--------------------------------------------------------------------------
+|
+| Implements Exceptions as part of the middleware package in the Gofreight
+| framework. Key symbols: ExceptionRenderer, ExceptionHandler,
+| NewExceptionHandler, Middleware.
+| 
+| HTTP middleware implements sessions, CSRF, CORS, locale, structured
+| logging, rate limiting, and maintenance mode.
+| 
+| Register global middleware in bootstrap or attach to route groups for
+| API-specific stacks.
+| 
+| Session drivers include file, cookie, and Redis variants selected by
+| SESSION_DRIVER.
+| 
+| Symbols defined here include: ExceptionRenderer (exported type);
+| ExceptionHandler (exported type); NewExceptionHandler
+| (NewExceptionHandler creates production-friendly error handling
+| middleware.); Middleware (Middleware catches panics and renders error
+| responses.).
+| 
+*/
+
 import (
 	"encoding/json"
 	"fmt"

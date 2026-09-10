@@ -1,5 +1,26 @@
 package view_test
 
+/*
+|--------------------------------------------------------------------------
+| Render
+|--------------------------------------------------------------------------
+|
+| Test suite for Render in the view package.
+| 
+| Uses table-driven tests, httptest, or gftest where applicable. Failures
+| should indicate regressions in public API or HTTP behavior.
+| 
+| The view engine compiles Gofreight Templates (.gft) to html/template,
+| supports layouts, slots, partials, and RenderString for mail.
+| 
+| Views live under app/views; hot reload in development reloads templates
+| on each request when enabled.
+| 
+| Run with go test ./view/... or go test for this package from the
+| framework root.
+| 
+*/
+
 import (
 	"net/http/httptest"
 	"os"

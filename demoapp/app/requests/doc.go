@@ -2,13 +2,13 @@ package requests
 
 /*
 |--------------------------------------------------------------------------
-| Form Requests
+| Demoapp — App — Requests Overview
 |--------------------------------------------------------------------------
 |
-| Form requests validate and authorize incoming HTTP input before it
-| reaches your controller action.
-|
-| Generate a form request:
-|   gofreight make:request StorePostRequest
-|
+| Overview and conventions for the Demoapp — App — Requests layer in a
+| Gofreight application.
+| 
+| Documents generator commands and where application code should live; not
+| imported at runtime for logic.
+| 
 */

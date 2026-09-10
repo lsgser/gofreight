@@ -2,15 +2,12 @@ package factories
 
 /*
 |--------------------------------------------------------------------------
-| Model Factories
+| Factories
 |--------------------------------------------------------------------------
 |
-| Factories create test model instances with sensible defaults. Use in
-| tests to avoid repeating setup boilerplate.
-|
-| Generate a factory (uses gftest/faker for random defaults):
-|   gofreight make:factory Post
-|
+| Implements Factories as part of the factories package in the Gofreight
+| framework.
+| 
 */
 
 /*

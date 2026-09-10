@@ -1,5 +1,29 @@
 package integrations
 
+/*
+|--------------------------------------------------------------------------
+| Drivers
+|--------------------------------------------------------------------------
+|
+| Test suite for Drivers in the integrations package.
+| 
+| Uses table-driven tests, httptest, or gftest where applicable. Failures
+| should indicate regressions in public API or HTTP behavior.
+| 
+| Integrations register pluggable drivers for mail, storage, cache, queue,
+| and custom third-party APIs.
+| 
+| Active() resolves the configured implementation from environment
+| variables; wire Application in ConfigureIntegrations.
+| 
+| Built-in connectors cover SMTP, SendGrid, S3-compatible storage, and
+| Redis without vendor-specific SDKs in app code.
+| 
+| Run with go test ./integrations/... or go test for this package from the
+| framework root.
+| 
+*/
+
 import (
 	"os"
 	"testing"

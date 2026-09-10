@@ -1,3 +1,29 @@
+<!--
+| --------------------------------------------------------------------------
+| Graphql
+| --------------------------------------------------------------------------
+|
+| Official Gofreight documentation consumed by the docs site and linked
+| from the CLI welcome page.
+|
+| Keep examples aligned with the current CLI and version; sync copies to
+| gofreight-web when publishing.
+|
+| Covers concepts, tutorials, and reference material for this topic.
+|
+
+-->
+
+<!--
+| --------------------------------------------------------------------------
+| GraphQL
+| --------------------------------------------------------------------------
+|
+| Official Gofreight documentation (published on the docs site).
+|
+
+-->
+
 # GraphQL
 
 Gofreight includes a modular GraphQL server with reusable schema modules, SDL string definitions (like `gql` in JavaScript/TypeScript), DataLoader support, GraphiQL playground, and layered security limits.

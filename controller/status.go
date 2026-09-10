@@ -1,5 +1,33 @@
 package controller
 
+/*
+|--------------------------------------------------------------------------
+| Status
+|--------------------------------------------------------------------------
+|
+| Implements Status as part of the controller package in the Gofreight
+| framework. Key symbols: StatusFromName, SetStatus, Head, OK, Created,
+| Accepted.
+| 
+| Controllers wrap http.HandlerFunc with a Base struct that exposes
+| Request, Response, validation, views, and JSON helpers.
+| 
+| This package defines RenderView, Redirect, status helpers, file
+| downloads, and route registration utilities.
+| 
+| Application controllers embed these patterns; see docs/controllers.md
+| for request lifecycle.
+| 
+| Symbols defined here include: StatusFromName (StatusFromName resolves a
+| symbolic status name to an HTTP code.); SetStatus (SetStatus sets the
+| response status used by Render* helpers.); Head (Head sends a response
+| with only a status line.); OK (OK sends a 200 JSON response.); Created
+| (Created sends a 201 JSON response.); Accepted (Accepted sends a 202
+| JSON response.); NoContent (NoContent sends a 204 response with no
+| body.); Forbidden (Forbidden sends a 403 response.).
+| 
+*/
+
 import (
 	"fmt"
 	"net/http"

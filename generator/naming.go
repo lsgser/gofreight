@@ -1,5 +1,33 @@
 package generator
 
+/*
+|--------------------------------------------------------------------------
+| Naming
+|--------------------------------------------------------------------------
+|
+| Implements Naming as part of the generator package in the Gofreight
+| framework. Key symbols: ParsedField, ParseField, FakerExpr,
+| MigrationColumnDef, HTMLInputType, ScaffoldFieldTypes.
+| 
+| The generator package powers gofreight new and all make:* scaffolds.
+| 
+| It writes idiomatic directory layouts, GFT views, migrations, tests, and
+| auth stubs from templates.
+| 
+| CLI handlers in cmd/gofreight call into this package; templates live
+| primarily in templates.go.
+| 
+| Symbols defined here include: ParsedField (exported type); ParseField
+| (ParseField maps a CLI field spec (e.g. "title:string",
+| "email:string:unique") to Go/SQL/form types.); FakerExpr (FakerExpr
+| returns a Go expression for fake data in generated factories.);
+| MigrationColumnDef (MigrationColumnDef returns the SQL column definition
+| for migrations.); HTMLInputType (HTMLInputType returns the HTML input
+| type for scaffold forms.); ScaffoldFieldTypes (ScaffoldFieldTypes lists
+| supported generator field types for documentation.).
+| 
+*/
+
 import (
 	"fmt"
 	"strings"

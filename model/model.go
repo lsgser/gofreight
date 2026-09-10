@@ -1,5 +1,34 @@
 package model
 
+/*
+|--------------------------------------------------------------------------
+| Model
+|--------------------------------------------------------------------------
+|
+| Implements Model as part of the model package in the Gofreight
+| framework. Key symbols: Record, IsSoftDeleted, Repository,
+| NewRepository, Query, Association.
+| 
+| The model package is the ORM layer: repositories, queries, associations,
+| soft deletes, validation, serialization, collections, and pagination.
+| 
+| Models map to tables via struct tags; migrations define schema
+| separately in db/migrate.
+| 
+| See docs/models.md, docs/orm.md, and docs/factories.md for
+| Laravel-aligned patterns.
+| 
+| Symbols defined here include: Record (exported type); IsSoftDeleted
+| (IsSoftDeleted reports whether the record has a deleted_at timestamp
+| set.); Repository (exported type); NewRepository (NewRepository creates
+| an ORM repository for the given table.); Query (Query returns a
+| chainable query builder for this model.); Association (Association
+| registers a model association.); Scope (Scope registers a named,
+| reusable query fragment on the repository.); EnableSoftDelete
+| (EnableSoftDelete enables soft delete for this model.).
+| 
+*/
+
 import (
 	"context"
 	"database/sql"

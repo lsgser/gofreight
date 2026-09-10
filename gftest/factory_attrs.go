@@ -1,5 +1,25 @@
 package gftest
 
+/*
+|--------------------------------------------------------------------------
+| Factory Attrs
+|--------------------------------------------------------------------------
+|
+| Implements Factory Attrs as part of the gftest package in the Gofreight
+| framework.
+| 
+| gftest is the feature testing harness used from tests/ in your
+| application.
+| 
+| NewApp boots a test HTTP server, runs migrations, exposes HTTP helpers
+| (Get, Post, AssertOk), database assertions, and fakes for mail, cache,
+| and queue.
+| 
+| Run the suite with gofreight test; see docs/testing.md for factories and
+| authentication in tests.
+| 
+*/
+
 import (
 	"reflect"
 	"strings"

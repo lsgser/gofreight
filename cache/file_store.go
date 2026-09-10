@@ -1,5 +1,27 @@
 package cache
 
+/*
+|--------------------------------------------------------------------------
+| File Store
+|--------------------------------------------------------------------------
+|
+| Implements File Store as part of the cache package in the Gofreight
+| framework. Key symbols: FileStore, NewFileStore, Put, Get, Has, Forget.
+| 
+| The cache package defines CacheStore implementations: in-memory, file,
+| Redis, and HTTP cache middleware.
+| 
+| Application wiring selects the driver from CACHE_STORE and related env
+| vars via integrations.
+| 
+| Use cache for rate limiting data, session alternatives, or fragment
+| caching in controllers.
+| 
+| Symbols defined here include: FileStore (exported type); NewFileStore
+| (NewFileStore creates a file-backed cache store.).
+| 
+*/
+
 import (
 	"encoding/json"
 	"os"

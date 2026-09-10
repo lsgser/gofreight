@@ -1,5 +1,34 @@
 package api
 
+/*
+|--------------------------------------------------------------------------
+| Resource
+|--------------------------------------------------------------------------
+|
+| Implements Resource as part of the api package in the Gofreight
+| framework. Key symbols: Resource, ResourceFunc, ToMap, Collection,
+| PaginatedMeta, PaginatedLinks.
+| 
+| The api package implements JSON resource transformers and helpers for
+| versioned HTTP APIs.
+| 
+| Resources map models and structs to consistent JSON shapes, pagination
+| metadata, and optional link collections.
+| 
+| Use api.Group with the router to register /api/v1-style routes with
+| shared middleware.
+| 
+| Symbols defined here include: Resource (exported type); ResourceFunc
+| (exported type); Collection (exported type); PaginatedMeta
+| (PaginatedMeta builds standard pagination meta.); PaginatedLinks
+| (PaginatedLinks builds Laravel-style pagination links for JSON
+| responses.); PaginatedResponse (PaginatedResponse builds a full
+| Laravel-style paginated JSON collection.); Render (Render sends a single
+| resource as JSON.); RenderCollection (RenderCollection sends a
+| collection as JSON.).
+| 
+*/
+
 import (
 	"encoding/json"
 	"net/http"

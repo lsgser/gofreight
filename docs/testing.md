@@ -1,3 +1,29 @@
+<!--
+| --------------------------------------------------------------------------
+| Testing
+| --------------------------------------------------------------------------
+|
+| Official Gofreight documentation consumed by the docs site and linked
+| from the CLI welcome page.
+|
+| Keep examples aligned with the current CLI and version; sync copies to
+| gofreight-web when publishing.
+|
+| Covers concepts, tutorials, and reference material for this topic.
+|
+
+-->
+
+<!--
+| --------------------------------------------------------------------------
+| Testing
+| --------------------------------------------------------------------------
+|
+| Official Gofreight documentation (published on the docs site).
+|
+
+-->
+
 # Testing
 
 Gofreight ships **`gftest`** for HTTP feature tests, factories, and BDD-style organization. **Go unit tests** live in `app/` and other packages. Use separate CLI commands for each — don't mix them with a single `go test ./...` unless you intend to run everything.

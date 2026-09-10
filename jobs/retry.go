@@ -1,5 +1,33 @@
 package jobs
 
+/*
+|--------------------------------------------------------------------------
+| Retry
+|--------------------------------------------------------------------------
+|
+| Implements Retry as part of the jobs package in the Gofreight framework.
+| Key symbols: JobPayload, FailedJob, DispatchNamed, ProcessOne, Failed,
+| RetryFailed.
+| 
+| The jobs package defines queue interfaces, in-memory and Redis drivers,
+| retries, and named job registration.
+| 
+| Dispatch struct jobs or func workers from controllers; process with
+| gofreight queue:work.
+| 
+| Queued mail and long-running tasks should use this layer instead of
+| blocking HTTP handlers.
+| 
+| Symbols defined here include: JobPayload (exported type); FailedJob
+| (exported type); DispatchNamed (DispatchNamed enqueues a registered job
+| with retry support.); ProcessOne (ProcessOne runs a single job with
+| retries and failed-job recording.); Failed (Failed returns failed jobs
+| from Redis.); RetryFailed (RetryFailed re-queues a failed job by id.);
+| FlushFailed (FlushFailed removes all failed jobs.); ForgetFailed
+| (ForgetFailed removes a single failed job by payload id.).
+| 
+*/
+
 import (
 	"context"
 	"encoding/json"

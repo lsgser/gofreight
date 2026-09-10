@@ -1,5 +1,29 @@
 package middleware
 
+/*
+|--------------------------------------------------------------------------
+| Cors
+|--------------------------------------------------------------------------
+|
+| Implements Cors as part of the middleware package in the Gofreight
+| framework. Key symbols: CORS, APIVersion, SecurityHeaders.
+| 
+| HTTP middleware implements sessions, CSRF, CORS, locale, structured
+| logging, rate limiting, and maintenance mode.
+| 
+| Register global middleware in bootstrap or attach to route groups for
+| API-specific stacks.
+| 
+| Session drivers include file, cookie, and Redis variants selected by
+| SESSION_DRIVER.
+| 
+| Symbols defined here include: CORS (CORS adds Cross-Origin Resource
+| Sharing headers.); APIVersion (APIVersion validates the X-API-Version
+| header or URL prefix.); SecurityHeaders (SecurityHeaders adds common
+| security headers.).
+| 
+*/
+
 import (
 	"net/http"
 	"strings"

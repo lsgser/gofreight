@@ -1,5 +1,32 @@
 package config
 
+/*
+|--------------------------------------------------------------------------
+| Config
+|--------------------------------------------------------------------------
+|
+| Implements Config as part of the config package in the Gofreight
+| framework. Key symbols: Environment, Config, Load, Timezone, Currency,
+| Locale.
+| 
+| The config package loads .env files, resolves MAIL_DRIVER and database
+| URLs, and reads config/app.yaml.
+| 
+| Database drivers and app keys are validated early so misconfiguration
+| fails fast at boot.
+| 
+| Application code reads config through helpers rather than os.Getenv
+| scattered across the codebase.
+| 
+| Symbols defined here include: Environment (exported type); Development
+| (exported value); Test (exported value); Production (exported value);
+| Config (exported type); Load (Load reads configuration from config files
+| and environment variables.); Timezone (Timezone returns the app timezone
+| (override via DEFAULT_TIMEZONE).); Currency (Currency returns the
+| default ISO 4217 currency code (override via DEFAULT_CURRENCY).).
+| 
+*/
+
 import (
 	"os"
 	"strconv"

@@ -1,5 +1,26 @@
 package generator
 
+/*
+|--------------------------------------------------------------------------
+| Service
+|--------------------------------------------------------------------------
+|
+| Implements Service as part of the generator package in the Gofreight
+| framework. Key symbols: Service.
+| 
+| The generator package powers gofreight new and all make:* scaffolds.
+| 
+| It writes idiomatic directory layouts, GFT views, migrations, tests, and
+| auth stubs from templates.
+| 
+| CLI handlers in cmd/gofreight call into this package; templates live
+| primarily in templates.go.
+| 
+| Symbols defined here include: Service (Service generates a service class
+| in app/services/.).
+| 
+*/
+
 import (
 	"os"
 	"path/filepath"

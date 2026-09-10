@@ -1,5 +1,31 @@
 package jobs
 
+/*
+|--------------------------------------------------------------------------
+| Jobs
+|--------------------------------------------------------------------------
+|
+| Implements Jobs as part of the jobs package in the Gofreight framework.
+| Key symbols: Job, JobFunc, Handle, Queue, New, Dispatch.
+| 
+| The jobs package defines queue interfaces, in-memory and Redis drivers,
+| retries, and named job registration.
+| 
+| Dispatch struct jobs or func workers from controllers; process with
+| gofreight queue:work.
+| 
+| Queued mail and long-running tasks should use this layer instead of
+| blocking HTTP handlers.
+| 
+| Symbols defined here include: Job (exported type); JobFunc (exported
+| type); Queue (exported type); New (New creates a job queue.); Dispatch
+| (Dispatch adds a job to the queue.); DispatchFunc (DispatchFunc
+| dispatches a function as a job.); Process (Process runs all pending jobs
+| synchronously (useful in tests).); Pending (Pending returns the number
+| of pending jobs.).
+| 
+*/
+
 import (
 	"context"
 	"sync"

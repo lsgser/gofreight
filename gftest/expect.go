@@ -1,5 +1,33 @@
 package gftest
 
+/*
+|--------------------------------------------------------------------------
+| Expect
+|--------------------------------------------------------------------------
+|
+| Implements Expect as part of the gftest package in the Gofreight
+| framework. Key symbols: Expectation, Expect, Not, ToEqual, ToBeTrue,
+| ToBeFalse.
+| 
+| gftest is the feature testing harness used from tests/ in your
+| application.
+| 
+| NewApp boots a test HTTP server, runs migrations, exposes HTTP helpers
+| (Get, Post, AssertOk), database assertions, and fakes for mail, cache,
+| and queue.
+| 
+| Run the suite with gofreight test; see docs/testing.md for factories and
+| authentication in tests.
+| 
+| Symbols defined here include: Expectation (exported type); Expect
+| (Expect creates a fluent assertion on a value.); Not (Not negates the
+| next assertion.); ToEqual (ToEqual asserts deep equality.); ToBeTrue
+| (ToBeTrue asserts the value is true.); ToBeFalse (ToBeFalse asserts the
+| value is false.); ToBeNil (ToBeNil asserts the value is nil.); ToBeEmpty
+| (ToBeEmpty asserts strings, slices, maps, or channels are empty.).
+| 
+*/
+
 import (
 	"fmt"
 	"reflect"

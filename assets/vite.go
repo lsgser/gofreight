@@ -1,5 +1,31 @@
 package assets
 
+/*
+|--------------------------------------------------------------------------
+| Vite
+|--------------------------------------------------------------------------
+|
+| Implements Vite as part of the assets package in the Gofreight
+| framework. Key symbols: Vite, NewVite, IsRunning, Asset, ClientTags.
+| 
+| The assets package connects your public/ directory and optional Vite dev
+| server to HTTP handlers.
+| 
+| In development, Vite can proxy hot module replacement; in production, a
+| manifest maps entry points to built files.
+| 
+| GFT templates use #vite and /assets/ paths documented in the templating
+| guide.
+| 
+| Symbols defined here include: Vite (exported type); NewVite (NewVite
+| creates Vite asset helpers.); IsRunning (IsRunning reports whether the
+| Vite dev server is active (public/hot exists).); Asset (Asset returns a
+| script or stylesheet URL for an entry point.); ClientTags (ClientTags
+| returns HTML script/link tags for a Vite entry in development or
+| production.).
+| 
+*/
+
 import (
 	"fmt"
 	"os"

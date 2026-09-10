@@ -1,5 +1,32 @@
 package config
 
+/*
+|--------------------------------------------------------------------------
+| Files
+|--------------------------------------------------------------------------
+|
+| Implements Files as part of the config package in the Gofreight
+| framework. Key symbols: FileConfig, LoadFiles, GetString, GetInt,
+| ApplyEnv.
+| 
+| The config package loads .env files, resolves MAIL_DRIVER and database
+| URLs, and reads config/app.yaml.
+| 
+| Database drivers and app keys are validated early so misconfiguration
+| fails fast at boot.
+| 
+| Application code reads config through helpers rather than os.Getenv
+| scattered across the codebase.
+| 
+| Symbols defined here include: FileConfig (exported type); LoadFiles
+| (LoadFiles loads config/{env}.yaml and config/app.yaml (env overrides
+| app).); GetString (GetString returns a string config value (file
+| overrides env when set via Apply).); GetInt (GetInt returns an int
+| config value.); ApplyEnv (ApplyEnv sets environment variables from file
+| config when not already set.).
+| 
+*/
+
 import (
 	"os"
 	"path/filepath"

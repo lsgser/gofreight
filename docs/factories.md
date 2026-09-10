@@ -1,3 +1,29 @@
+<!--
+| --------------------------------------------------------------------------
+| Factories
+| --------------------------------------------------------------------------
+|
+| Official Gofreight documentation consumed by the docs site and linked
+| from the CLI welcome page.
+|
+| Keep examples aligned with the current CLI and version; sync copies to
+| gofreight-web when publishing.
+|
+| Covers concepts, tutorials, and reference material for this topic.
+|
+
+-->
+
+<!--
+| --------------------------------------------------------------------------
+| Factories
+| --------------------------------------------------------------------------
+|
+| Official Gofreight documentation (published on the docs site).
+|
+
+-->
+
 # Factories
 
 Gofreight model factories create test (and seed) data with sensible defaults, similar to Laravel [Eloquent Factories](https://laravel.com/docs/eloquent-factories).

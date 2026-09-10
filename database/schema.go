@@ -1,5 +1,33 @@
 package database
 
+/*
+|--------------------------------------------------------------------------
+| Schema
+|--------------------------------------------------------------------------
+|
+| Implements Schema as part of the database package in the Gofreight
+| framework. Key symbols: ColumnDef, CreateTable, DropTable, AddColumn,
+| ExportTableSQL, ExecDDL.
+| 
+| The database package manages connections, fluent schema blueprints, Go
+| and SQL migrations, seeding, and introspection.
+| 
+| Migrations run via gofreight migrate; blueprints generate portable DDL
+| across SQLite, PostgreSQL, and MySQL.
+| 
+| Lower-level query helpers complement the model ORM in the model package.
+| 
+| Symbols defined here include: ColumnDef (exported type);
+| CommonColumnTypes (exported value); CreateTable (CreateTable creates a
+| new table from column definitions.); DropTable (DropTable removes a
+| table.); AddColumn (AddColumn adds a column to an existing table.);
+| ExportTableSQL (ExportTableSQL returns CREATE TABLE + INSERT statements
+| for a table.); ExecDDL (ExecDDL runs a DDL statement (CREATE, ALTER,
+| DROP) in development admin.); ImportSQL (ImportSQL runs multiple SQL
+| statements separated by semicolons.).
+| 
+*/
+
 import (
 	"context"
 	"fmt"

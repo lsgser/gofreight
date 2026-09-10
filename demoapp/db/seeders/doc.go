@@ -2,16 +2,13 @@ package seeders
 
 /*
 |--------------------------------------------------------------------------
-| Database Seeders
+| Demoapp — Db — Seeders Overview
 |--------------------------------------------------------------------------
 |
-| Seeders populate your database with test or default data. Register
-| seeders in cmd/seed/main.go and run:
-|
-|   gofreight db:seed
-|   gofreight db:seed --class=DatabaseSeeder
-|
-| Generate a seeder:
-|   gofreight make:seeder DatabaseSeeder
-|
+| Overview and conventions for the Demoapp — Db — Seeders layer in a
+| Gofreight application.
+| 
+| Documents generator commands and where application code should live; not
+| imported at runtime for logic.
+| 
 */

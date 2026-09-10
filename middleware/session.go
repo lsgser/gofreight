@@ -1,5 +1,31 @@
 package middleware
 
+/*
+|--------------------------------------------------------------------------
+| Session
+|--------------------------------------------------------------------------
+|
+| Implements Session as part of the middleware package in the Gofreight
+| framework. Key symbols: Session, NewSession, ID, Get, Set, Delete.
+| 
+| HTTP middleware implements sessions, CSRF, CORS, locale, structured
+| logging, rate limiting, and maintenance mode.
+| 
+| Register global middleware in bootstrap or attach to route groups for
+| API-specific stacks.
+| 
+| Session drivers include file, cookie, and Redis variants selected by
+| SESSION_DRIVER.
+| 
+| Symbols defined here include: Session (exported type); NewSession
+| (NewSession creates a new session with a random ID.); ID (ID returns the
+| session identifier.); Get (Get retrieves a value from the session.); Set
+| (Set stores a value in the session.); Delete (Delete removes a key from
+| the session.); GetString (GetString retrieves a string value from the
+| session.); Flash (Flash sets a one-time message stored under "_flash".).
+| 
+*/
+
 import (
 	"context"
 	"crypto/rand"

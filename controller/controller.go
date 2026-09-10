@@ -1,5 +1,34 @@
 package controller
 
+/*
+|--------------------------------------------------------------------------
+| Controller
+|--------------------------------------------------------------------------
+|
+| Implements Controller as part of the controller package in the Gofreight
+| framework. Key symbols: SetViews, Views, Base, NewBase, RenderJSON,
+| RenderView.
+| 
+| Controllers wrap http.HandlerFunc with a Base struct that exposes
+| Request, Response, validation, views, and JSON helpers.
+| 
+| This package defines RenderView, Redirect, status helpers, file
+| downloads, and route registration utilities.
+| 
+| Application controllers embed these patterns; see docs/controllers.md
+| for request lifecycle.
+| 
+| Symbols defined here include: SetViews (SetViews configures the global
+| view engine for controllers.); Views (Views returns the configured view
+| engine.); Base (exported type); NewBase (NewBase creates a controller
+| instance bound to the current request.); RenderJSON (RenderJSON sends a
+| JSON response.); RenderView (RenderView renders a template using the
+| global view engine.); RenderPartial (RenderPartial renders a partial
+| template (no layout).); RenderHTML (RenderHTML renders an HTML template
+| with the given data.).
+| 
+*/
+
 import (
 	"encoding/json"
 	"html/template"

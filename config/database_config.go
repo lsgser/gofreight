@@ -1,5 +1,31 @@
 package config
 
+/*
+|--------------------------------------------------------------------------
+| Database Config
+|--------------------------------------------------------------------------
+|
+| Implements Database Config as part of the config package in the
+| Gofreight framework. Key symbols: DatabaseConfig, LoadDatabaseConfig,
+| ResolveDatabaseURL, URL.
+| 
+| The config package loads .env files, resolves MAIL_DRIVER and database
+| URLs, and reads config/app.yaml.
+| 
+| Database drivers and app keys are validated early so misconfiguration
+| fails fast at boot.
+| 
+| Application code reads config through helpers rather than os.Getenv
+| scattered across the codebase.
+| 
+| Symbols defined here include: DatabaseConfig (exported type);
+| LoadDatabaseConfig (LoadDatabaseConfig reads database settings from file
+| config and environment.); ResolveDatabaseURL (URL returns a connection
+| URL for database.Connect.); URL (URL builds a driver connection URL from
+| discrete settings.).
+| 
+*/
+
 import (
 	"fmt"
 	"net/url"

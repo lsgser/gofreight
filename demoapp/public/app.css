@@ -1,4 +1,26 @@
 /*
+ * --------------------------------------------------------------------------
+ * App
+ * --------------------------------------------------------------------------
+ *
+ * Stylesheet served from public/ at /assets/ and linked from GFT layouts.
+ *
+ * Uses CSS variables for theming; adjust colors and layout for your brand.
+ *
+
+ */
+
+/*
+ * --------------------------------------------------------------------------
+ * App
+ * --------------------------------------------------------------------------
+ *
+ * Public stylesheet served from /assets/.
+ *
+
+ */
+
+/*
  * Public assets — served from public/ at /assets/*
  */
 :root,

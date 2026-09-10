@@ -1,5 +1,31 @@
 package jobs
 
+/*
+|--------------------------------------------------------------------------
+| Redis Queue
+|--------------------------------------------------------------------------
+|
+| Implements Redis Queue as part of the jobs package in the Gofreight
+| framework. Key symbols: RedisQueue, NewRedisQueue, DispatchFuncJob,
+| Handle, RegisterJob, Dispatch.
+| 
+| The jobs package defines queue interfaces, in-memory and Redis drivers,
+| retries, and named job registration.
+| 
+| Dispatch struct jobs or func workers from controllers; process with
+| gofreight queue:work.
+| 
+| Queued mail and long-running tasks should use this layer instead of
+| blocking HTTP handlers.
+| 
+| Symbols defined here include: RedisQueue (exported type); NewRedisQueue
+| (NewRedisQueue creates a Redis-backed job queue.); DispatchFuncJob
+| (exported type); RegisterJob (RegisterJob registers a named job handler
+| for Redis queue workers.); StartWorker (StartWorker polls Redis and
+| processes jobs until ctx is cancelled.).
+| 
+*/
+
 import (
 	"context"
 	"encoding/json"

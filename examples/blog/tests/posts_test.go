@@ -1,5 +1,20 @@
 package tests
 
+/*
+|--------------------------------------------------------------------------
+| Posts
+|--------------------------------------------------------------------------
+|
+| Test suite for Posts in the tests package.
+| 
+| Uses table-driven tests, httptest, or gftest where applicable. Failures
+| should indicate regressions in public API or HTTP behavior.
+| 
+| Run from the app directory with go test ./... or gofreight test for
+| tests/ packages.
+| 
+*/
+
 import (
 	"net/http"
 	"testing"

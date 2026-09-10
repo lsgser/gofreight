@@ -1,6 +1,30 @@
 // Package datetime provides fluent date helpers for Gofreight apps via github.com/dromara/carbon/v2.
 package datetime
 
+/*
+|--------------------------------------------------------------------------
+| Datetime
+|--------------------------------------------------------------------------
+|
+| Implements Datetime as part of the datetime package in the Gofreight
+| framework. Key symbols: Carbon, Now, Parse, Yesterday, Tomorrow,
+| FromTime.
+| 
+| Datetime helpers parse and format timestamps consistently across models,
+| APIs, and views.
+| 
+| Complements carbon-style usage documented in configuration and ORM
+| guides.
+| 
+| Symbols defined here include: Carbon (exported type); Now (Now returns
+| the current time.); Parse (Parse parses a datetime string.); Yesterday
+| (Yesterday returns yesterday's date.); Tomorrow (Tomorrow returns
+| tomorrow's date.); FromTime (FromTime wraps a standard library
+| time.Time.); ToTime (ToTime converts Carbon to time.Time.); DateString
+| (DateString returns Y-m-d (for date columns).).
+| 
+*/
+
 import (
 	"time"
 

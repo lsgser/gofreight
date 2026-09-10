@@ -1,5 +1,32 @@
 package database
 
+/*
+|--------------------------------------------------------------------------
+| Migrate
+|--------------------------------------------------------------------------
+|
+| Implements Migrate as part of the database package in the Gofreight
+| framework. Key symbols: Migrator, NewMigrator, Up, Reset, Refresh,
+| Fresh.
+| 
+| The database package manages connections, fluent schema blueprints, Go
+| and SQL migrations, seeding, and introspection.
+| 
+| Migrations run via gofreight migrate; blueprints generate portable DDL
+| across SQLite, PostgreSQL, and MySQL.
+| 
+| Lower-level query helpers complement the model ORM in the model package.
+| 
+| Symbols defined here include: Migrator (exported type); NewMigrator
+| (NewMigrator creates a migrator for the given migrations directory.); Up
+| (Up runs all pending migrations.); Reset (Reset rolls back all applied
+| migrations.); Refresh (Refresh resets and re-runs all migrations.);
+| Fresh (Fresh drops all tables and re-runs all migrations.); Down (Down
+| rolls back the most recent migration.); Status (Status prints the status
+| of all migrations.).
+| 
+*/
+
 import (
 	"fmt"
 	"os"

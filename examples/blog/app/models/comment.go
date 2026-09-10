@@ -1,5 +1,18 @@
 package models
 
+/*
+|--------------------------------------------------------------------------
+| Comment
+|--------------------------------------------------------------------------
+|
+| Implements Comment as part of the models package in the Gofreight
+| framework. Key symbols: Comment, Validators, Save.
+| 
+| Symbols defined here include: Comment (exported type); Comments
+| (exported value).
+| 
+*/
+
 import (
 	"context"
 

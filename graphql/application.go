@@ -1,5 +1,35 @@
 package graphql
 
+/*
+|--------------------------------------------------------------------------
+| Application
+|--------------------------------------------------------------------------
+|
+| Implements Application as part of the graphql package in the Gofreight
+| framework. Key symbols: ModuleConfig, Module, CreateModule,
+| MustCreateModule, ApplicationConfig, Application.
+| 
+| The graphql package integrates graphql-go with Gofreight: schema
+| registration, HTTP mount, playground, DataLoader batching, and
+| field-level rate limits.
+| 
+| Generate modules with gofreight make:graphql-module; SDL and resolvers
+| live under app/graphql in your project.
+| 
+| See docs/graphql.md and the tutorial for N+1 avoidance and security
+| middleware.
+| 
+| Symbols defined here include: ModuleConfig (exported type); Module
+| (exported type); CreateModule (CreateModule builds a GraphQL module from
+| config, similar to graphql-modules.); MustCreateModule (MustCreateModule
+| calls CreateModule and panics on error (for init/bootstrap code).);
+| ApplicationConfig (exported type); Application (exported type);
+| CreateApplication (CreateApplication merges modules into one executable
+| GraphQL application.); Server (Server returns the underlying HTTP
+| server.).
+| 
+*/
+
 import (
 	"context"
 	"fmt"

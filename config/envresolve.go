@@ -1,5 +1,38 @@
 package config
 
+/*
+|--------------------------------------------------------------------------
+| Envresolve
+|--------------------------------------------------------------------------
+|
+| Implements Envresolve as part of the config package in the Gofreight
+| framework. Key symbols: DefaultAppURL, ResolveRedisURL,
+| ResolveSessionDriver, ResolveQueueConnection, ResolveCacheStore,
+| ResolveMailMailer.
+| 
+| The config package loads .env files, resolves MAIL_DRIVER and database
+| URLs, and reads config/app.yaml.
+| 
+| Database drivers and app keys are validated early so misconfiguration
+| fails fast at boot.
+| 
+| Application code reads config through helpers rather than os.Getenv
+| scattered across the codebase.
+| 
+| Symbols defined here include: DefaultPort (exported value);
+| DefaultAppURL (DefaultAppURL returns the default application URL for
+| local development.); ResolveRedisURL (ResolveRedisURL builds a Redis URL
+| from REDIS_URL or REDIS_HOST/PORT/PASSWORD.); ResolveSessionDriver
+| (ResolveSessionDriver normalizes SESSION_DRIVER.);
+| ResolveQueueConnection (ResolveQueueConnection normalizes
+| QUEUE_CONNECTION / QUEUE_DRIVER.); ResolveCacheStore (ResolveCacheStore
+| normalizes CACHE_STORE / CACHE_DRIVER.); ResolveMailMailer
+| (ResolveMailMailer returns the active mail transport (log, smtp,
+| sendgrid, …).); ResolveFilesystemDisk (ResolveFilesystemDisk returns
+| local or s3 (FILESYSTEM_DISK / STORAGE_PROVIDER).).
+| 
+*/
+
 import (
 	"fmt"
 	"os"

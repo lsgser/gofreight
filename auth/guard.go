@@ -1,5 +1,36 @@
 package auth
 
+/*
+|--------------------------------------------------------------------------
+| Guard
+|--------------------------------------------------------------------------
+|
+| Implements Guard as part of the auth package in the Gofreight framework.
+| Key symbols: Guard, Middleware, OptionalMiddleware, UserIDFromRequest,
+| RoleFromRequest, DefaultJWT.
+| 
+| The auth package covers session login, password hashing, API token
+| storage, OAuth callbacks, email verification, and password reset flows.
+| 
+| Controllers compose auth helpers with your User model; tokens and
+| verification stores can be in-memory or database-backed.
+| 
+| Install scaffolding with gofreight make:auth and wire find-user
+| callbacks in app/auth.
+| 
+| Symbols defined here include: Guard (exported type); Middleware
+| (Middleware tries JWT, then opaque API tokens, then session
+| authentication.); OptionalMiddleware (OptionalMiddleware attaches user
+| context when credentials are present but allows anonymous access.);
+| UserIDFromRequest (UserIDFromRequest returns the authenticated user ID
+| from context, JWT, API token, or session.); RoleFromRequest
+| (RoleFromRequest returns the authenticated user's role from context or
+| session.); DefaultJWT (DefaultJWT creates a JWT manager from APP_KEY
+| material with optional TTL.); JWTFromEnv (JWTFromEnv builds a JWT
+| manager using APP_KEY and optional JWT_TTL.).
+| 
+*/
+
 import (
 	"net/http"
 	"os"

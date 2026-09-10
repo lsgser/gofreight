@@ -1,5 +1,33 @@
 package cache
 
+/*
+|--------------------------------------------------------------------------
+| Http
+|--------------------------------------------------------------------------
+|
+| Implements Http as part of the cache package in the Gofreight framework.
+| Key symbols: HTTPCacheMiddleware, FragmentCache, NewFragmentCache,
+| Remember, FragmentKey, RememberHTTP.
+| 
+| The cache package defines CacheStore implementations: in-memory, file,
+| Redis, and HTTP cache middleware.
+| 
+| Application wiring selects the driver from CACHE_STORE and related env
+| vars via integrations.
+| 
+| Use cache for rate limiting data, session alternatives, or fragment
+| caching in controllers.
+| 
+| Symbols defined here include: HTTPCacheMiddleware (HTTPCacheMiddleware
+| adds Cache-Control and ETag support.); FragmentCache (exported type);
+| NewFragmentCache (NewFragmentCache creates a fragment cache wrapper.);
+| Remember (Remember renders or returns a cached HTML fragment.);
+| FragmentKey (FragmentKey hashes a cache key from parts.); RememberHTTP
+| (RememberHTTP caches full HTTP responses by URL path (use with
+| caution).).
+| 
+*/
+
 import (
 	"crypto/sha256"
 	"encoding/hex"

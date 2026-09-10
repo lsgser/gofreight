@@ -1,5 +1,34 @@
 package controller
 
+/*
+|--------------------------------------------------------------------------
+| Validation
+|--------------------------------------------------------------------------
+|
+| Implements Validation as part of the controller package in the Gofreight
+| framework. Key symbols: ValidateUsing, HandleValidationFailure,
+| WantsJSON, RedirectBackWithErrors, ViewData.
+| 
+| Controllers wrap http.HandlerFunc with a Base struct that exposes
+| Request, Response, validation, views, and JSON helpers.
+| 
+| This package defines RenderView, Redirect, status helpers, file
+| downloads, and route registration utilities.
+| 
+| Application controllers embed these patterns; see docs/controllers.md
+| for request lifecycle.
+| 
+| Symbols defined here include: ErrValidationFailed (exported value);
+| ValidateUsing (ValidateUsing validates the request with a Vine schema.);
+| HandleValidationFailure (HandleValidationFailure stores errors for HTML
+| flows or returns JSON 422.); WantsJSON (WantsJSON returns true when the
+| client expects a JSON response.); RedirectBackWithErrors
+| (RedirectBackWithErrors flashes validation errors and old input, then
+| redirects to Referer.); ViewData (ViewData merges request-scoped view
+| context (CSRF, errors, old input) with extra data.).
+| 
+*/
+
 import (
 	"errors"
 	"net/http"

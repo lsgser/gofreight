@@ -1,5 +1,35 @@
 package gftest
 
+/*
+|--------------------------------------------------------------------------
+| App
+|--------------------------------------------------------------------------
+|
+| Implements App as part of the gftest package in the Gofreight framework.
+| Key symbols: App, AppOption, WithDatabase, WithMigrations,
+| WithMigrateDir, WithViewsRoot.
+| 
+| gftest is the feature testing harness used from tests/ in your
+| application.
+| 
+| NewApp boots a test HTTP server, runs migrations, exposes HTTP helpers
+| (Get, Post, AssertOk), database assertions, and fakes for mail, cache,
+| and queue.
+| 
+| Run the suite with gofreight test; see docs/testing.md for factories and
+| authentication in tests.
+| 
+| Symbols defined here include: App (exported type); AppOption (exported
+| type); WithDatabase (WithDatabase sets the database URL.);
+| WithMigrations (WithMigrations provides inline SQL migrations.);
+| WithMigrateDir (WithMigrateDir sets the migrations directory to run on
+| setup.); WithViewsRoot (WithViewsRoot sets the views directory path.);
+| WithChdir (WithChdir changes working directory during app setup (for
+| tests in subpackages).); NewApp (NewApp creates a fully configured test
+| application.).
+| 
+*/
+
 import (
 	"bytes"
 	"context"

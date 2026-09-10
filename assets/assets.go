@@ -1,5 +1,32 @@
 package assets
 
+/*
+|--------------------------------------------------------------------------
+| Assets
+|--------------------------------------------------------------------------
+|
+| Implements Assets as part of the assets package in the Gofreight
+| framework. Key symbols: Pipeline, New, Precompile, Path, Handler, Mount.
+| 
+| The assets package connects your public/ directory and optional Vite dev
+| server to HTTP handlers.
+| 
+| In development, Vite can proxy hot module replacement; in production, a
+| manifest maps entry points to built files.
+| 
+| GFT templates use #vite and /assets/ paths documented in the templating
+| guide.
+| 
+| Symbols defined here include: Pipeline (exported type); New (New creates
+| an asset pipeline rooted at the public directory.); Precompile
+| (Precompile builds a digest map for all files in the public directory.);
+| Path (Path returns the asset URL path, with digest in production mode.);
+| Handler (Handler returns an http.Handler that serves static files.);
+| Mount (Mount registers the asset handler on a router at the configured
+| prefix.).
+| 
+*/
+
 import (
 	"crypto/sha256"
 	"encoding/hex"

@@ -1,5 +1,31 @@
 package channels
 
+/*
+|--------------------------------------------------------------------------
+| Server
+|--------------------------------------------------------------------------
+|
+| Implements Server as part of the channels package in the Gofreight
+| framework. Key symbols: EventHandler, Hub, Connection, Client, Message,
+| RoomEmitter.
+| 
+| The channels package provides WebSocket broadcasting and a channel
+| server for real-time features.
+| 
+| Demo applications register chat or notification endpoints; production
+| setups typically sit behind Redis or a dedicated broker.
+| 
+| See channels documentation for server lifecycle and message fan-out
+| patterns.
+| 
+| Symbols defined here include: EventHandler (exported type); Hub
+| (exported type); Connection (exported type); Client (exported type);
+| Message (exported type); RoomEmitter (exported type); NewHub (NewHub
+| creates a WebSocket hub.); On (On registers a handler for client-emitted
+| events.).
+| 
+*/
+
 import (
 	"crypto/rand"
 	"encoding/hex"

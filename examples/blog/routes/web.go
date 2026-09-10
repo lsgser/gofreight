@@ -2,11 +2,18 @@ package routes
 
 /*
 |--------------------------------------------------------------------------
-| Web Routes
+| Web
 |--------------------------------------------------------------------------
 |
-| Browser-facing routes — sessions, CSRF, and GFT HTML responses.
-|
+| Implements Web as part of the routes package in the Gofreight framework.
+| Key symbols: Web.
+| 
+| Symbols defined here include: Web (/*
+| |--------------------------------------------------------------------------
+| | Web
+| |--------------------------------------------------------------------------
+| | | Registers browser-facing HTTP routes. | */).
+| 
 */
 
 import (

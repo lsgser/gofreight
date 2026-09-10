@@ -1,5 +1,34 @@
 package view
 
+/*
+|--------------------------------------------------------------------------
+| View
+|--------------------------------------------------------------------------
+|
+| Loads templates from app/views, executes layouts and sections, and
+| writes HTML to http.ResponseWriter or strings.
+| 
+| RenderString supports mailables and tests; SetReloadOnRender enables
+| development hot reload.
+| 
+| The view engine compiles Gofreight Templates (.gft) to html/template,
+| supports layouts, slots, partials, and RenderString for mail.
+| 
+| Views live under app/views; hot reload in development reloads templates
+| on each request when enabled.
+| 
+| Symbols defined here include: Engine (exported type); SetReloadOnRender
+| (SetReloadOnRender reloads templates before each render (development hot
+| reload).); New (New creates a view engine rooted at the given directory
+| (e.g. "app/views").); RegisterFunc (RegisterFunc adds a template helper
+| function.); SetLayout (SetLayout sets the default layout template
+| name.); Load (Load parses view files under the views root (.gft and
+| .html with GFT syntax).); Render (Render executes a template with
+| optional layout wrapping.); RenderString (RenderString renders a
+| template to an HTML string (with GFT layout when declared).).
+| 
+*/
+
 import (
 	"fmt"
 	"html/template"

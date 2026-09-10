@@ -1,3 +1,29 @@
+<!--
+| --------------------------------------------------------------------------
+| Database
+| --------------------------------------------------------------------------
+|
+| Official Gofreight documentation consumed by the docs site and linked
+| from the CLI welcome page.
+|
+| Keep examples aligned with the current CLI and version; sync copies to
+| gofreight-web when publishing.
+|
+| Covers concepts, tutorials, and reference material for this topic.
+|
+
+-->
+
+<!--
+| --------------------------------------------------------------------------
+| Database
+| --------------------------------------------------------------------------
+|
+| Official Gofreight documentation (published on the docs site).
+|
+
+-->
+
 # Database
 
 Gofreight uses **Laravel-style blueprint migrations** (Go files in `db/migrate/`), seeders, and an optional raw SQL path for legacy apps. Models and repositories are in **[Models](models.md)**; the full column type catalog is in **[Column Types](column-types.md)**. Query building is in **[ORM](orm.md)**.

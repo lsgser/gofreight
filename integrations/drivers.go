@@ -1,5 +1,31 @@
 package integrations
 
+/*
+|--------------------------------------------------------------------------
+| Drivers
+|--------------------------------------------------------------------------
+|
+| Implements Drivers as part of the integrations package in the Gofreight
+| framework. Key symbols: Category, CategorizedDriver, ProviderEnvKey,
+| AsCategorizedDriver, Active, ActiveStorage.
+| 
+| Integrations register pluggable drivers for mail, storage, cache, queue,
+| and custom third-party APIs.
+| 
+| Active() resolves the configured implementation from environment
+| variables; wire Application in ConfigureIntegrations.
+| 
+| Built-in connectors cover SMTP, SendGrid, S3-compatible storage, and
+| Redis without vendor-specific SDKs in app code.
+| 
+| Symbols defined here include: Category (exported type); CategoryMail
+| (exported value); CategoryStorage (exported value); CategoryCache
+| (exported value); CategoryPayment (exported value); CategoryAnalytics
+| (exported value); CategoryWebhook (exported value); CategorizedDriver
+| (exported type).
+| 
+*/
+
 import "strings"
 
 // Category groups third-party adapters by service type (mail, cache, queue, storage, etc.).

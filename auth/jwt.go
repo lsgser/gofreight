@@ -1,5 +1,32 @@
 package auth
 
+/*
+|--------------------------------------------------------------------------
+| Jwt
+|--------------------------------------------------------------------------
+|
+| Implements Jwt as part of the auth package in the Gofreight framework.
+| Key symbols: JWTClaims, JWT, JWTConfig, NewJWT, Issue, Validate.
+| 
+| The auth package covers session login, password hashing, API token
+| storage, OAuth callbacks, email verification, and password reset flows.
+| 
+| Controllers compose auth helpers with your User model; tokens and
+| verification stores can be in-memory or database-backed.
+| 
+| Install scaffolding with gofreight make:auth and wire find-user
+| callbacks in app/auth.
+| 
+| Symbols defined here include: JWTClaims (exported type); JWT (exported
+| type); JWTConfig (exported type); NewJWT (NewJWT creates a JWT manager.
+| TTL defaults to 24 hours.); Issue (Issue creates a signed access token
+| for a user.); Validate (Validate parses and verifies a JWT access
+| token.); JWTMiddleware (JWTMiddleware authenticates requests with a
+| Bearer JWT.); WithUserRole (WithUserRole stores a role on the request
+| context.).
+| 
+*/
+
 import (
 	"context"
 	"errors"

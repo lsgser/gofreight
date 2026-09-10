@@ -1,5 +1,27 @@
 package dev
 
+/*
+|--------------------------------------------------------------------------
+| Watch
+|--------------------------------------------------------------------------
+|
+| Implements Watch as part of the dev package in the Gofreight framework.
+| Key symbols: Watch.
+| 
+| The dev package implements file watching for gofreight serve and
+| gofreight dev.
+| 
+| It restarts the process or reloads views when .go, .gft, .html, or
+| config files change.
+| 
+| Development-only; production deployments use a compiled binary without
+| the watcher.
+| 
+| Symbols defined here include: Watch (Watch reruns a command when source
+| or template files change (nodemon-style dev reload).).
+| 
+*/
+
 import (
 	"log"
 	"os"

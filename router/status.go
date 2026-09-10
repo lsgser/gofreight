@@ -1,5 +1,25 @@
 package router
 
+/*
+|--------------------------------------------------------------------------
+| Status
+|--------------------------------------------------------------------------
+|
+| Implements Status as part of the router package in the Gofreight
+| framework. Key symbols: Status, StatusName, WriteHeader, Write.
+| 
+| The router matches verbs and paths, supports groups, prefixes, named
+| routes, constraints, signed URLs, and domain routing.
+| 
+| Routes register in routes/web.go and routes/api.go; see docs/routing.md
+| for middleware and model binding.
+| 
+| Symbols defined here include: Status (Status forces a fixed HTTP status
+| code for this route.); StatusName (StatusName forces a fixed HTTP status
+| using a symbolic name (e.g. "no_content").).
+| 
+*/
+
 import "net/http"
 
 // Status forces a fixed HTTP status code for this route.

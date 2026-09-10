@@ -1,5 +1,34 @@
 package model
 
+/*
+|--------------------------------------------------------------------------
+| Dirty
+|--------------------------------------------------------------------------
+|
+| Implements Dirty as part of the model package in the Gofreight
+| framework. Key symbols: Dirty, Snapshot, Changed, ChangedFields,
+| Changes, ChangedAttr.
+| 
+| The model package is the ORM layer: repositories, queries, associations,
+| soft deletes, validation, serialization, collections, and pagination.
+| 
+| Models map to tables via struct tags; migrations define schema
+| separately in db/migrate.
+| 
+| See docs/models.md, docs/orm.md, and docs/factories.md for
+| Laravel-aligned patterns.
+| 
+| Symbols defined here include: Dirty (exported type); Snapshot (Snapshot
+| captures the current state for change detection.); Changed (Changed
+| returns true if any attribute has changed since the snapshot.);
+| ChangedFields (ChangedFields returns the names of changed attributes.);
+| Changes (Changes returns a map of changed attributes with [original,
+| current] values.); ChangedAttr (ChangedAttr returns true if a specific
+| attribute changed.); Previous (Previous returns the original value of an
+| attribute.); Clear (Clear resets dirty tracking after save.).
+| 
+*/
+
 import (
 	"reflect"
 )

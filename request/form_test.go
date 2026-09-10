@@ -1,5 +1,26 @@
 package request
 
+/*
+|--------------------------------------------------------------------------
+| Form
+|--------------------------------------------------------------------------
+|
+| Test suite for Form in the request package.
+| 
+| Uses table-driven tests, httptest, or gftest where applicable. Failures
+| should indicate regressions in public API or HTTP behavior.
+| 
+| Form requests bind and validate HTTP input using vine schemas or
+| validation tags before controller actions run.
+| 
+| Integrates with controller Base for 422 Unprocessable responses and GFT
+| error display helpers.
+| 
+| Run with go test ./request/... or go test for this package from the
+| framework root.
+| 
+*/
+
 import (
 	"net/http/httptest"
 	"strings"

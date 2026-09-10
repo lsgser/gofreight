@@ -1,5 +1,33 @@
 package controller
 
+/*
+|--------------------------------------------------------------------------
+| Files
+|--------------------------------------------------------------------------
+|
+| Implements Files as part of the controller package in the Gofreight
+| framework. Key symbols: Download, File, DownloadBytes, UploadedFile,
+| StoreUpload, StreamDownload.
+| 
+| Controllers wrap http.HandlerFunc with a Base struct that exposes
+| Request, Response, validation, views, and JSON helpers.
+| 
+| This package defines RenderView, Redirect, status helpers, file
+| downloads, and route registration utilities.
+| 
+| Application controllers embed these patterns; see docs/controllers.md
+| for request lifecycle.
+| 
+| Symbols defined here include: Download (Download sends a file as an
+| attachment.); File (File sends a file inline in the browser.);
+| DownloadBytes (DownloadBytes sends in-memory content as a downloadable
+| attachment.); UploadedFile (UploadedFile parses a multipart upload
+| field.); StoreUpload (StoreUpload saves an uploaded file field to
+| destDir and returns the saved path.); StreamDownload (StreamDownload
+| streams a reader as a downloadable attachment.).
+| 
+*/
+
 import (
 	"fmt"
 	"io"

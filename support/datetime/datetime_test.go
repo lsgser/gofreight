@@ -1,5 +1,26 @@
 package datetime_test
 
+/*
+|--------------------------------------------------------------------------
+| Datetime
+|--------------------------------------------------------------------------
+|
+| Test suite for Datetime in the datetime package.
+| 
+| Uses table-driven tests, httptest, or gftest where applicable. Failures
+| should indicate regressions in public API or HTTP behavior.
+| 
+| Datetime helpers parse and format timestamps consistently across models,
+| APIs, and views.
+| 
+| Complements carbon-style usage documented in configuration and ORM
+| guides.
+| 
+| Run with go test ./support/datetime/... or go test for this package from
+| the framework root.
+| 
+*/
+
 import (
 	"testing"
 	"time"

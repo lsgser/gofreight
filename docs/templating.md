@@ -1,3 +1,29 @@
+<!--
+| --------------------------------------------------------------------------
+| Templating
+| --------------------------------------------------------------------------
+|
+| Official Gofreight documentation consumed by the docs site and linked
+| from the CLI welcome page.
+|
+| Keep examples aligned with the current CLI and version; sync copies to
+| gofreight-web when publishing.
+|
+| Covers concepts, tutorials, and reference material for this topic.
+|
+
+-->
+
+<!--
+| --------------------------------------------------------------------------
+| Gofreight Templates (GFT)
+| --------------------------------------------------------------------------
+|
+| Official Gofreight documentation (published on the docs site).
+|
+
+-->
+
 # Gofreight Templates (GFT)
 
 **Gofreight Templates** (`.gft`) is Gofreight's native view language. It provides layouts, partials, loops, conditionals, and CSRF helpers with its **own syntax**, and compiles to Go `html/template` at load time.

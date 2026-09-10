@@ -1,3 +1,27 @@
+<!--
+| --------------------------------------------------------------------------
+| README
+| --------------------------------------------------------------------------
+|
+| Database migration defining schema changes applied in order by gofreight
+| migrate.
+|
+| Pair up/down migrations when altering columns; prefer blueprint Go
+| migrations for new projects.
+|
+
+-->
+
+<!--
+| --------------------------------------------------------------------------
+| Database migrations
+| --------------------------------------------------------------------------
+|
+| Database migration or schema SQL for versioned database changes.
+|
+
+-->
+
 # Database migrations
 
 Blueprint migrations live in this directory as Go files (Laravel-style). Run them with:

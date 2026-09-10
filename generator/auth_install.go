@@ -1,5 +1,23 @@
 package generator
 
+/*
+|--------------------------------------------------------------------------
+| Auth Install
+|--------------------------------------------------------------------------
+|
+| Implements Auth Install as part of the generator package in the
+| Gofreight framework.
+| 
+| The generator package powers gofreight new and all make:* scaffolds.
+| 
+| It writes idiomatic directory layouts, GFT views, migrations, tests, and
+| auth stubs from templates.
+| 
+| CLI handlers in cmd/gofreight call into this package; templates live
+| primarily in templates.go.
+| 
+*/
+
 import (
 	"os"
 	"path/filepath"

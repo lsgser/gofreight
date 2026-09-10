@@ -1,5 +1,33 @@
 package integrations
 
+/*
+|--------------------------------------------------------------------------
+| Custom
+|--------------------------------------------------------------------------
+|
+| Implements Custom as part of the integrations package in the Gofreight
+| framework. Key symbols: CustomIntegration, NewCustom, Name, Configure,
+| Enabled, Config.
+| 
+| Integrations register pluggable drivers for mail, storage, cache, queue,
+| and custom third-party APIs.
+| 
+| Active() resolves the configured implementation from environment
+| variables; wire Application in ConfigureIntegrations.
+| 
+| Built-in connectors cover SMTP, SendGrid, S3-compatible storage, and
+| Redis without vendor-specific SDKs in app code.
+| 
+| Symbols defined here include: CustomIntegration (exported type);
+| NewCustom (NewCustom creates a user-defined integration.); Config
+| (Config returns the integration configuration.); RegisterCustom
+| (RegisterCustom adds a custom integration to the default registry.);
+| EventBus (exported type); Event (exported type); Subscribe (Subscribe
+| registers an event handler.); Publish (Publish emits an event to
+| subscribers.).
+| 
+*/
+
 import (
 	"context"
 	"encoding/json"

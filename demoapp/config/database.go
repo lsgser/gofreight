@@ -2,12 +2,18 @@ package config
 
 /*
 |--------------------------------------------------------------------------
-| Database Configuration
+| Database
 |--------------------------------------------------------------------------
 |
-| Optional programmatic migrations for apps that prefer Go over SQL files.
-| Most apps use db/migrate/*.sql and the gofreight migrate command instead.
-|
+| Implements Database as part of the config package in the Gofreight
+| framework. Key symbols: RunMigrations.
+| 
+| Symbols defined here include: RunMigrations (/*
+| |--------------------------------------------------------------------------
+| | RunMigrations
+| |--------------------------------------------------------------------------
+| | | Runs inline SQL migrations (optional — prefer db/migrate/). | */).
+| 
 */
 
 import "github.com/lsgser/gofreight/database"

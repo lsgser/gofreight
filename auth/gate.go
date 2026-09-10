@@ -1,5 +1,32 @@
 package auth
 
+/*
+|--------------------------------------------------------------------------
+| Gate
+|--------------------------------------------------------------------------
+|
+| Implements Gate as part of the auth package in the Gofreight framework.
+| Key symbols: Authorizer, AuthorizeFunc, Authorize, Gate, NewGate,
+| Define.
+| 
+| The auth package covers session login, password hashing, API token
+| storage, OAuth callbacks, email verification, and password reset flows.
+| 
+| Controllers compose auth helpers with your User model; tokens and
+| verification stores can be in-memory or database-backed.
+| 
+| Install scaffolding with gofreight make:auth and wire find-user
+| callbacks in app/auth.
+| 
+| Symbols defined here include: Authorizer (exported type); AuthorizeFunc
+| (exported type); Gate (exported type); NewGate (NewGate creates an
+| authorization gate registry.); Define (Define registers an authorization
+| rule.); Allows (Allows checks authorization for the current request
+| user.); RequireGate (RequireGate middleware denies unauthorized
+| requests.).
+| 
+*/
+
 import (
 	"context"
 	"net/http"

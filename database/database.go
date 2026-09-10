@@ -1,5 +1,29 @@
 package database
 
+/*
+|--------------------------------------------------------------------------
+| Database
+|--------------------------------------------------------------------------
+|
+| Implements Database as part of the database package in the Gofreight
+| framework. Key symbols: Connect, DB, Close, Reset, Migrate.
+| 
+| The database package manages connections, fluent schema blueprints, Go
+| and SQL migrations, seeding, and introspection.
+| 
+| Migrations run via gofreight migrate; blueprints generate portable DDL
+| across SQLite, PostgreSQL, and MySQL.
+| 
+| Lower-level query helpers complement the model ORM in the model package.
+| 
+| Symbols defined here include: Connect (Connect establishes a database
+| connection pool, auto-detecting the driver.); DB (DB returns the active
+| database connection.); Close (Close closes the database connection
+| pool.); Reset (Reset closes and clears the connection (for testing).);
+| Migrate (Migrate runs SQL migration statements in order.).
+| 
+*/
+
 import (
 	"database/sql"
 	"fmt"

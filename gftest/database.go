@@ -1,5 +1,36 @@
 package gftest
 
+/*
+|--------------------------------------------------------------------------
+| Database
+|--------------------------------------------------------------------------
+|
+| Implements Database as part of the gftest package in the Gofreight
+| framework. Key symbols: DatabaseAssertions, ToHaveCount, ToHaveRecord,
+| ToBeEmpty, RefreshDatabase, RunMigrations.
+| 
+| gftest is the feature testing harness used from tests/ in your
+| application.
+| 
+| NewApp boots a test HTTP server, runs migrations, exposes HTTP helpers
+| (Get, Post, AssertOk), database assertions, and fakes for mail, cache,
+| and queue.
+| 
+| Run the suite with gofreight test; see docs/testing.md for factories and
+| authentication in tests.
+| 
+| Symbols defined here include: DatabaseAssertions (exported type);
+| ToHaveCount (ToHaveCount asserts a table has the expected row count.);
+| ToHaveRecord (ToHaveRecord asserts a record exists matching
+| conditions.); ToBeEmpty (ToBeEmpty asserts a table has no rows.);
+| RefreshDatabase (RefreshDatabase resets and re-runs migrations between
+| tests.); RunMigrations (RunMigrations runs SQL files from a directory.);
+| TruncateTables (TruncateTables removes all rows from the given tables.);
+| UseTransactionalTests (UseTransactionalTests wraps each test in a
+| transaction that rolls back.).
+| 
+*/
+
 import (
 	"context"
 	"fmt"

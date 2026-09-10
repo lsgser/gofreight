@@ -1,5 +1,26 @@
 package router_test
 
+/*
+|--------------------------------------------------------------------------
+| Status
+|--------------------------------------------------------------------------
+|
+| Test suite for Status in the router package.
+| 
+| Uses table-driven tests, httptest, or gftest where applicable. Failures
+| should indicate regressions in public API or HTTP behavior.
+| 
+| The router matches verbs and paths, supports groups, prefixes, named
+| routes, constraints, signed URLs, and domain routing.
+| 
+| Routes register in routes/web.go and routes/api.go; see docs/routing.md
+| for middleware and model binding.
+| 
+| Run with go test ./router/... or go test for this package from the
+| framework root.
+| 
+*/
+
 import (
 	"net/http"
 	"net/http/httptest"

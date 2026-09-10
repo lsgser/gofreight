@@ -1,5 +1,32 @@
 package integrations
 
+/*
+|--------------------------------------------------------------------------
+| Registry
+|--------------------------------------------------------------------------
+|
+| Implements Registry as part of the integrations package in the Gofreight
+| framework. Key symbols: Integration, EnvReader, OsEnv, Get, Registry,
+| NewRegistry.
+| 
+| Integrations register pluggable drivers for mail, storage, cache, queue,
+| and custom third-party APIs.
+| 
+| Active() resolves the configured implementation from environment
+| variables; wire Application in ConfigureIntegrations.
+| 
+| Built-in connectors cover SMTP, SendGrid, S3-compatible storage, and
+| Redis without vendor-specific SDKs in app code.
+| 
+| Symbols defined here include: Integration (exported type); EnvReader
+| (exported type); OsEnv (exported type); Registry (exported type);
+| NewRegistry (NewRegistry creates an integration registry.); Register
+| (Register adds an integration factory to the registry.); Register
+| (Register adds a factory to this registry.); ConfigureAll (ConfigureAll
+| initializes all registered integrations from environment.).
+| 
+*/
+
 import (
 	"fmt"
 	"os"

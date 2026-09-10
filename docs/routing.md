@@ -1,3 +1,29 @@
+<!--
+| --------------------------------------------------------------------------
+| Routing
+| --------------------------------------------------------------------------
+|
+| Official Gofreight documentation consumed by the docs site and linked
+| from the CLI welcome page.
+|
+| Keep examples aligned with the current CLI and version; sync copies to
+| gofreight-web when publishing.
+|
+| Covers concepts, tutorials, and reference material for this topic.
+|
+
+-->
+
+<!--
+| --------------------------------------------------------------------------
+| Routing
+| --------------------------------------------------------------------------
+|
+| Official Gofreight documentation (published on the docs site).
+|
+
+-->
+
 # Routing
 
 Gofreight provides a **full-featured router** with route groups, named routes, redirects, constraints, model binding, domain routing, signed URLs, file upload/download helpers, and HTTP status helpers. Routes live in `routes/web.go` and `routes/api.go`, wired from `routes/register.go`.

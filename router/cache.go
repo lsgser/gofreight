@@ -1,5 +1,28 @@
 package router
 
+/*
+|--------------------------------------------------------------------------
+| Cache
+|--------------------------------------------------------------------------
+|
+| Implements Cache as part of the router package in the Gofreight
+| framework. Key symbols: RouteEntry, ResourceOptions, ExportRoutes,
+| SaveCache, LoadCache.
+| 
+| The router matches verbs and paths, supports groups, prefixes, named
+| routes, constraints, signed URLs, and domain routing.
+| 
+| Routes register in routes/web.go and routes/api.go; see docs/routing.md
+| for middleware and model binding.
+| 
+| Symbols defined here include: RouteEntry (exported type);
+| ResourceOptions (exported type); ExportRoutes (ExportRoutes returns
+| serializable route metadata.); SaveCache (SaveCache writes route
+| metadata to a JSON file for faster URL lookups.); LoadCache (LoadCache
+| merges cached route names for URL generation.).
+| 
+*/
+
 import (
 	"encoding/json"
 	"net/http"

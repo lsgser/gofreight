@@ -1,5 +1,26 @@
 package graphql
 
+/*
+|--------------------------------------------------------------------------
+| Modules
+|--------------------------------------------------------------------------
+|
+| Implements Modules as part of the graphql package in the Gofreight
+| framework. Key symbols: Modules, RegisterLoaders.
+| 
+| Symbols defined here include: Modules (/*
+| |--------------------------------------------------------------------------
+| | Modules
+| |--------------------------------------------------------------------------
+| | | Returns demo GraphQL modules (user + post) built with CreateModule.
+| | */); RegisterLoaders (/*
+| |--------------------------------------------------------------------------
+| | RegisterLoaders
+| |--------------------------------------------------------------------------
+| | | Attaches dataloaders to each GraphQL request. | */).
+| 
+*/
+
 import (
 	"context"
 	"fmt"

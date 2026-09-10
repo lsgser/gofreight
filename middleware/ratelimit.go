@@ -1,5 +1,29 @@
 package middleware
 
+/*
+|--------------------------------------------------------------------------
+| Ratelimit
+|--------------------------------------------------------------------------
+|
+| Implements Ratelimit as part of the middleware package in the Gofreight
+| framework. Key symbols: RateLimiter, NewRateLimiter, Middleware.
+| 
+| HTTP middleware implements sessions, CSRF, CORS, locale, structured
+| logging, rate limiting, and maintenance mode.
+| 
+| Register global middleware in bootstrap or attach to route groups for
+| API-specific stacks.
+| 
+| Session drivers include file, cookie, and Redis variants selected by
+| SESSION_DRIVER.
+| 
+| Symbols defined here include: RateLimiter (exported type);
+| NewRateLimiter (NewRateLimiter creates a rate limiter (limit requests
+| per window).); Middleware (Middleware returns rate limiting
+| middleware.).
+| 
+*/
+
 import (
 	"net/http"
 	"sync"

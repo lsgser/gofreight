@@ -1,6 +1,29 @@
 // Package faker provides fake data helpers for tests and seeders.
 package faker
 
+/*
+|--------------------------------------------------------------------------
+| Faker
+|--------------------------------------------------------------------------
+|
+| Implements Faker as part of the faker package in the Gofreight
+| framework. Key symbols: Name, FirstName, LastName, Email, Username,
+| Password.
+| 
+| Test fakers generate random emails, names, and type-aware values for
+| factories and gftest seed data.
+| 
+| Used by gofreight make:factory and table-driven tests that need
+| realistic but non-production data.
+| 
+| Symbols defined here include: Lazy (Lazy wraps a generator so factories
+| produce fresh values on each Create.); DefinitionsForModel
+| (DefinitionsForModel returns lazy default attributes for common model
+| names.); ForFieldType (ForFieldType returns a lazy generator for a
+| scaffold field type.).
+| 
+*/
+
 import (
 	"strings"
 

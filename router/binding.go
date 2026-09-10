@@ -1,5 +1,32 @@
 package router
 
+/*
+|--------------------------------------------------------------------------
+| Binding
+|--------------------------------------------------------------------------
+|
+| Implements Binding as part of the router package in the Gofreight
+| framework. Key symbols: Bound, BoundAs, BindModelID, BindModelColumn,
+| BindModel, BindModelBy.
+| 
+| The router matches verbs and paths, supports groups, prefixes, named
+| routes, constraints, signed URLs, and domain routing.
+| 
+| Routes register in routes/web.go and routes/api.go; see docs/routing.md
+| for middleware and model binding.
+| 
+| Symbols defined here include: Bound (Bound returns a model bound to the
+| request by route model binding.); BoundAs (BoundAs returns a typed bound
+| model.); BindModelID (BindModelID binds a route parameter to a model
+| looked up by numeric ID.); BindModelColumn (BindModelColumn binds a
+| route parameter to a model looked up by any column.); BindModel
+| (BindModel attaches implicit route model binding by numeric ID.);
+| BindModelBy (BindModelBy attaches implicit route model binding by a
+| custom column.); Bind (Bind registers a custom binding function for a
+| route parameter.).
+| 
+*/
+
 import (
 	"context"
 	"net/http"

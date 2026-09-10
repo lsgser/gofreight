@@ -1,5 +1,27 @@
 package validation
 
+/*
+|--------------------------------------------------------------------------
+| Validation
+|--------------------------------------------------------------------------
+|
+| Implements Validation as part of the validation package in the Gofreight
+| framework. Key symbols: Errors, Error, Validator, New, FromMap, Get.
+| 
+| Validation provides rule structs and runners used by models, form
+| requests, and the vine DSL.
+| 
+| Errors map to field names for JSON and GFT #error directives.
+| 
+| Symbols defined here include: Errors (exported type); Validator
+| (exported type); New (New creates a validator from form values.);
+| FromMap (FromMap creates a validator from a map.); Get (Get returns a
+| field value.); Required (Required ensures a field is present.); Email
+| (Email validates email format.); MinLength (MinLength validates minimum
+| string length.).
+| 
+*/
+
 import (
 	"fmt"
 	"net/http"

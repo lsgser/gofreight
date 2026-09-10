@@ -2,29 +2,18 @@ package routes
 
 /*
 |--------------------------------------------------------------------------
-| API Routes
+| Api
 |--------------------------------------------------------------------------
 |
-| Stateless JSON API routes. Registered inside a route group in
-| routes/register.go with prefix /api/v1.
-|
-| Example:
-|
-|   api.ApiResource("posts", router.ApiResourceHandlers{
-|       Index:   controller.Handler(PostAPIController{}.Index),
-|       Store:   controller.Handler(PostAPIController{}.Store),
-|       Show:    controller.Handler(PostAPIController{}.Show),
-|       Update:  controller.Handler(PostAPIController{}.Update),
-|       Destroy: controller.Handler(PostAPIController{}.Destroy),
-|   })
-|
-| Group middleware (auth, rate limit):
-|
-|   r.Group(func(api *router.Router) { ... }).
-|       Prefix("/api/v1").
-|       Use(auth.APITokenMiddleware(store)).
-|       Apply()
-|
+| Implements Api as part of the routes package in the Gofreight framework.
+| Key symbols: API.
+| 
+| Symbols defined here include: API (/*
+| |--------------------------------------------------------------------------
+| | API
+| |--------------------------------------------------------------------------
+| | | Registers JSON API routes (prefix applied by Register). | */).
+| 
 */
 
 import (

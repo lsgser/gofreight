@@ -1,5 +1,33 @@
 package admin
 
+/*
+|--------------------------------------------------------------------------
+| Schema
+|--------------------------------------------------------------------------
+|
+| Implements Schema as part of the admin package in the Gofreight
+| framework. Key symbols: SchemaNew, SchemaCreate, TableStructure,
+| TableDrop, ColumnNew, ColumnAdd.
+| 
+| The admin package exposes a development-only database browser and schema
+| tools.
+| 
+| It introspects tables and columns so you can inspect SQLite, PostgreSQL,
+| or MySQL data without leaving the browser.
+| 
+| Mount it only in non-production environments; see docs and application
+| wiring for route registration.
+| 
+| Symbols defined here include: SchemaNew (SchemaNew shows the create
+| table form.); SchemaCreate (SchemaCreate handles table creation.);
+| TableStructure (TableStructure shows column definitions for a table.);
+| TableDrop (TableDrop drops a table.); ColumnNew (ColumnNew shows add
+| column form.); ColumnAdd (ColumnAdd adds a column to a table.);
+| ImportForm (ImportForm shows SQL import form.); ImportRun (ImportRun
+| executes imported SQL.).
+| 
+*/
+
 import (
 	"context"
 	"net/http"

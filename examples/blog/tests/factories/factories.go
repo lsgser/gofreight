@@ -1,5 +1,18 @@
 package factories
 
+/*
+|--------------------------------------------------------------------------
+| Factories
+|--------------------------------------------------------------------------
+|
+| Implements Factories as part of the factories package in the Gofreight
+| framework. Key symbols: PostSequence.
+| 
+| Symbols defined here include: PostFactory (exported value);
+| CommentFactory (exported value).
+| 
+*/
+
 import (
 	"fmt"
 

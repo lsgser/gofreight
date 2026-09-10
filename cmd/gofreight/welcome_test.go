@@ -1,5 +1,30 @@
 package main
 
+/*
+|--------------------------------------------------------------------------
+| Welcome
+|--------------------------------------------------------------------------
+|
+| Test suite for Welcome in the gofreight package.
+| 
+| Uses table-driven tests, httptest, or gftest where applicable. Failures
+| should indicate regressions in public API or HTTP behavior.
+| 
+| This directory contains the gofreight CLI binary: command registration,
+| terminal UI, and handlers for make:*, migrate, serve, test, and
+| mail:preview.
+| 
+| Each subcommand lives in its own source file; commands.go registers the
+| catalog shown by gofreight list.
+| 
+| Install locally with go install ./cmd/gofreight from the framework
+| repository root.
+| 
+| Run with go test ./cmd/gofreight/... or go test for this package from
+| the framework root.
+| 
+*/
+
 import (
 	"bytes"
 	"strings"

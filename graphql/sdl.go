@@ -1,5 +1,34 @@
 package graphql
 
+/*
+|--------------------------------------------------------------------------
+| Sdl
+|--------------------------------------------------------------------------
+|
+| Implements Sdl as part of the graphql package in the Gofreight
+| framework. Key symbols: GQL, MustGQL, ParseSDL, SDLResolvers,
+| SDLModuleConfig, ModuleFromSDL.
+| 
+| The graphql package integrates graphql-go with Gofreight: schema
+| registration, HTTP mount, playground, DataLoader batching, and
+| field-level rate limits.
+| 
+| Generate modules with gofreight make:graphql-module; SDL and resolvers
+| live under app/graphql in your project.
+| 
+| See docs/graphql.md and the tutorial for N+1 avoidance and security
+| middleware.
+| 
+| Symbols defined here include: GQL (GQL parses and validates a GraphQL
+| SDL string (like the gql template tag in JavaScript/TypeScript).);
+| MustGQL (MustGQL calls GQL and panics on error (for package-level schema
+| constants).); ParseSDL (ParseSDL parses a GraphQL Schema Definition
+| Language document.); SDLResolvers (exported type); SDLModuleConfig
+| (exported type); ModuleFromSDL (ModuleFromSDL builds a Module from an
+| SDL string and resolver bindings.); SupportedSDLKinds (exported value).
+| 
+*/
+
 import (
 	"fmt"
 	"strings"

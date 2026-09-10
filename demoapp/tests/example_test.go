@@ -2,17 +2,17 @@ package tests
 
 /*
 |--------------------------------------------------------------------------
-| Example Feature Test
+| Example
 |--------------------------------------------------------------------------
 |
-| Tests live in tests/ and use gftest for HTTP assertions and database
-| setup. Run the suite with:
-|
-|   gofreight test
-|
-| Generate a test:
-|   gofreight make:test Posts
-|
+| Test suite for Example in the tests package.
+| 
+| Uses table-driven tests, httptest, or gftest where applicable. Failures
+| should indicate regressions in public API or HTTP behavior.
+| 
+| Run from the app directory with go test ./... or gofreight test for
+| tests/ packages.
+| 
 */
 
 import (

@@ -2,11 +2,18 @@ package routes
 
 /*
 |--------------------------------------------------------------------------
-| Route Registration
+| Register
 |--------------------------------------------------------------------------
 |
-| Wires web (HTML) and API (JSON) route groups for this application.
-|
+| Implements Register as part of the routes package in the Gofreight
+| framework. Key symbols: Register.
+| 
+| Symbols defined here include: Register (/*
+| |--------------------------------------------------------------------------
+| | Register
+| |--------------------------------------------------------------------------
+| | | Loads web and API route groups onto the router. | */).
+| 
 */
 
 import "github.com/lsgser/gofreight/router"

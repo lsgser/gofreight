@@ -2,17 +2,13 @@ package controllers
 
 /*
 |--------------------------------------------------------------------------
-| HTTP Controllers
+| Demoapp — App — Controllers Overview
 |--------------------------------------------------------------------------
 |
-| Controllers handle incoming HTTP requests and return responses — HTML
-| views, JSON, or redirects. Keep controllers thin; put business logic in
-| app/services/.
-|
-| Generate a controller:
-|   gofreight make:controller Post
-|
-| Generate a full CRUD resource (controller + model + views + migration):
-|   gofreight make:scaffold Post title:string body:text
-|
+| Overview and conventions for the Demoapp — App — Controllers layer
+| in a Gofreight application.
+| 
+| Documents generator commands and where application code should live; not
+| imported at runtime for logic.
+| 
 */

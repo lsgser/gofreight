@@ -1,5 +1,33 @@
 package graphql
 
+/*
+|--------------------------------------------------------------------------
+| Ratelimit
+|--------------------------------------------------------------------------
+|
+| Implements Ratelimit as part of the graphql package in the Gofreight
+| framework. Key symbols: RateLimitRule, FieldRateLimitRegistry,
+| NewFieldRateLimitRegistry, Set, Check.
+| 
+| The graphql package integrates graphql-go with Gofreight: schema
+| registration, HTTP mount, playground, DataLoader batching, and
+| field-level rate limits.
+| 
+| Generate modules with gofreight make:graphql-module; SDL and resolvers
+| live under app/graphql in your project.
+| 
+| See docs/graphql.md and the tutorial for N+1 avoidance and security
+| middleware.
+| 
+| Symbols defined here include: RateLimitRule (exported type);
+| FieldRateLimitRegistry (exported type); NewFieldRateLimitRegistry
+| (NewFieldRateLimitRegistry creates an empty per-field rate limit
+| registry.); Set (Set registers a rate limit for a field. parentType is
+| Query, Mutation, or Subscription.); Check (Check validates requested
+| root fields against registered limits.).
+| 
+*/
+
 import (
 	"fmt"
 	"sync"

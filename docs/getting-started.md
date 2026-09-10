@@ -1,3 +1,29 @@
+<!--
+| --------------------------------------------------------------------------
+| Getting-started
+| --------------------------------------------------------------------------
+|
+| Official Gofreight documentation consumed by the docs site and linked
+| from the CLI welcome page.
+|
+| Keep examples aligned with the current CLI and version; sync copies to
+| gofreight-web when publishing.
+|
+| Covers concepts, tutorials, and reference material for this topic.
+|
+
+-->
+
+<!--
+| --------------------------------------------------------------------------
+| Getting Started
+| --------------------------------------------------------------------------
+|
+| Official Gofreight documentation (published on the docs site).
+|
+
+-->
+
 # Getting Started
 
 Install the Gofreight CLI, scaffold an app, and understand the core concepts in under ten minutes.

@@ -1,5 +1,38 @@
 package application
 
+/*
+|--------------------------------------------------------------------------
+| Wiring
+|--------------------------------------------------------------------------
+|
+| Implements Wiring as part of the application package in the Gofreight
+| framework. Key symbols: ConfigureStorage, UseExceptionHandler, UseVite,
+| UseRedisBroadcast, CacheRoutes, CacheRoutesIfRequested.
+| 
+| The application package is the framework kernel: it constructs the
+| Application value that owns the router, ORM, mailer, cache, queue, and
+| view engine.
+| 
+| bootstrap/app.go in your project returns application.New() with your
+| bindings; Run() serves HTTP and optional background workers.
+| 
+| Most cross-cutting services are configured here or via
+| ConfigureIntegrations from environment variables.
+| 
+| Symbols defined here include: ConfigureStorage (ConfigureStorage wires
+| the local filesystem disk from config.); UseExceptionHandler
+| (UseExceptionHandler registers panic recovery with HTML/JSON error
+| pages.); UseVite (UseVite enables Vite dev server asset tags when
+| public/hot exists.); UseRedisBroadcast (UseRedisBroadcast enables
+| multi-instance WebSocket broadcasting.); CacheRoutes (CacheRoutes writes
+| route metadata for faster URL generation.); CacheRoutesIfRequested
+| (CacheRoutesIfRequested exits after writing route cache (CLI:
+| GOFREIGHT_ROUTE_CACHE=1).); NewScheduler (NewScheduler creates the
+| application task scheduler.); NewNotifier (NewNotifier creates a
+| notification sender using app mailer.).
+| 
+*/
+
 import (
 	"html/template"
 	"log"

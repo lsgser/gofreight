@@ -1,5 +1,30 @@
 package gftest_test
 
+/*
+|--------------------------------------------------------------------------
+| Gftest
+|--------------------------------------------------------------------------
+|
+| Test suite for Gftest in the gftest package.
+| 
+| Uses table-driven tests, httptest, or gftest where applicable. Failures
+| should indicate regressions in public API or HTTP behavior.
+| 
+| gftest is the feature testing harness used from tests/ in your
+| application.
+| 
+| NewApp boots a test HTTP server, runs migrations, exposes HTTP helpers
+| (Get, Post, AssertOk), database assertions, and fakes for mail, cache,
+| and queue.
+| 
+| Run the suite with gofreight test; see docs/testing.md for factories and
+| authentication in tests.
+| 
+| Run with go test ./gftest/... or go test for this package from the
+| framework root.
+| 
+*/
+
 import (
 	"testing"
 

@@ -1,5 +1,27 @@
 package generator
 
+/*
+|--------------------------------------------------------------------------
+| Api
+|--------------------------------------------------------------------------
+|
+| Implements Api as part of the generator package in the Gofreight
+| framework. Key symbols: API, BlueprintMigration.
+| 
+| The generator package powers gofreight new and all make:* scaffolds.
+| 
+| It writes idiomatic directory layouts, GFT views, migrations, tests, and
+| auth stubs from templates.
+| 
+| CLI handlers in cmd/gofreight call into this package; templates live
+| primarily in templates.go.
+| 
+| Symbols defined here include: API (API generates a JSON API controller
+| and resource for a model.); BlueprintMigration (BlueprintMigration
+| generates up/down SQL from a blueprint callback name.).
+| 
+*/
+
 import (
 	"fmt"
 	"os"

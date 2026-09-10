@@ -1,5 +1,35 @@
 package build
 
+/*
+|--------------------------------------------------------------------------
+| Build
+|--------------------------------------------------------------------------
+|
+| Implements Build as part of the build package in the Gofreight
+| framework. Key symbols: Options, Result, DefaultOutput, ModuleName,
+| ValidateAppRoot, RunRouteCache.
+| 
+| The build package implements production compilation invoked by gofreight
+| build.
+| 
+| It sets GOOS/GOARCH, optional ldflags, output paths, and can emit a
+| short deploy checklist after a successful compile.
+| 
+| Use it from CI or locally when you need a single binary artifact rather
+| than go run.
+| 
+| Symbols defined here include: Options (exported type); Result (exported
+| type); DefaultOutput (DefaultOutput returns bin/<module-base> from
+| go.mod in dir.); ModuleName (ModuleName reads the module path from
+| go.mod.); ValidateAppRoot (ValidateAppRoot returns an error when dir is
+| not a Go application root.); RunRouteCache (RunRouteCache runs the app
+| once to cache routes (optional pre-build step).); Build (Build compiles
+| the application binary for production.); DeployArtifacts
+| (DeployArtifacts lists paths to copy alongside the binary for
+| production.).
+| 
+*/
+
 import (
 	"bufio"
 	"fmt"

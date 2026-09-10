@@ -1,5 +1,34 @@
 package graphql
 
+/*
+|--------------------------------------------------------------------------
+| Server
+|--------------------------------------------------------------------------
+|
+| Implements Server as part of the graphql package in the Gofreight
+| framework. Key symbols: Config, Server, NewServer, Schema, Handler,
+| PrintSchema.
+| 
+| The graphql package integrates graphql-go with Gofreight: schema
+| registration, HTTP mount, playground, DataLoader batching, and
+| field-level rate limits.
+| 
+| Generate modules with gofreight make:graphql-module; SDL and resolvers
+| live under app/graphql in your project.
+| 
+| See docs/graphql.md and the tutorial for N+1 avoidance and security
+| middleware.
+| 
+| Symbols defined here include: Config (exported type); Server (exported
+| type); NewServer (NewServer builds a server from config, combining all
+| modules.); Schema (Schema returns the compiled GraphQL schema.); Handler
+| (Handler returns the HTTP handler for GraphQL POST/GET.); PrintSchema
+| (PrintSchema returns a human-readable schema description for
+| self-documentation.); DefaultOnRequest (DefaultOnRequest attaches
+| loaders, session, and client IP to GraphQL context.).
+| 
+*/
+
 import (
 	"context"
 	"encoding/json"

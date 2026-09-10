@@ -2,18 +2,18 @@ package routes
 
 /*
 |--------------------------------------------------------------------------
-| Web Routes
+| Web
 |--------------------------------------------------------------------------
 |
-| Register routes for browser requests here. These routes receive session
-| state, CSRF protection, and typically return GFT HTML views.
-|
-| Generate a full CRUD resource:
-|   gofreight make:scaffold Post title:string body:text
-|
-| Then register the generated routes below, e.g.:
-|   controllers.RegisterPostRoutes(r)
-|
+| Implements Web as part of the routes package in the Gofreight framework.
+| Key symbols: Web.
+| 
+| Symbols defined here include: Web (/*
+| |--------------------------------------------------------------------------
+| | Web
+| |--------------------------------------------------------------------------
+| | | Registers browser-facing HTTP routes. | */).
+| 
 */
 
 import (

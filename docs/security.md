@@ -1,3 +1,29 @@
+<!--
+| --------------------------------------------------------------------------
+| Security
+| --------------------------------------------------------------------------
+|
+| Official Gofreight documentation consumed by the docs site and linked
+| from the CLI welcome page.
+|
+| Keep examples aligned with the current CLI and version; sync copies to
+| gofreight-web when publishing.
+|
+| Covers concepts, tutorials, and reference material for this topic.
+|
+
+-->
+
+<!--
+| --------------------------------------------------------------------------
+| Security
+| --------------------------------------------------------------------------
+|
+| Official Gofreight documentation (published on the docs site).
+|
+
+-->
+
 # Security
 
 Production security practices for Gofreight applications — CSRF, headers, rate limiting, signed URLs, upload hardening, and authentication.

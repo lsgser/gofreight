@@ -1,5 +1,26 @@
 package vine_test
 
+/*
+|--------------------------------------------------------------------------
+| Vine
+|--------------------------------------------------------------------------
+|
+| Test suite for Vine in the vine package.
+| 
+| Uses table-driven tests, httptest, or gftest where applicable. Failures
+| should indicate regressions in public API or HTTP behavior.
+| 
+| Vine is a fluent validation DSL: vine.String().Required().Email() builds
+| schemas validated against form maps or JSON.
+| 
+| Used in form requests, API payloads, and anywhere you want Laravel-like
+| validation chains in Go.
+| 
+| Run with go test ./vine/... or go test for this package from the
+| framework root.
+| 
+*/
+
 import (
 	"testing"
 

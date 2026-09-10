@@ -1,5 +1,18 @@
 package controllers
 
+/*
+|--------------------------------------------------------------------------
+| Post Controller
+|--------------------------------------------------------------------------
+|
+| Implements Post Controller as part of the controllers package in the
+| Gofreight framework. Key symbols: PostController, RegisterPostRoutes,
+| Index, Show, Create, Update.
+| 
+| Symbols defined here include: PostController (exported type).
+| 
+*/
+
 import (
 	"context"
 	"encoding/json"

@@ -1,5 +1,21 @@
 package graphql
 
+/*
+|--------------------------------------------------------------------------
+| Register
+|--------------------------------------------------------------------------
+|
+| Implements Register as part of the graphql package in the Gofreight
+| framework. Key symbols: Mount.
+| 
+| Symbols defined here include: Mount (/*
+| |--------------------------------------------------------------------------
+| | Mount
+| |--------------------------------------------------------------------------
+| | | Registers combined GraphQL modules on the application. | */).
+| 
+*/
+
 import (
 	"context"
 	"log"

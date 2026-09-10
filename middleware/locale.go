@@ -1,5 +1,28 @@
 package middleware
 
+/*
+|--------------------------------------------------------------------------
+| Locale
+|--------------------------------------------------------------------------
+|
+| Implements Locale as part of the middleware package in the Gofreight
+| framework. Key symbols: LocaleFromContext, LocaleMiddleware.
+| 
+| HTTP middleware implements sessions, CSRF, CORS, locale, structured
+| logging, rate limiting, and maintenance mode.
+| 
+| Register global middleware in bootstrap or attach to route groups for
+| API-specific stacks.
+| 
+| Session drivers include file, cookie, and Redis variants selected by
+| SESSION_DRIVER.
+| 
+| Symbols defined here include: LocaleFromContext (LocaleFromContext
+| returns the request locale.); LocaleMiddleware (LocaleMiddleware sets
+| locale from query, cookie, or Accept-Language.).
+| 
+*/
+
 import (
 	"context"
 	"net/http"

@@ -1,5 +1,32 @@
 package model
 
+/*
+|--------------------------------------------------------------------------
+| Associations
+|--------------------------------------------------------------------------
+|
+| Implements Associations as part of the model package in the Gofreight
+| framework. Key symbols: AssocType, Association, BelongsToAssociation,
+| HasManyAssociation, HasOneAssociation, ManyToManyAssociation.
+| 
+| The model package is the ORM layer: repositories, queries, associations,
+| soft deletes, validation, serialization, collections, and pagination.
+| 
+| Models map to tables via struct tags; migrations define schema
+| separately in db/migrate.
+| 
+| See docs/models.md, docs/orm.md, and docs/factories.md for
+| Laravel-aligned patterns.
+| 
+| Symbols defined here include: AssocType (exported type); BelongsTo
+| (exported value); HasOne (exported value); HasMany (exported value);
+| ManyToMany (exported value); Association (exported type);
+| BelongsToAssociation (BelongsToAssociation creates a belongs_to
+| association definition.); HasManyAssociation (HasManyAssociation creates
+| a has_many association definition.).
+| 
+*/
+
 import (
 	"context"
 	"fmt"

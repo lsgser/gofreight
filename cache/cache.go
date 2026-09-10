@@ -1,5 +1,31 @@
 package cache
 
+/*
+|--------------------------------------------------------------------------
+| Cache
+|--------------------------------------------------------------------------
+|
+| Implements Cache as part of the cache package in the Gofreight
+| framework. Key symbols: Store, New, Put, Get, Has, Forget.
+| 
+| The cache package defines CacheStore implementations: in-memory, file,
+| Redis, and HTTP cache middleware.
+| 
+| Application wiring selects the driver from CACHE_STORE and related env
+| vars via integrations.
+| 
+| Use cache for rate limiting data, session alternatives, or fragment
+| caching in controllers.
+| 
+| Symbols defined here include: Store (exported type); New (New creates an
+| in-memory cache store.); Put (Put stores a value with optional TTL.);
+| Get (Get retrieves a value.); Has (Has returns true if the key exists
+| and is not expired.); Forget (Forget removes a key.); Flush (Flush
+| clears all keys.); Remember (Remember gets or computes and stores a
+| value.).
+| 
+*/
+
 import (
 	"sync"
 	"time"

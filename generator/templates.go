@@ -1,5 +1,25 @@
 package generator
 
+/*
+|--------------------------------------------------------------------------
+| Templates
+|--------------------------------------------------------------------------
+|
+| Large embedded template strings for gofreight new and generator output.
+| 
+| Edit these constants when changing default app layout, README,
+| migrations, or GFT stubs shipped to new projects.
+| 
+| The generator package powers gofreight new and all make:* scaffolds.
+| 
+| It writes idiomatic directory layouts, GFT views, migrations, tests, and
+| auth stubs from templates.
+| 
+| CLI handlers in cmd/gofreight call into this package; templates live
+| primarily in templates.go.
+| 
+*/
+
 const appMainTmpl = `package main
 
 /*
@@ -768,7 +788,15 @@ database.SchemaCreate(ctx, "users", func(b *database.Blueprint) {
 Legacy SQL files (` + "*.sql`" + `) in this directory are still supported when ` + "`tools/migrate/`" + ` is not present.
 `
 
-const mailLayoutDefaultTmpl = `<!DOCTYPE html>
+const mailLayoutDefaultTmpl = `{#
+|--------------------------------------------------------------------------
+| Mail Layout
+|--------------------------------------------------------------------------
+|
+| Shared HTML wrapper for mailable GFT templates (app/views/layouts/mail/).
+|
+#}
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
@@ -785,9 +813,14 @@ const mailLayoutDefaultTmpl = `<!DOCTYPE html>
 </html>
 `
 
-const gftLayoutTmpl = `{# --------------------------------------------------------------------------
-   Layout: Application Shell
-   -------------------------------------------------------------------------- #}
+const gftLayoutTmpl = `{#
+|--------------------------------------------------------------------------
+| Application Layout
+|--------------------------------------------------------------------------
+|
+| Default HTML shell for browser pages: header, flash partial, and content slot.
+|
+#}
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
@@ -856,13 +889,27 @@ const gftLayoutTmpl = `{# ------------------------------------------------------
 </html>
 `
 
-const gftFlashPartialTmpl = `{# Partial: flash messages — include with #partial "partials.flash" #}
+const gftFlashPartialTmpl = `{#
+|--------------------------------------------------------------------------
+| Flash Partial
+|--------------------------------------------------------------------------
+|
+| Session flash message markup. Include in layouts with #partial "partials.flash".
+|
+#}
 #when .Flash
 <div class="flash">{= .Flash }</div>
 #endwhen
 `
 
-const gftHomeTmpl = `{# View: home/index — rendered by the / route in routes/web.go #}
+const gftHomeTmpl = `{#
+|--------------------------------------------------------------------------
+| Home Index View
+|--------------------------------------------------------------------------
+|
+| Welcome page for new applications. Rendered by GET / in routes/web.go.
+|
+#}
 #layout "layouts.application"
 
 #slot "title"
